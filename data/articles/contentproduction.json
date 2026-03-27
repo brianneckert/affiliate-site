@@ -1,7 +1,7 @@
 {
   "title": "Best Espresso Grinders",
-  "top_pick": "Niche Zero",
-  "summary": "Niche Zero is the top pick based on weighted scoring across espresso focus, ease of use, build quality, and value retention.",
+  "top_pick": "Eureka Mignon Specialita",
+  "summary": "Eureka Mignon Specialita is the top pick based on weighted scoring across espresso focus, ease of use, build quality, and value retention.",
   "comparison": [
     {
       "name": "Eureka Mignon Specialita",
@@ -40,6 +40,18 @@
       "affiliate_url": "https://www.amazon.com/dp/B0BV96VPSR?tag=helperscollec-20"
     },
     {
+      "name": "Eureka Mignon Silenzio",
+      "price_tier": "Premium ($549 USD MSRP)",
+      "best_for": "Quiet espresso setups",
+      "total_score": 30.4,
+      "notable_features": [
+        "Silent grind design",
+        "Stepless adjustment",
+        "Timed dosing"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0DDRP1WNP?tag=helperscollec-20"
+    },
+    {
       "name": "Breville Smart Grinder Pro",
       "price_tier": "Mid ($299 USD MSRP)",
       "best_for": "Versatile users",
@@ -55,10 +67,6 @@
   "sections": {
     "who_is_this_for": [
       {
-        "product": "Niche Zero",
-        "best_for": "Home espresso enthusiasts"
-      },
-      {
         "product": "Eureka Mignon Specialita",
         "best_for": "Serious espresso users"
       },
@@ -71,6 +79,10 @@
         "best_for": "Design-focused users"
       },
       {
+        "product": "Eureka Mignon Silenzio",
+        "best_for": "Quiet espresso setups"
+      },
+      {
         "product": "Breville Smart Grinder Pro",
         "best_for": "Versatile users"
       }
@@ -81,6 +93,6 @@
       "Build quality matters for long-term durability.",
       "Value retention matters if you care about long-term resale and overall value."
     ],
-    "final_verdict": "If you want the strongest overall option from this offline test set, choose Niche Zero."
+    "final_verdict": "If you want the strongest overall option from this offline test set, choose Eureka Mignon Specialita."
   }
 }
