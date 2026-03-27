@@ -1,0 +1,347 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import subprocess
+from copy import deepcopy
+from datetime import datetime, timezone
+from pathlib import Path
+
+SITE_ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE_ROOT = SITE_ROOT.parent
+AFFILIATE_OS_ROOT = WORKSPACE_ROOT / 'affiliate_os'
+
+POLICY_PATH = SITE_ROOT / 'config' / 'automation_policy.json'
+DECISIONS_PATH = SITE_ROOT / 'data' / 'analytics' / 'decisions.json'
+REGISTRY_PATH = SITE_ROOT / 'data' / 'articles' / 'registry.json'
+EXECUTION_LOG_PATH = SITE_ROOT / 'data' / 'analytics' / 'execution_log.json'
+
+BASE_AIR_PURIFIER_DATASET = AFFILIATE_OS_ROOT / 'data' / 'samples' / 'air_purifiers.json'
+BASE_AIR_PURIFIER_WORKFLOW = AFFILIATE_OS_ROOT / 'workflows' / 'air_purifier_test.yaml'
+AIR_PURIFIER_MAPPING = AFFILIATE_OS_ROOT / 'data' / 'amazon_mapping' / 'air_purifiers.json'
+
+
+def now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def load_json(path, default):
+    if not path.exists():
+        return default
+    return json.loads(path.read_text())
+
+
+def write_json(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2))
+
+
+def append_execution_log(entry):
+    log = load_json(EXECUTION_LOG_PATH, [])
+    log.append(entry)
+    write_json(EXECUTION_LOG_PATH, log)
+
+
+def load_policy():
+    return load_json(POLICY_PATH, {})
+
+
+def load_decisions():
+    return load_json(DECISIONS_PATH, {'recommended_actions': []})
+
+
+def load_registry():
+    return load_json(REGISTRY_PATH, {'articles': []})
+
+
+def save_registry(registry):
+    write_json(REGISTRY_PATH, registry)
+
+
+def published_or_generated_slugs(registry):
+    return {item['article_slug'] for item in registry.get('articles', [])}
+
+
+def next_follow_on_plan(category, registry, policy):
+    strategies = (policy.get('follow_on_strategies') or {}).get(category, [])
+    existing = published_or_generated_slugs(registry)
+    for strategy in strategies:
+        if strategy['slug'] not in existing:
+            return strategy
+    return None
+
+
+def build_air_purifier_follow_on_dataset(plan):
+    base = load_json(BASE_AIR_PURIFIER_DATASET, {'products': []})
+    products = []
+    focus = plan.get('focus')
+    focus_overrides = {
+        'allergies': {
+            'Coway Airmega AP-1512HH': {
+                'best_for': 'Allergy relief in medium rooms',
+                'notes': 'Balanced purifier with strong everyday filtration and dependable long-term value for allergy-prone homes.',
+                'criteria': {'filtration_performance': 9, 'noise_control': 8, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'LEVOIT Core 300-P': {
+                'best_for': 'Bedroom allergy control on a budget',
+                'notes': 'Compact purifier that is easy to place in bedrooms where allergy control and quiet operation matter most.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 9, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'Blueair Blue Pure 311i Max': {
+                'best_for': 'Large-room allergy filtration with smart controls',
+                'notes': 'Strong mainstream allergy-focused option for larger rooms with smart controls and broad coverage.',
+                'criteria': {'filtration_performance': 9, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'Winix 5510': {
+                'best_for': 'Large-room allergen control with practical value',
+                'notes': 'Large-room purifier that balances filtration strength and price for households managing allergens.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'GermGuardian AC4825E': {
+                'best_for': 'Entry-level allergy filtering in smaller spaces',
+                'notes': 'Affordable starting point for allergy control where low upfront cost matters more than maximum room coverage.',
+                'criteria': {'filtration_performance': 7, 'noise_control': 8, 'room_coverage': 6, 'long_term_value': 9}
+            }
+        },
+        'pets': {
+            'Coway Airmega AP-1512HH': {
+                'best_for': 'Pet dander control with balanced value',
+                'notes': 'Reliable everyday purifier for pet households that want strong filtration without moving into premium pricing.',
+                'criteria': {'filtration_performance': 9, 'noise_control': 8, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'LEVOIT Core 300-P': {
+                'best_for': 'Pet hair and odor control in bedrooms',
+                'notes': 'Compact purifier that fits smaller rooms where pet hair, dander, and overnight noise matter.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 9, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'Blueair Blue Pure 311i Max': {
+                'best_for': 'Large pet-friendly living spaces',
+                'notes': 'Strong large-room option for households managing pet dander across open living areas.',
+                'criteria': {'filtration_performance': 9, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'Winix 5510': {
+                'best_for': 'Pet households needing strong deodorization',
+                'notes': 'Practical large-room purifier with strong value for homes dealing with pet odors and airborne dander.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'GermGuardian AC4825E': {
+                'best_for': 'Entry-level purifier for pet owners on a budget',
+                'notes': 'Affordable option for smaller pet spaces where odor reduction and lower cost matter most.',
+                'criteria': {'filtration_performance': 7, 'noise_control': 8, 'room_coverage': 6, 'long_term_value': 9}
+            }
+        }
+    }
+    overrides = focus_overrides[focus]
+    for product in base['products']:
+        item = deepcopy(product)
+        if item['name'] in overrides:
+            item.update(overrides[item['name']])
+        products.append(item)
+    return {'products': products}
+
+
+def build_air_purifier_follow_on_workflow(plan):
+    focus = plan.get('focus')
+    search_phrase = f"best air purifiers for {focus}" if focus not in {'quiet operation', 'budget under $200'} else (
+        'best quiet air purifiers' if focus == 'quiet operation' else 'best air purifiers under $200'
+    )
+    objective_focus = plan['title'].lower()
+    buying_guide = [
+        'Prioritize filtration performance and realistic room sizing for the use case this guide targets.',
+        'Noise control matters more when the purifier will run in bedrooms, nurseries, or workspaces.',
+        'Filter cost and upkeep affect long-term value more than sticker price alone.',
+        'Smart features can help, but clean-air performance should still drive the final choice.'
+    ]
+    faq = [
+        {
+            'question': f"What matters most when choosing an air purifier for {focus}?",
+            'answer': 'The best choice usually balances filtration performance, room fit, day-to-day noise, and realistic long-term ownership cost.'
+        },
+        {
+            'question': 'Should you choose based only on the biggest coverage number?',
+            'answer': 'No. Coverage claims matter, but actual room size, noise tolerance, and how often the purifier runs matter just as much.'
+        }
+    ]
+    verdict = {
+        'allergies': 'If allergy control is the main goal, choose {top_pick} from this validated Amazon-only test set.',
+        'pets': 'If pet dander and odor control matter most, choose {top_pick} from this validated Amazon-only test set.'
+    }.get(focus, 'If this is your target use case, choose {top_pick} from this validated Amazon-only test set.')
+
+    return {
+        'workflow': plan['slug'].replace('-', '_'),
+        'article': {
+            'slug': plan['slug'],
+            'category': 'air purifiers',
+            'search_phrase': search_phrase,
+            'article_title': plan['title'],
+            'objective': f'Generate a structured affiliate article for {objective_focus} using the configured offline dataset only.',
+            'scoring_dimensions': ['filtration performance', 'noise control', 'room coverage', 'long-term value'],
+            'buying_guide': buying_guide,
+            'faq': faq,
+            'summary_template': '{top_pick} is the top pick based on weighted scoring across {scoring_phrase}.',
+            'final_verdict_template': verdict
+        },
+        'dataset': f"data/samples/{plan['slug'].replace('-', '_')}.json",
+        'amazon_mapping_dataset': 'data/amazon_mapping/air_purifiers.json',
+        'output_dir': f"runs/manual_tests/{plan['slug'].replace('-', '_')}",
+        'stages': [
+            {'name': 'Orchestrator', 'agent': 'Orchestrator'},
+            {'name': 'Research', 'agent': 'Research'},
+            {
+                'name': 'ProductIntelligence',
+                'agent': 'ProductIntelligence',
+                'config': {
+                    'weights': {
+                        'filtration_performance': 1.0,
+                        'noise_control': 0.8,
+                        'room_coverage': 1.0,
+                        'long_term_value': 1.0
+                    }
+                }
+            },
+            {'name': 'ContentProduction', 'agent': 'ContentProduction'},
+            {'name': 'Compliance', 'agent': 'Compliance'}
+        ]
+    }
+
+
+def create_follow_on_article(plan, policy, dry_run=False):
+    slug = plan['slug']
+    dataset_filename = slug.replace('-', '_') + '.json'
+    workflow_filename = slug.replace('-', '_') + '.yaml'
+    dataset_path = AFFILIATE_OS_ROOT / 'data' / 'samples' / dataset_filename
+    workflow_path = AFFILIATE_OS_ROOT / 'workflows' / workflow_filename
+    output_dir = AFFILIATE_OS_ROOT / 'runs' / 'manual_tests' / slug.replace('-', '_')
+    article_dir = SITE_ROOT / 'data' / 'articles' / slug
+
+    if dry_run:
+        return {
+            'mode': 'dry-run',
+            'article_slug': slug,
+            'would_create_files': [str(dataset_path), str(workflow_path), str(article_dir / 'productintelligence.json'), str(article_dir / 'contentproduction.json'), str(article_dir / 'compliance.json')],
+            'would_publish': False
+        }
+
+    dataset_payload = build_air_purifier_follow_on_dataset(plan)
+    workflow_payload = build_air_purifier_follow_on_workflow(plan)
+    write_json(dataset_path, dataset_payload)
+    write_json(workflow_path, workflow_payload)
+
+    subprocess.run(
+        ['python3', str(AFFILIATE_OS_ROOT / 'scripts' / 'run_workflow.py'), '--workflow', f'workflows/{workflow_filename}'],
+        cwd=str(AFFILIATE_OS_ROOT),
+        check=True,
+    )
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    article_dir.mkdir(parents=True, exist_ok=True)
+    for name in ['productintelligence.json', 'contentproduction.json', 'compliance.json']:
+        (article_dir / name).write_text((output_dir / name).read_text())
+
+    content = load_json(article_dir / 'contentproduction.json', {})
+    compliance = load_json(article_dir / 'compliance.json', {})
+    intelligence = load_json(article_dir / 'productintelligence.json', {})
+    valid = (
+        compliance.get('passed') is True
+        and len(content.get('comparison', [])) == 5
+        and len(intelligence.get('products', [])) == 5
+        and all(bool(p.get('affiliate_url')) for p in intelligence.get('products', []))
+    )
+    if not valid:
+        raise SystemExit('Generated follow-on article failed validation checks.')
+
+    registry = load_registry()
+    registry['articles'].append({
+        'article_slug': slug,
+        'category': 'air purifiers',
+        'title': plan['title'],
+        'workflow_path': str(workflow_path),
+        'dataset_path': str(dataset_path),
+        'amazon_mapping_dataset_path': str(AIR_PURIFIER_MAPPING),
+        'output_dir': str(output_dir),
+        'article_dir': f'data/articles/{slug}',
+        'publish_status': 'published' if policy.get('auto_publish_enabled') else 'ready_to_publish',
+        'published_at': now_iso() if policy.get('auto_publish_enabled') else None,
+        'source_article_family': 'air purifiers',
+        'related_articles': ['air-purifiers']
+    })
+    save_registry(registry)
+
+    return {
+        'mode': 'live-prep',
+        'article_slug': slug,
+        'created_files': [str(dataset_path), str(workflow_path), str(article_dir / 'productintelligence.json'), str(article_dir / 'contentproduction.json'), str(article_dir / 'compliance.json')],
+        'published': bool(policy.get('auto_publish_enabled')),
+        'publish_status': 'published' if policy.get('auto_publish_enabled') else 'ready_to_publish'
+    }
+
+
+def run_default_decision_loop(policy, decisions, registry):
+    dry_run = policy.get('dry_run', True)
+    approved_categories = set(policy.get('approved_categories', []))
+    actions = decisions.get('recommended_actions', [])
+    selected = None
+    for action in actions:
+        if action.get('action_type') == 'create_more_articles_in_category' and action.get('target') in approved_categories and float(action.get('confidence', 0)) >= float(policy.get('min_confidence_required', 0.7)):
+            selected = action
+            break
+    if selected:
+        plan = next_follow_on_plan(selected['target'], registry, policy)
+        if not plan:
+            return {'mode': 'decision-loop', 'result': 'no_available_follow_on_plan'}
+        return {
+            'mode': 'decision-loop',
+            'decision': selected,
+            'next_article_plan': plan,
+            'would_publish': bool(policy.get('auto_publish_enabled')) and not dry_run
+        }
+    return {
+        'mode': 'decision-loop',
+        'result': 'keep_collecting_data',
+        'would_publish': False,
+        'next_article_plan': next_follow_on_plan('air purifiers', registry, policy)
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--prepare-follow-on', choices=['air purifiers'])
+    parser.add_argument('--live', action='store_true')
+    args = parser.parse_args()
+
+    policy = load_policy()
+    decisions = load_decisions()
+    registry = load_registry()
+
+    if args.prepare_follow_on:
+        plan = next_follow_on_plan(args.prepare_follow_on, registry, policy)
+        if not plan:
+            result = {'mode': 'follow-on-prep', 'result': 'no_available_plan'}
+        else:
+            result = create_follow_on_article(plan, policy, dry_run=not args.live)
+        append_execution_log({
+            'timestamp': now_iso(),
+            'action_attempted': 'create_more_articles_in_category',
+            'target_category': args.prepare_follow_on,
+            'target_article_slug': result.get('article_slug'),
+            'dry_run': not args.live,
+            'result': result.get('publish_status') or result.get('result') or 'prepared',
+            'error': None
+        })
+        print(json.dumps(result, indent=2))
+        return
+
+    result = run_default_decision_loop(policy, decisions, registry)
+    append_execution_log({
+        'timestamp': now_iso(),
+        'action_attempted': result.get('decision', {}).get('action_type', 'keep_collecting_data'),
+        'target_category': result.get('decision', {}).get('target') if result.get('decision') else 'air purifiers',
+        'target_article_slug': result.get('next_article_plan', {}).get('slug') if result.get('next_article_plan') else None,
+        'dry_run': policy.get('dry_run', True),
+        'result': result.get('result', 'would_plan_follow_on' if result.get('next_article_plan') else 'noop'),
+        'error': None
+    })
+    print(json.dumps(result, indent=2))
+
+
+if __name__ == '__main__':
+    main()

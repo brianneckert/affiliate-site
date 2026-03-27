@@ -5,12 +5,107 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
+
 const ARTICLES_PATH = path.join(__dirname, 'data/articles');
+const REGISTRY_PATH = path.join(ARTICLES_PATH, 'registry.json');
+const ANALYTICS_PATH = path.join(__dirname, 'data/analytics/events.json');
 
 function readJson(name) {
   const file = path.join(ARTICLES_PATH, name);
   if (!fs.existsSync(file)) return null;
   return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+function readRegistry() {
+  if (!fs.existsSync(REGISTRY_PATH)) return { articles: [] };
+  return JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
+}
+
+function getPublishedArticles() {
+  return (readRegistry().articles || []).filter((item) => item.publish_status === 'published');
+}
+
+function readArticleBundle(articleSlug) {
+  const registry = readRegistry();
+  const entry = (registry.articles || []).find((item) => item.article_slug === articleSlug);
+  if (!entry) return null;
+  const baseDir = path.join(__dirname, entry.article_dir);
+  const readBundleJson = (name) => {
+    const file = path.join(baseDir, name);
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  };
+  return {
+    entry,
+    content: readBundleJson('contentproduction.json'),
+    compliance: readBundleJson('compliance.json'),
+    intelligence: readBundleJson('productintelligence.json')
+  };
+}
+
+function ensureAnalyticsStore() {
+  const dir = path.dirname(ANALYTICS_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(ANALYTICS_PATH)) fs.writeFileSync(ANALYTICS_PATH, '[]\n');
+}
+
+function readEvents() {
+  ensureAnalyticsStore();
+  return JSON.parse(fs.readFileSync(ANALYTICS_PATH, 'utf8'));
+}
+
+function writeEvents(events) {
+  ensureAnalyticsStore();
+  fs.writeFileSync(ANALYTICS_PATH, JSON.stringify(events, null, 2));
+}
+
+function logEvent(event) {
+  const events = readEvents();
+  events.push({ ...event, timestamp: event.timestamp || new Date().toISOString() });
+  writeEvents(events);
+}
+
+function buildAnalyticsSummary(events) {
+  const summary = { articles: {}, products: {}, categories: {} };
+  for (const event of events) {
+    const articleSlug = event.article_slug || 'unknown-article';
+    if (!summary.articles[articleSlug]) {
+      summary.articles[articleSlug] = { total_views: 0, total_clicks: 0, ctr: 0, category: event.category || null };
+    }
+    const category = event.category || summary.articles[articleSlug].category || 'unknown-category';
+    summary.articles[articleSlug].category = category;
+    if (!summary.categories[category]) {
+      summary.categories[category] = { total_views: 0, total_clicks: 0, ctr: 0, articles: {} };
+    }
+    if (!summary.categories[category].articles[articleSlug]) {
+      summary.categories[category].articles[articleSlug] = { total_views: 0, total_clicks: 0 };
+    }
+    if (event.type === 'article_view') {
+      summary.articles[articleSlug].total_views += 1;
+      summary.categories[category].total_views += 1;
+      summary.categories[category].articles[articleSlug].total_views += 1;
+    }
+    if (event.type === 'outbound_click') {
+      summary.articles[articleSlug].total_clicks += 1;
+      summary.categories[category].total_clicks += 1;
+      summary.categories[category].articles[articleSlug].total_clicks += 1;
+      const productName = event.product_name || 'unknown-product';
+      if (!summary.products[productName]) {
+        summary.products[productName] = { article_slug: articleSlug, category, clicks: 0, asin: event.asin || null };
+      }
+      summary.products[productName].clicks += 1;
+    }
+  }
+
+  for (const article of Object.values(summary.articles)) {
+    article.ctr = article.total_views ? Number((article.total_clicks / article.total_views).toFixed(4)) : 0;
+  }
+  for (const category of Object.values(summary.categories)) {
+    category.ctr = category.total_views ? Number((category.total_clicks / category.total_views).toFixed(4)) : 0;
+  }
+
+  return summary;
 }
 
 function escapeHtml(value) {
@@ -33,26 +128,33 @@ function isDisplayableCompliance(compliance) {
   return errors.length === 1 && errors[0] === 'no_external_urls';
 }
 
-function buildSearchIndex(content, compliance) {
-  if (!content || !isDisplayableCompliance(compliance)) return [];
-  const comparison = Array.isArray(content.comparison) ? content.comparison : [];
-  return [{
-    route: '/article/espresso-grinders',
-    article_title: content.title || 'Best Espresso Grinders',
-    summary: content.summary || '',
-    top_pick: content.top_pick || '',
-    products: comparison.map(item => item.name),
-    search_text: [
-      content.title || '',
-      content.summary || '',
-      content.top_pick || '',
-      ...comparison.map(item => item.name || '')
-    ].join(' ').toLowerCase()
-  }];
+function buildSearchIndex() {
+  return getPublishedArticles().flatMap((entry) => {
+    const bundle = readArticleBundle(entry.article_slug);
+    const content = bundle?.content;
+    const compliance = bundle?.compliance;
+    if (!content || !isDisplayableCompliance(compliance)) return [];
+    const comparison = Array.isArray(content.comparison) ? content.comparison : [];
+    return [{
+      route: `/article/${entry.article_slug}`,
+      article_title: content.title || entry.title || entry.article_slug,
+      summary: content.summary || '',
+      top_pick: content.top_pick || '',
+      category: entry.category || content.category || '',
+      products: comparison.map(item => item.name),
+      search_text: [
+        content.title || '',
+        content.summary || '',
+        content.top_pick || '',
+        entry.category || '',
+        ...comparison.map(item => item.name || '')
+      ].join(' ').toLowerCase()
+    }];
+  });
 }
 
-function renderHome(content, compliance) {
-  const searchData = JSON.stringify(buildSearchIndex(content, compliance));
+function renderHome() {
+  const searchData = JSON.stringify(buildSearchIndex());
   return `<!doctype html>
   <html>
   <head>
@@ -229,7 +331,7 @@ function renderHome(content, compliance) {
   </html>`;
 }
 
-function renderArticle(content, compliance) {
+function renderArticle(content, compliance, entry = null) {
   if (!content || !isDisplayableCompliance(compliance)) {
     return `
     <!doctype html>
@@ -247,6 +349,12 @@ function renderArticle(content, compliance) {
     `;
   }
 
+  const productEntityMap = new Map((content.product_entities || []).map((item) => [item.product_name, item]));
+  const relatedGuides = getPublishedArticles()
+    .filter((article) => article.category === (entry?.category || content.category) && article.article_slug !== (entry?.article_slug || content.article_slug))
+    .map((article) => `<a href="/article/${escapeHtml(article.article_slug)}">${escapeHtml(article.title)}</a>`)
+    .join(' · ');
+
   const rows = (content.comparison || [])
     .filter(hasValidAffiliateUrl)
     .map(
@@ -257,7 +365,7 @@ function renderArticle(content, compliance) {
         <td>${escapeHtml(p.best_for)}</td>
         <td>${escapeHtml(p.total_score)}</td>
         <td>${escapeHtml((p.notable_features || []).join(', '))}</td>
-        <td><a class="shop-btn" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></td>
+        <td><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></td>
       </tr>
     `
     )
@@ -270,7 +378,7 @@ function renderArticle(content, compliance) {
         <div><strong>Best for:</strong> ${escapeHtml(item.best_for)}</div>
         <div><strong>Price tier:</strong> ${escapeHtml(item.pricing_tier)}</div>
         <div><strong>Rating:</strong> ${escapeHtml(item.rating)} (${escapeHtml(item.review_count)} reviews)</div>
-        <div style="margin-top:10px;"><a class="shop-btn" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div>
+        <div style="margin-top:10px;"><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(productEntityMap.get(item.product_name)?.asin || '')}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div>
       </div>
     `)
     .join('');
@@ -288,7 +396,7 @@ function renderArticle(content, compliance) {
         <p><strong>Summary:</strong> ${escapeHtml(item.short_factual_description)}</p>
         <p><strong>Key strengths:</strong> ${escapeHtml((item.key_strengths || []).join(', '))}</p>
         <p><strong>Drawbacks:</strong> ${escapeHtml((item.drawbacks || []).join(', '))}</p>
-        <p><strong>Canonical product URL:</strong> <a href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">View on Amazon</a></p>
+        <p><strong>Canonical product URL:</strong> <a class="analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(item.asin)}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">View on Amazon</a></p>
       </div>
     `)
     .join('');
@@ -462,6 +570,8 @@ function renderArticle(content, compliance) {
           <div class="top-name">${escapeHtml(content.top_pick)}</div>
         </div>
 
+        ${relatedGuides ? `<h3>Related Guides</h3><p>${relatedGuides}</p>` : ''}
+
         ${glance ? `<h3>Top Picks at a Glance</h3><div class="glance-grid">${glance}</div>` : ''}
 
         <h3>Comparison</h3>
@@ -487,25 +597,83 @@ function renderArticle(content, compliance) {
 
         ${faq ? `<h3>FAQ</h3><div class="product-grid">${faq}</div>` : ''}
 
+        ${relatedGuides ? `<h3>More Air Purifier Guides</h3><p>${relatedGuides}</p>` : ''}
+
         <h3>Final Verdict</h3>
         <p class="final">${escapeHtml(content.sections?.final_verdict || '')}</p>
       </div>
     </div>
+    <script>
+      document.querySelectorAll('.analytics-link').forEach(function(link) {
+        link.addEventListener('click', function() {
+          const payload = {
+            type: 'outbound_click',
+            article_slug: link.dataset.articleSlug,
+            category: link.dataset.category,
+            product_name: link.dataset.productName,
+            asin: link.dataset.asin,
+            affiliate_url: link.dataset.affiliateUrl,
+            timestamp: new Date().toISOString()
+          };
+          fetch('/analytics/click', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).catch(function() {});
+        });
+      });
+    </script>
   </body>
   </html>
   `;
 }
 
 app.get('/', (req, res) => {
-  const content = readJson('contentproduction.json');
-  const compliance = readJson('compliance.json');
-  res.send(renderHome(content, compliance));
+  res.send(renderHome());
 });
 
-app.get('/article/espresso-grinders', (req, res) => {
-  const content = readJson('contentproduction.json');
-  const compliance = readJson('compliance.json');
-  res.send(renderArticle(content, compliance));
+app.get('/article/:slug', (req, res) => {
+  const bundle = readArticleBundle(req.params.slug);
+  if (!bundle || bundle.entry?.publish_status !== 'published') {
+    return res.status(404).send(renderArticle(null, null));
+  }
+  const content = bundle.content;
+  const compliance = bundle.compliance;
+  if (content && isDisplayableCompliance(compliance)) {
+    logEvent({
+      type: 'article_view',
+      article_slug: content.article_slug || req.params.slug,
+      category: content.category || bundle?.entry?.category || 'configured category',
+      timestamp: new Date().toISOString()
+    });
+  }
+  res.send(renderArticle(content, compliance, bundle.entry));
+});
+
+app.post('/analytics/click', (req, res) => {
+  const { article_slug, category, product_name, asin, affiliate_url, timestamp } = req.body || {};
+  if (!article_slug || !product_name || !affiliate_url) {
+    return res.status(400).json({ ok: false, error: 'missing_required_fields' });
+  }
+  logEvent({
+    type: 'outbound_click',
+    article_slug,
+    category: category || 'configured category',
+    product_name,
+    asin: asin || null,
+    affiliate_url,
+    timestamp: timestamp || new Date().toISOString()
+  });
+  res.json({ ok: true });
+});
+
+app.get('/analytics/events', (req, res) => {
+  res.json(readEvents());
+});
+
+app.get('/analytics/summary', (req, res) => {
+  res.json(buildAnalyticsSummary(readEvents()));
 });
 
 app.listen(PORT, () => {

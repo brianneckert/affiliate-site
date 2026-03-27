@@ -1,0 +1,38 @@
+{
+  "approved_categories": [
+    "air purifiers"
+  ],
+  "max_new_articles_per_day": 1,
+  "min_confidence_required": 0.7,
+  "auto_publish_enabled": false,
+  "dry_run": true,
+  "follow_on_strategies": {
+    "air purifiers": [
+      {
+        "slug": "air-purifiers-for-allergies",
+        "title": "Best Air Purifiers for Allergies",
+        "focus": "allergies"
+      },
+      {
+        "slug": "air-purifiers-for-pets",
+        "title": "Best Air Purifiers for Pets",
+        "focus": "pets"
+      },
+      {
+        "slug": "air-purifiers-for-large-rooms",
+        "title": "Best Air Purifiers for Large Rooms",
+        "focus": "large rooms"
+      },
+      {
+        "slug": "quiet-air-purifiers",
+        "title": "Best Quiet Air Purifiers",
+        "focus": "quiet operation"
+      },
+      {
+        "slug": "air-purifiers-under-200",
+        "title": "Best Air Purifiers Under $200",
+        "focus": "budget under $200"
+      }
+    ]
+  }
+}
