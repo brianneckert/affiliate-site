@@ -14,7 +14,9 @@
       "source_article_family": "air purifiers",
       "related_articles": [
         "air-purifiers-for-allergies",
-        "air-purifiers-for-pets"
+        "air-purifiers-for-pets",
+        "air-purifiers-for-large-rooms",
+        "quiet-air-purifiers"
       ]
     },
     {
@@ -31,7 +33,9 @@
       "source_article_family": "air purifiers",
       "related_articles": [
         "air-purifiers",
-        "air-purifiers-for-pets"
+        "air-purifiers-for-pets",
+        "air-purifiers-for-large-rooms",
+        "quiet-air-purifiers"
       ]
     },
     {
@@ -48,7 +52,9 @@
       "source_article_family": "air purifiers",
       "related_articles": [
         "air-purifiers",
-        "air-purifiers-for-allergies"
+        "air-purifiers-for-allergies",
+        "air-purifiers-for-large-rooms",
+        "quiet-air-purifiers"
       ]
     },
     {
@@ -60,13 +66,14 @@
       "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_purifiers.json",
       "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/air_purifiers_for_large_rooms",
       "article_dir": "data/articles/air-purifiers-for-large-rooms",
-      "publish_status": "ready_to_publish",
-      "published_at": null,
+      "publish_status": "published",
+      "published_at": "2026-03-27T22:29:17.644141+00:00",
       "source_article_family": "air purifiers",
       "related_articles": [
         "air-purifiers",
         "air-purifiers-for-allergies",
-        "air-purifiers-for-pets"
+        "air-purifiers-for-pets",
+        "quiet-air-purifiers"
       ]
     },
     {
@@ -78,13 +85,14 @@
       "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_purifiers.json",
       "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/quiet_air_purifiers",
       "article_dir": "data/articles/quiet-air-purifiers",
-      "publish_status": "ready_to_publish",
-      "published_at": null,
+      "publish_status": "published",
+      "published_at": "2026-03-27T22:29:17.678786+00:00",
       "source_article_family": "air purifiers",
       "related_articles": [
         "air-purifiers",
         "air-purifiers-for-allergies",
-        "air-purifiers-for-pets"
+        "air-purifiers-for-pets",
+        "air-purifiers-for-large-rooms"
       ]
     }
   ]

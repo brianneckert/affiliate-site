@@ -57,6 +57,16 @@ def save_registry(registry):
     write_json(REGISTRY_PATH, registry)
 
 
+def sync_related_articles(registry, category):
+    family = [item for item in registry.get('articles', []) if item.get('category') == category]
+    published = [item['article_slug'] for item in family if item.get('publish_status') == 'published']
+    for article in family:
+        if article.get('publish_status') == 'published':
+            article['related_articles'] = [slug for slug in published if slug != article['article_slug']]
+        else:
+            article['related_articles'] = published[:]
+
+
 def published_or_generated_slugs(registry):
     return {item['article_slug'] for item in registry.get('articles', [])}
 
@@ -260,6 +270,34 @@ def build_air_purifier_follow_on_workflow(plan):
     }
 
 
+def promote_article_to_published(article_slug, dry_run=False):
+    registry = load_registry()
+    article = next((item for item in registry.get('articles', []) if item.get('article_slug') == article_slug), None)
+    if not article:
+        raise SystemExit(f'Unknown article slug: {article_slug}')
+    article_dir = SITE_ROOT / article['article_dir']
+    required = [article_dir / 'productintelligence.json', article_dir / 'contentproduction.json', article_dir / 'compliance.json']
+    if not all(path.exists() for path in required):
+        raise SystemExit(f'Cannot promote {article_slug}: missing article bundle files in {article_dir}')
+    if dry_run:
+        return {
+            'mode': 'promote-dry-run',
+            'article_slug': article_slug,
+            'would_set_publish_status': 'published',
+            'would_set_published_at': now_iso()
+        }
+    article['publish_status'] = 'published'
+    article['published_at'] = now_iso()
+    sync_related_articles(registry, article.get('category'))
+    save_registry(registry)
+    return {
+        'mode': 'promote-live',
+        'article_slug': article_slug,
+        'publish_status': article['publish_status'],
+        'published_at': article['published_at']
+    }
+
+
 def create_follow_on_article(plan, policy, dry_run=False):
     slug = plan['slug']
     dataset_filename = slug.replace('-', '_') + '.json'
@@ -318,8 +356,9 @@ def create_follow_on_article(plan, policy, dry_run=False):
         'publish_status': 'published' if policy.get('auto_publish_enabled') else 'ready_to_publish',
         'published_at': now_iso() if policy.get('auto_publish_enabled') else None,
         'source_article_family': 'air purifiers',
-        'related_articles': ['air-purifiers']
+        'related_articles': []
     })
+    sync_related_articles(registry, 'air purifiers')
     save_registry(registry)
 
     return {
@@ -361,6 +400,7 @@ def run_default_decision_loop(policy, decisions, registry):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--prepare-follow-on', choices=['air purifiers'])
+    parser.add_argument('--promote')
     parser.add_argument('--live', action='store_true')
     args = parser.parse_args()
 
@@ -381,6 +421,20 @@ def main():
             'target_article_slug': result.get('article_slug'),
             'dry_run': not args.live,
             'result': result.get('publish_status') or result.get('result') or 'prepared',
+            'error': None
+        })
+        print(json.dumps(result, indent=2))
+        return
+
+    if args.promote:
+        result = promote_article_to_published(args.promote, dry_run=not args.live)
+        append_execution_log({
+            'timestamp': now_iso(),
+            'action_attempted': 'promote_article_to_published',
+            'target_category': next((item.get('category') for item in registry.get('articles', []) if item.get('article_slug') == args.promote), None),
+            'target_article_slug': args.promote,
+            'dry_run': not args.live,
+            'result': result.get('publish_status') or 'promoted',
             'error': None
         })
         print(json.dumps(result, indent=2))
