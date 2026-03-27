@@ -12,7 +12,10 @@
       "publish_status": "published",
       "published_at": "2026-03-27T13:16:30-07:00",
       "source_article_family": "air purifiers",
-      "related_articles": []
+      "related_articles": [
+        "air-purifiers-for-allergies",
+        "air-purifiers-for-pets"
+      ]
     },
     {
       "article_slug": "air-purifiers-for-allergies",
@@ -27,7 +30,8 @@
       "published_at": "2026-03-27T14:55:00-07:00",
       "source_article_family": "air purifiers",
       "related_articles": [
-        "air-purifiers"
+        "air-purifiers",
+        "air-purifiers-for-pets"
       ]
     },
     {
@@ -39,11 +43,48 @@
       "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_purifiers.json",
       "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/air_purifiers_for_pets",
       "article_dir": "data/articles/air-purifiers-for-pets",
+      "publish_status": "published",
+      "published_at": "2026-03-27T15:05:00-07:00",
+      "source_article_family": "air purifiers",
+      "related_articles": [
+        "air-purifiers",
+        "air-purifiers-for-allergies"
+      ]
+    },
+    {
+      "article_slug": "air-purifiers-for-large-rooms",
+      "category": "air purifiers",
+      "title": "Best Air Purifiers for Large Rooms",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/air_purifiers_for_large_rooms.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/air_purifiers_for_large_rooms.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_purifiers.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/air_purifiers_for_large_rooms",
+      "article_dir": "data/articles/air-purifiers-for-large-rooms",
       "publish_status": "ready_to_publish",
       "published_at": null,
       "source_article_family": "air purifiers",
       "related_articles": [
-        "air-purifiers"
+        "air-purifiers",
+        "air-purifiers-for-allergies",
+        "air-purifiers-for-pets"
+      ]
+    },
+    {
+      "article_slug": "quiet-air-purifiers",
+      "category": "air purifiers",
+      "title": "Best Quiet Air Purifiers",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/quiet_air_purifiers.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/quiet_air_purifiers.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_purifiers.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/quiet_air_purifiers",
+      "article_dir": "data/articles/quiet-air-purifiers",
+      "publish_status": "ready_to_publish",
+      "published_at": null,
+      "source_article_family": "air purifiers",
+      "related_articles": [
+        "air-purifiers",
+        "air-purifiers-for-allergies",
+        "air-purifiers-for-pets"
       ]
     }
   ]

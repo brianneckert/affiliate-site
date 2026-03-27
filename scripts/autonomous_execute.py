@@ -128,6 +128,60 @@ def build_air_purifier_follow_on_dataset(plan):
                 'notes': 'Affordable option for smaller pet spaces where odor reduction and lower cost matter most.',
                 'criteria': {'filtration_performance': 7, 'noise_control': 8, 'room_coverage': 6, 'long_term_value': 9}
             }
+        },
+        'large rooms': {
+            'Coway Airmega AP-1512HH': {
+                'best_for': 'Medium-to-large rooms with strong all-around value',
+                'notes': 'Still a balanced value choice, but not the strongest coverage option in this large-room-focused set.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 8, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'LEVOIT Core 300-P': {
+                'best_for': 'Smaller large-room budgets',
+                'notes': 'Affordable and quiet, but coverage is less convincing than the strongest large-room leaders here.',
+                'criteria': {'filtration_performance': 7, 'noise_control': 9, 'room_coverage': 6, 'long_term_value': 9}
+            },
+            'Blueair Blue Pure 311i Max': {
+                'best_for': 'Best large-room smart purification',
+                'notes': 'Best overall fit here for large-room purification with strong coverage and easy smart controls.',
+                'criteria': {'filtration_performance': 9, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'Winix 5510': {
+                'best_for': 'Large rooms on a more practical budget',
+                'notes': 'Very strong large-room option for buyers who want serious coverage without moving up to pricier models.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 9}
+            },
+            'GermGuardian AC4825E': {
+                'best_for': 'Budget fallback for modest spaces',
+                'notes': 'Useful on price, but clearly the weakest fit for truly large-room purification.',
+                'criteria': {'filtration_performance': 6, 'noise_control': 7, 'room_coverage': 5, 'long_term_value': 8}
+            }
+        },
+        'quiet operation': {
+            'Coway Airmega AP-1512HH': {
+                'best_for': 'Quiet all-around performance',
+                'notes': 'Balanced quieter option with dependable value and solid everyday filtration.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 9, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'LEVOIT Core 300-P': {
+                'best_for': 'Best quiet bedroom value',
+                'notes': 'The strongest quiet-operation value play for bedrooms and smaller spaces.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 10, 'room_coverage': 7, 'long_term_value': 9}
+            },
+            'Blueair Blue Pure 311i Max': {
+                'best_for': 'Quiet large-room smart use',
+                'notes': 'Strong option when you want quieter operation without giving up large-room capability.',
+                'criteria': {'filtration_performance': 9, 'noise_control': 9, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'Winix 5510': {
+                'best_for': 'Quiet auto-mode large-room coverage',
+                'notes': 'Good quiet-mode value for larger rooms, though not the softest-sounding option in every setting.',
+                'criteria': {'filtration_performance': 8, 'noise_control': 8, 'room_coverage': 9, 'long_term_value': 8}
+            },
+            'GermGuardian AC4825E': {
+                'best_for': 'Low-cost quiet-enough starter option',
+                'notes': 'Affordable, but quieter-operation shoppers will usually prefer stronger bedroom-focused models above it.',
+                'criteria': {'filtration_performance': 7, 'noise_control': 7, 'room_coverage': 6, 'long_term_value': 9}
+            }
         }
     }
     overrides = focus_overrides[focus]
@@ -163,7 +217,9 @@ def build_air_purifier_follow_on_workflow(plan):
     ]
     verdict = {
         'allergies': 'If allergy control is the main goal, choose {top_pick} from this validated Amazon-only test set.',
-        'pets': 'If pet dander and odor control matter most, choose {top_pick} from this validated Amazon-only test set.'
+        'pets': 'If pet dander and odor control matter most, choose {top_pick} from this validated Amazon-only test set.',
+        'large rooms': 'If you need stronger large-room purification, choose {top_pick} from this validated Amazon-only test set.',
+        'quiet operation': 'If low-noise performance matters most, choose {top_pick} from this validated Amazon-only test set.'
     }.get(focus, 'If this is your target use case, choose {top_pick} from this validated Amazon-only test set.')
 
     return {

@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "filtration_performance": 1.0,
+    "noise_control": 0.8,
+    "room_coverage": 1.0,
+    "long_term_value": 1.0
+  },
+  "products": [
+    {
+      "name": "Blueair Blue Pure 311i Max",
+      "brand": "BLUEAIR",
+      "price_tier": "Mid ($169 USD street)",
+      "best_for": "Quiet large-room smart use",
+      "notes": "Strong option when you want quieter operation without giving up large-room capability.",
+      "notable_features": [
+        "App connectivity",
+        "Large room coverage",
+        "Smart air cleaner controls"
+      ],
+      "scores": {
+        "filtration_performance": 9,
+        "noise_control": 9,
+        "room_coverage": 9,
+        "long_term_value": 8,
+        "total_score": 33.2
+      },
+      "persona_fit": "Quiet large-room smart use",
+      "asin": "B0BN2LZ9JH",
+      "product_title": "BLUEAIR Air Purifiers for Medium Rooms, HEPASilent Smart Air Cleaner for Home, Pets, Allergies, Dust, Mold, Smoke - Blue Pure 311i Max",
+      "affiliate_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+      "price_usd": 169.0,
+      "rating": 4.5,
+      "review_count": 1900,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "LEVOIT Core 300-P",
+      "brand": "LEVOIT",
+      "price_tier": "Entry ($85 USD street)",
+      "best_for": "Best quiet bedroom value",
+      "notes": "The strongest quiet-operation value play for bedrooms and smaller spaces.",
+      "notable_features": [
+        "Compact footprint",
+        "Sleep mode",
+        "Strong value pricing"
+      ],
+      "scores": {
+        "filtration_performance": 8,
+        "noise_control": 10,
+        "room_coverage": 7,
+        "long_term_value": 9,
+        "total_score": 32.0
+      },
+      "persona_fit": "Best quiet bedroom value",
+      "asin": "B07VVK39F7",
+      "product_title": "LEVOIT Air Purifier for Home Allergens Pet Hair in Bedroom, Covers Up to 1073 ft\u00b2, 3-in-1 Filter with HEPA Sleep Mode, Core300-P, White",
+      "affiliate_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+      "price_usd": 84.99,
+      "rating": 4.7,
+      "review_count": 106400,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Winix 5510",
+      "brand": "Winix",
+      "price_tier": "Mid ($136 USD street)",
+      "best_for": "Quiet auto-mode large-room coverage",
+      "notes": "Good quiet-mode value for larger rooms, though not the softest-sounding option in every setting.",
+      "notable_features": [
+        "App support",
+        "Auto mode",
+        "Large room performance"
+      ],
+      "scores": {
+        "filtration_performance": 8,
+        "noise_control": 8,
+        "room_coverage": 9,
+        "long_term_value": 8,
+        "total_score": 31.4
+      },
+      "persona_fit": "Quiet auto-mode large-room coverage",
+      "asin": "B0DJG1731C",
+      "product_title": "Winix 5510 Air Purifier (New Generation of 5500-2 with App Support) for Home Large Room Up to 1881 Ft\u00b2 in 1 Hr, True HEPA, High Deodorization Carbon Filter and Auto Mode",
+      "affiliate_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+      "price_usd": 135.99,
+      "rating": 4.6,
+      "review_count": 31000,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.97,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Coway Airmega AP-1512HH",
+      "brand": "Coway",
+      "price_tier": "Mid ($154 USD street)",
+      "best_for": "Quiet all-around performance",
+      "notes": "Balanced quieter option with dependable value and solid everyday filtration.",
+      "notable_features": [
+        "Air quality monitoring",
+        "Auto mode",
+        "Eco mode"
+      ],
+      "scores": {
+        "filtration_performance": 8,
+        "noise_control": 9,
+        "room_coverage": 7,
+        "long_term_value": 9,
+        "total_score": 31.2
+      },
+      "persona_fit": "Quiet all-around performance",
+      "asin": "B01728NLRG",
+      "product_title": "Coway Airmega AP-1512HH(W) True HEPA Purifier with Air Quality Monitoring, Auto, Timer, Filter Indicator, and Eco Mode, White",
+      "affiliate_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+      "price_usd": 153.99,
+      "rating": 4.6,
+      "review_count": 16400,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "GermGuardian AC4825E",
+      "brand": "GermGuardian",
+      "price_tier": "Entry ($79 USD street)",
+      "best_for": "Low-cost quiet-enough starter option",
+      "notes": "Affordable, but quieter-operation shoppers will usually prefer stronger bedroom-focused models above it.",
+      "notable_features": [
+        "UV-C light",
+        "Tower design",
+        "Low entry price"
+      ],
+      "scores": {
+        "filtration_performance": 7,
+        "noise_control": 7,
+        "room_coverage": 6,
+        "long_term_value": 9,
+        "total_score": 27.6
+      },
+      "persona_fit": "Low-cost quiet-enough starter option",
+      "asin": "B004VGIGVY",
+      "product_title": "GermGuardian HEPA Air Purifier for Home, Large Rooms - 743 Sq. Ft. with HEPA Air Filter, UV-C Light & Odor Reduction, AC4825E, 22\" Tower, Gray",
+      "affiliate_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+      "price_usd": 79.0,
+      "rating": 4.6,
+      "review_count": 53800,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "Blueair Blue Pure 311i Max"
+}

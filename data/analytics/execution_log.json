@@ -25,5 +25,23 @@
     "dry_run": false,
     "result": "ready_to_publish",
     "error": null
+  },
+  {
+    "timestamp": "2026-03-27T22:18:54.878892+00:00",
+    "action_attempted": "create_more_articles_in_category",
+    "target_category": "air purifiers",
+    "target_article_slug": "air-purifiers-for-large-rooms",
+    "dry_run": false,
+    "result": "ready_to_publish",
+    "error": null
+  },
+  {
+    "timestamp": "2026-03-27T22:18:54.939839+00:00",
+    "action_attempted": "create_more_articles_in_category",
+    "target_category": "air purifiers",
+    "target_article_slug": "quiet-air-purifiers",
+    "dry_run": false,
+    "result": "ready_to_publish",
+    "error": null
   }
 ]

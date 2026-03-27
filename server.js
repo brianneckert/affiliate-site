@@ -154,7 +154,9 @@ function buildSearchIndex() {
 }
 
 function renderHome() {
-  const searchData = JSON.stringify(buildSearchIndex());
+  const articleIndex = buildSearchIndex();
+  const searchData = JSON.stringify(articleIndex);
+  const publishedCount = articleIndex.length;
   return `<!doctype html>
   <html>
   <head>
@@ -296,7 +298,7 @@ function renderHome() {
             <div class="search-icon">⌕</div>
             <input id="searchInput" class="search-input" type="text" placeholder="Search grinders, product names, top picks, buying guides..." autofocus>
           </div>
-          <div class="assist">Search across article titles, top picks, and compared product names.</div>
+          <div class="assist">Published library: ${publishedCount} approved guides. Search across article titles, categories, top picks, and compared product names.</div>
         </div>
       </section>
       <section id="results" class="results"></section>
@@ -317,7 +319,7 @@ function renderHome() {
           }).join('');
           return '<a class="result" href="' + item.route + '">' +
             '<h2 class="result-title">' + item.article_title + '</h2>' +
-            '<div class="result-meta">Top pick: ' + (item.top_pick || '—') + '</div>' +
+            '<div class="result-meta">Category: ' + (item.category || '—') + ' · Top pick: ' + (item.top_pick || '—') + '</div>' +
             '<p class="result-summary">' + (item.summary || '') + '</p>' +
             '<div class="chips">' + chips + '</div>' +
             '</a>';

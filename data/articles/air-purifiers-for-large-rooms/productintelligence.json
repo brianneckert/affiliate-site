@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "filtration_performance": 1.0,
+    "noise_control": 0.8,
+    "room_coverage": 1.0,
+    "long_term_value": 1.0
+  },
+  "products": [
+    {
+      "name": "Blueair Blue Pure 311i Max",
+      "brand": "BLUEAIR",
+      "price_tier": "Mid ($169 USD street)",
+      "best_for": "Best large-room smart purification",
+      "notes": "Best overall fit here for large-room purification with strong coverage and easy smart controls.",
+      "notable_features": [
+        "App connectivity",
+        "Large room coverage",
+        "Smart air cleaner controls"
+      ],
+      "scores": {
+        "filtration_performance": 9,
+        "noise_control": 8,
+        "room_coverage": 9,
+        "long_term_value": 8,
+        "total_score": 32.4
+      },
+      "persona_fit": "Best large-room smart purification",
+      "asin": "B0BN2LZ9JH",
+      "product_title": "BLUEAIR Air Purifiers for Medium Rooms, HEPASilent Smart Air Cleaner for Home, Pets, Allergies, Dust, Mold, Smoke - Blue Pure 311i Max",
+      "affiliate_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+      "price_usd": 169.0,
+      "rating": 4.5,
+      "review_count": 1900,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Winix 5510",
+      "brand": "Winix",
+      "price_tier": "Mid ($136 USD street)",
+      "best_for": "Large rooms on a more practical budget",
+      "notes": "Very strong large-room option for buyers who want serious coverage without moving up to pricier models.",
+      "notable_features": [
+        "App support",
+        "Auto mode",
+        "Large room performance"
+      ],
+      "scores": {
+        "filtration_performance": 8,
+        "noise_control": 8,
+        "room_coverage": 9,
+        "long_term_value": 9,
+        "total_score": 32.4
+      },
+      "persona_fit": "Large rooms on a more practical budget",
+      "asin": "B0DJG1731C",
+      "product_title": "Winix 5510 Air Purifier (New Generation of 5500-2 with App Support) for Home Large Room Up to 1881 Ft\u00b2 in 1 Hr, True HEPA, High Deodorization Carbon Filter and Auto Mode",
+      "affiliate_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+      "price_usd": 135.99,
+      "rating": 4.6,
+      "review_count": 31000,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.97,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Coway Airmega AP-1512HH",
+      "brand": "Coway",
+      "price_tier": "Mid ($154 USD street)",
+      "best_for": "Medium-to-large rooms with strong all-around value",
+      "notes": "Still a balanced value choice, but not the strongest coverage option in this large-room-focused set.",
+      "notable_features": [
+        "Air quality monitoring",
+        "Auto mode",
+        "Eco mode"
+      ],
+      "scores": {
+        "filtration_performance": 8,
+        "noise_control": 8,
+        "room_coverage": 7,
+        "long_term_value": 9,
+        "total_score": 30.4
+      },
+      "persona_fit": "Medium-to-large rooms with strong all-around value",
+      "asin": "B01728NLRG",
+      "product_title": "Coway Airmega AP-1512HH(W) True HEPA Purifier with Air Quality Monitoring, Auto, Timer, Filter Indicator, and Eco Mode, White",
+      "affiliate_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+      "price_usd": 153.99,
+      "rating": 4.6,
+      "review_count": 16400,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "LEVOIT Core 300-P",
+      "brand": "LEVOIT",
+      "price_tier": "Entry ($85 USD street)",
+      "best_for": "Smaller large-room budgets",
+      "notes": "Affordable and quiet, but coverage is less convincing than the strongest large-room leaders here.",
+      "notable_features": [
+        "Compact footprint",
+        "Sleep mode",
+        "Strong value pricing"
+      ],
+      "scores": {
+        "filtration_performance": 7,
+        "noise_control": 9,
+        "room_coverage": 6,
+        "long_term_value": 9,
+        "total_score": 29.2
+      },
+      "persona_fit": "Smaller large-room budgets",
+      "asin": "B07VVK39F7",
+      "product_title": "LEVOIT Air Purifier for Home Allergens Pet Hair in Bedroom, Covers Up to 1073 ft\u00b2, 3-in-1 Filter with HEPA Sleep Mode, Core300-P, White",
+      "affiliate_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+      "price_usd": 84.99,
+      "rating": 4.7,
+      "review_count": 106400,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "GermGuardian AC4825E",
+      "brand": "GermGuardian",
+      "price_tier": "Entry ($79 USD street)",
+      "best_for": "Budget fallback for modest spaces",
+      "notes": "Useful on price, but clearly the weakest fit for truly large-room purification.",
+      "notable_features": [
+        "UV-C light",
+        "Tower design",
+        "Low entry price"
+      ],
+      "scores": {
+        "filtration_performance": 6,
+        "noise_control": 7,
+        "room_coverage": 5,
+        "long_term_value": 8,
+        "total_score": 24.6
+      },
+      "persona_fit": "Budget fallback for modest spaces",
+      "asin": "B004VGIGVY",
+      "product_title": "GermGuardian HEPA Air Purifier for Home, Large Rooms - 743 Sq. Ft. with HEPA Air Filter, UV-C Light & Odor Reduction, AC4825E, 22\" Tower, Gray",
+      "affiliate_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+      "price_usd": 79.0,
+      "rating": 4.6,
+      "review_count": 53800,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "Blueair Blue Pure 311i Max"
+}
