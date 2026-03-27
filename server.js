@@ -5,10 +5,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const ARTICLES_PATH = path.join(
-  __dirname,
-  '../affiliate_os/runs/manual_tests/espresso_grinders'
-);
+const ARTICLES_PATH = path.join(__dirname, 'data/articles');
 
 function readJson(name) {
   const file = path.join(ARTICLES_PATH, name);
