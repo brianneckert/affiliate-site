@@ -1,0 +1,98 @@
+{
+  "title": "Best Espresso Grinders",
+  "top_pick": "Niche Zero",
+  "summary": "Niche Zero is the top pick based on weighted scoring across espresso focus, ease of use, build quality, and value retention.",
+  "comparison": [
+    {
+      "name": "Niche Zero",
+      "price_tier": "Premium ($649 USD MSRP)",
+      "best_for": "Home espresso enthusiasts",
+      "total_score": 33.4,
+      "notable_features": [
+        "Single dosing",
+        "Low retention",
+        "Premium build"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0C8NZR630?tag=helperscollec-20"
+    },
+    {
+      "name": "Eureka Mignon Specialita",
+      "price_tier": "Premium ($699 USD MSRP)",
+      "best_for": "Serious espresso users",
+      "total_score": 31.6,
+      "notable_features": [
+        "Flat burrs",
+        "Quiet operation",
+        "Stepless adjustment"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0C5EMS550?tag=helperscollec-20"
+    },
+    {
+      "name": "Baratza Encore ESP",
+      "price_tier": "Entry ($199 USD MSRP)",
+      "best_for": "Beginner espresso users",
+      "total_score": 31.2,
+      "notable_features": [
+        "ESP micro-adjustment",
+        "Beginner friendly",
+        "Compact footprint"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0C7KQ1ESP?tag=helperscollec-20"
+    },
+    {
+      "name": "Fellow Opus",
+      "price_tier": "Mid ($195 USD MSRP)",
+      "best_for": "Design-focused users",
+      "total_score": 30.6,
+      "notable_features": [
+        "Modern design",
+        "Wide range",
+        "Fine adjustment system"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0C2OPU540?tag=helperscollec-20"
+    },
+    {
+      "name": "Breville Smart Grinder Pro",
+      "price_tier": "Mid ($299 USD MSRP)",
+      "best_for": "Versatile users",
+      "total_score": 29.2,
+      "notable_features": [
+        "Digital timer",
+        "Wide grind range",
+        "Programmable dosing"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0B9SGP240?tag=helperscollec-20"
+    }
+  ],
+  "sections": {
+    "who_is_this_for": [
+      {
+        "product": "Niche Zero",
+        "best_for": "Home espresso enthusiasts"
+      },
+      {
+        "product": "Eureka Mignon Specialita",
+        "best_for": "Serious espresso users"
+      },
+      {
+        "product": "Baratza Encore ESP",
+        "best_for": "Beginner espresso users"
+      },
+      {
+        "product": "Fellow Opus",
+        "best_for": "Design-focused users"
+      },
+      {
+        "product": "Breville Smart Grinder Pro",
+        "best_for": "Versatile users"
+      }
+    ],
+    "buying_guide": [
+      "Look for strong espresso focus if the grinder is mainly for espresso.",
+      "Ease of use matters if you want a simpler daily workflow.",
+      "Build quality matters for long-term durability.",
+      "Value retention matters if you care about long-term resale and overall value."
+    ],
+    "final_verdict": "If you want the strongest overall option from this offline test set, choose Niche Zero."
+  }
+}

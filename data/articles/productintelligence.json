@@ -1,0 +1,157 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "espresso_focus": 1.0,
+    "ease_of_use": 0.8,
+    "build_quality": 1.0,
+    "value_retention": 1.0
+  },
+  "products": [
+    {
+      "name": "Niche Zero",
+      "brand": "Niche",
+      "price_tier": "Premium ($649 USD MSRP)",
+      "best_for": "Home espresso enthusiasts",
+      "notes": "Best-in-class single dose grinder",
+      "notable_features": [
+        "Single dosing",
+        "Low retention",
+        "Premium build"
+      ],
+      "scores": {
+        "espresso_focus": 9,
+        "ease_of_use": 8,
+        "build_quality": 9,
+        "value_retention": 9,
+        "total_score": 33.4
+      },
+      "persona_fit": "Home espresso enthusiasts",
+      "asin": "B0C8NZR630",
+      "product_title": "Niche Zero Single Dose Coffee Grinder, White, 63mm Conical Burrs",
+      "affiliate_url": "https://www.amazon.com/dp/B0C8NZR630?tag=helperscollec-20",
+      "price_usd": 649.0,
+      "rating": 4.8,
+      "review_count": 588,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.96
+    },
+    {
+      "name": "Eureka Mignon Specialita",
+      "brand": "Eureka",
+      "price_tier": "Premium ($699 USD MSRP)",
+      "best_for": "Serious espresso users",
+      "notes": "High consistency with premium build",
+      "notable_features": [
+        "Flat burrs",
+        "Quiet operation",
+        "Stepless adjustment"
+      ],
+      "scores": {
+        "espresso_focus": 9,
+        "ease_of_use": 7,
+        "build_quality": 9,
+        "value_retention": 8,
+        "total_score": 31.6
+      },
+      "persona_fit": "Serious espresso users",
+      "asin": "B0C5EMS550",
+      "product_title": "Eureka Mignon Specialita Espresso Grinder, 55mm Flat Burrs, Matte Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0C5EMS550?tag=helperscollec-20",
+      "price_usd": 699.0,
+      "rating": 4.7,
+      "review_count": 412,
+      "prime_eligible": false,
+      "availability_status": "available",
+      "match_confidence": 0.95
+    },
+    {
+      "name": "Baratza Encore ESP",
+      "brand": "Baratza",
+      "price_tier": "Entry ($199 USD MSRP)",
+      "best_for": "Beginner espresso users",
+      "notes": "Strong entry grinder with easy workflow",
+      "notable_features": [
+        "ESP micro-adjustment",
+        "Beginner friendly",
+        "Compact footprint"
+      ],
+      "scores": {
+        "espresso_focus": 8,
+        "ease_of_use": 9,
+        "build_quality": 7,
+        "value_retention": 9,
+        "total_score": 31.2
+      },
+      "persona_fit": "Beginner espresso users",
+      "asin": "B0C7KQ1ESP",
+      "product_title": "Baratza Encore ESP Coffee Grinder ZCG495BLK, Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0C7KQ1ESP?tag=helperscollec-20",
+      "price_usd": 199.95,
+      "rating": 4.6,
+      "review_count": 1284,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.98
+    },
+    {
+      "name": "Fellow Opus",
+      "brand": "Fellow",
+      "price_tier": "Mid ($195 USD MSRP)",
+      "best_for": "Design-focused users",
+      "notes": "Stylish option with strong value",
+      "notable_features": [
+        "Modern design",
+        "Wide range",
+        "Fine adjustment system"
+      ],
+      "scores": {
+        "espresso_focus": 8,
+        "ease_of_use": 7,
+        "build_quality": 8,
+        "value_retention": 9,
+        "total_score": 30.6
+      },
+      "persona_fit": "Design-focused users",
+      "asin": "B0C2OPU540",
+      "product_title": "Fellow Opus Conical Burr Coffee Grinder, Matte Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0C2OPU540?tag=helperscollec-20",
+      "price_usd": 195.0,
+      "rating": 4.4,
+      "review_count": 941,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.96
+    },
+    {
+      "name": "Breville Smart Grinder Pro",
+      "brand": "Breville",
+      "price_tier": "Mid ($299 USD MSRP)",
+      "best_for": "Versatile users",
+      "notes": "Feature-rich but not espresso-specialized",
+      "notable_features": [
+        "Digital timer",
+        "Wide grind range",
+        "Programmable dosing"
+      ],
+      "scores": {
+        "espresso_focus": 7,
+        "ease_of_use": 9,
+        "build_quality": 7,
+        "value_retention": 8,
+        "total_score": 29.2
+      },
+      "persona_fit": "Versatile users",
+      "asin": "B0B9SGP240",
+      "product_title": "Breville Smart Grinder Pro Coffee Mill, Brushed Stainless Steel",
+      "affiliate_url": "https://www.amazon.com/dp/B0B9SGP240?tag=helperscollec-20",
+      "price_usd": 299.95,
+      "rating": 4.5,
+      "review_count": 3672,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.97
+    }
+  ],
+  "top_pick": "Niche Zero"
+}
