@@ -4,18 +4,6 @@
   "summary": "Niche Zero is the top pick based on weighted scoring across espresso focus, ease of use, build quality, and value retention.",
   "comparison": [
     {
-      "name": "Niche Zero",
-      "price_tier": "Premium ($649 USD MSRP)",
-      "best_for": "Home espresso enthusiasts",
-      "total_score": 33.4,
-      "notable_features": [
-        "Single dosing",
-        "Low retention",
-        "Premium build"
-      ],
-      "affiliate_url": "https://www.amazon.com/dp/B0C8NZR630?tag=helperscollec-20"
-    },
-    {
       "name": "Eureka Mignon Specialita",
       "price_tier": "Premium ($699 USD MSRP)",
       "best_for": "Serious espresso users",
@@ -25,7 +13,7 @@
         "Quiet operation",
         "Stepless adjustment"
       ],
-      "affiliate_url": "https://www.amazon.com/dp/B0C5EMS550?tag=helperscollec-20"
+      "affiliate_url": "https://www.amazon.com/dp/B07GFV6HM8?tag=helperscollec-20"
     },
     {
       "name": "Baratza Encore ESP",
@@ -37,7 +25,7 @@
         "Beginner friendly",
         "Compact footprint"
       ],
-      "affiliate_url": "https://www.amazon.com/dp/B0C7KQ1ESP?tag=helperscollec-20"
+      "affiliate_url": "https://www.amazon.com/dp/B0BW272XCV?tag=helperscollec-20"
     },
     {
       "name": "Fellow Opus",
@@ -49,7 +37,7 @@
         "Wide range",
         "Fine adjustment system"
       ],
-      "affiliate_url": "https://www.amazon.com/dp/B0C2OPU540?tag=helperscollec-20"
+      "affiliate_url": "https://www.amazon.com/dp/B0BV96VPSR?tag=helperscollec-20"
     },
     {
       "name": "Breville Smart Grinder Pro",
@@ -61,7 +49,7 @@
         "Wide grind range",
         "Programmable dosing"
       ],
-      "affiliate_url": "https://www.amazon.com/dp/B0B9SGP240?tag=helperscollec-20"
+      "affiliate_url": "https://www.amazon.com/dp/B0CDM2GWS6?tag=helperscollec-20"
     }
   ],
   "sections": {

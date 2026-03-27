@@ -26,15 +26,15 @@
         "total_score": 33.4
       },
       "persona_fit": "Home espresso enthusiasts",
-      "asin": "B0C8NZR630",
-      "product_title": "Niche Zero Single Dose Coffee Grinder, White, 63mm Conical Burrs",
-      "affiliate_url": "https://www.amazon.com/dp/B0C8NZR630?tag=helperscollec-20",
-      "price_usd": 649.0,
-      "rating": 4.8,
-      "review_count": 588,
-      "prime_eligible": true,
-      "availability_status": "available",
-      "match_confidence": 0.96
+      "asin": null,
+      "product_title": null,
+      "affiliate_url": null,
+      "price_usd": null,
+      "rating": null,
+      "review_count": null,
+      "prime_eligible": false,
+      "availability_status": "unverified",
+      "match_confidence": 0.0
     },
     {
       "name": "Eureka Mignon Specialita",
@@ -55,15 +55,15 @@
         "total_score": 31.6
       },
       "persona_fit": "Serious espresso users",
-      "asin": "B0C5EMS550",
-      "product_title": "Eureka Mignon Specialita Espresso Grinder, 55mm Flat Burrs, Matte Black",
-      "affiliate_url": "https://www.amazon.com/dp/B0C5EMS550?tag=helperscollec-20",
-      "price_usd": 699.0,
-      "rating": 4.7,
-      "review_count": 412,
+      "asin": "B07GFV6HM8",
+      "product_title": "Eureka Mignon Specialita Espresso Grinder | Silent Technology | Stepless 55mm Burrs | Touchscreen | Black",
+      "affiliate_url": "https://www.amazon.com/dp/B07GFV6HM8?tag=helperscollec-20",
+      "price_usd": 649.0,
+      "rating": 4.1,
+      "review_count": 190,
       "prime_eligible": false,
       "availability_status": "available",
-      "match_confidence": 0.95
+      "match_confidence": 0.98
     },
     {
       "name": "Baratza Encore ESP",
@@ -84,15 +84,15 @@
         "total_score": 31.2
       },
       "persona_fit": "Beginner espresso users",
-      "asin": "B0C7KQ1ESP",
+      "asin": "B0BW272XCV",
       "product_title": "Baratza Encore ESP Coffee Grinder ZCG495BLK, Black",
-      "affiliate_url": "https://www.amazon.com/dp/B0C7KQ1ESP?tag=helperscollec-20",
-      "price_usd": 199.95,
-      "rating": 4.6,
-      "review_count": 1284,
-      "prime_eligible": true,
+      "affiliate_url": "https://www.amazon.com/dp/B0BW272XCV?tag=helperscollec-20",
+      "price_usd": null,
+      "rating": 4.3,
+      "review_count": 1100,
+      "prime_eligible": false,
       "availability_status": "available",
-      "match_confidence": 0.98
+      "match_confidence": 0.99
     },
     {
       "name": "Fellow Opus",
@@ -113,15 +113,15 @@
         "total_score": 30.6
       },
       "persona_fit": "Design-focused users",
-      "asin": "B0C2OPU540",
-      "product_title": "Fellow Opus Conical Burr Coffee Grinder, Matte Black",
-      "affiliate_url": "https://www.amazon.com/dp/B0C2OPU540?tag=helperscollec-20",
-      "price_usd": 195.0,
-      "rating": 4.4,
-      "review_count": 941,
+      "asin": "B0BV96VPSR",
+      "product_title": "Fellow Opus Conical Burr Coffee Grinder \u2013 Electric Espresso Grinder for Home Use, 41 Adjustable Settings for Drip, French Press, Cold Brew & More, 40mm Stainless Steel Burrs, Matte Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0BV96VPSR?tag=helperscollec-20",
+      "price_usd": 199.95,
+      "rating": 3.9,
+      "review_count": 1700,
       "prime_eligible": true,
       "availability_status": "available",
-      "match_confidence": 0.96
+      "match_confidence": 0.99
     },
     {
       "name": "Breville Smart Grinder Pro",
@@ -142,15 +142,15 @@
         "total_score": 29.2
       },
       "persona_fit": "Versatile users",
-      "asin": "B0B9SGP240",
-      "product_title": "Breville Smart Grinder Pro Coffee Mill, Brushed Stainless Steel",
-      "affiliate_url": "https://www.amazon.com/dp/B0B9SGP240?tag=helperscollec-20",
-      "price_usd": 299.95,
+      "asin": "B0CDM2GWS6",
+      "product_title": "Breville BCG820BST Smart Grinder Pro for Coffee and Espresso, Black Stainless Steel",
+      "affiliate_url": "https://www.amazon.com/dp/B0CDM2GWS6?tag=helperscollec-20",
+      "price_usd": 199.95,
       "rating": 4.5,
-      "review_count": 3672,
+      "review_count": 6800,
       "prime_eligible": true,
       "availability_status": "available",
-      "match_confidence": 0.97
+      "match_confidence": 0.95
     }
   ],
   "top_pick": "Niche Zero"
