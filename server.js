@@ -263,6 +263,45 @@ function renderArticle(content, compliance) {
     )
     .join('');
 
+  const glance = (content.top_picks_at_a_glance || [])
+    .map((item) => `
+      <div class="mini-card">
+        <div class="mini-title">${escapeHtml(item.product_name)}</div>
+        <div><strong>Best for:</strong> ${escapeHtml(item.best_for)}</div>
+        <div><strong>Price tier:</strong> ${escapeHtml(item.pricing_tier)}</div>
+        <div><strong>Rating:</strong> ${escapeHtml(item.rating)} (${escapeHtml(item.review_count)} reviews)</div>
+        <div style="margin-top:10px;"><a class="shop-btn" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div>
+      </div>
+    `)
+    .join('');
+
+  const productSections = (content.sections?.product_sections || content.product_entities || [])
+    .map((item) => `
+      <div class="product-card">
+        <h4>${escapeHtml(item.product_name)}</h4>
+        <p><strong>Best for:</strong> ${escapeHtml(item.best_for)}</p>
+        <p><strong>Price position:</strong> ${escapeHtml(item.price_position)}</p>
+        <p><strong>Rating:</strong> ${escapeHtml(item.rating)} (${escapeHtml(item.review_count)} reviews)</p>
+        <p><strong>Prime eligible:</strong> ${escapeHtml(item.prime_eligible)}</p>
+        <p><strong>ASIN:</strong> ${escapeHtml(item.asin)}</p>
+        <p><strong>Category:</strong> ${escapeHtml(item.category)}</p>
+        <p><strong>Summary:</strong> ${escapeHtml(item.short_factual_description)}</p>
+        <p><strong>Key strengths:</strong> ${escapeHtml((item.key_strengths || []).join(', '))}</p>
+        <p><strong>Drawbacks:</strong> ${escapeHtml((item.drawbacks || []).join(', '))}</p>
+        <p><strong>Canonical product URL:</strong> <a href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">View on Amazon</a></p>
+      </div>
+    `)
+    .join('');
+
+  const faq = (content.sections?.faq || [])
+    .map((item) => `
+      <div class="faq-item">
+        <p><strong>${escapeHtml(item.question)}</strong></p>
+        <p>${escapeHtml(item.answer)}</p>
+      </div>
+    `)
+    .join('');
+
   const who = (content.sections?.who_is_this_for || [])
     .map((x) => `<li><strong>${escapeHtml(x.product)}</strong>: ${escapeHtml(x.best_for)}</li>`)
     .join('');
@@ -323,6 +362,32 @@ function renderArticle(content, compliance) {
         border-radius: 22px;
         padding: 22px 26px;
         margin-bottom: 32px;
+      }
+      .glance-grid,
+      .product-grid {
+        display: grid;
+        gap: 16px;
+      }
+      .glance-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        margin-bottom: 28px;
+      }
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+      .mini-card,
+      .product-card,
+      .faq-item {
+        background: #f8fafc;
+        border: 1px solid #dbe2ea;
+        border-radius: 18px;
+        padding: 18px;
+      }
+      .mini-title,
+      .product-card h4 {
+        margin: 0 0 10px;
+        font-size: 22px;
+        font-weight: 800;
       }
       .eyebrow {
         font-size: 14px;
@@ -397,6 +462,8 @@ function renderArticle(content, compliance) {
           <div class="top-name">${escapeHtml(content.top_pick)}</div>
         </div>
 
+        ${glance ? `<h3>Top Picks at a Glance</h3><div class="glance-grid">${glance}</div>` : ''}
+
         <h3>Comparison</h3>
         <table>
           <tr>
@@ -413,8 +480,12 @@ function renderArticle(content, compliance) {
         <h3>Who is this for</h3>
         <ul>${who}</ul>
 
+        ${productSections ? `<h3>Product Details</h3><div class="product-grid">${productSections}</div>` : ''}
+
         <h3>Buying Guide</h3>
         <ul>${guide}</ul>
+
+        ${faq ? `<h3>FAQ</h3><div class="product-grid">${faq}</div>` : ''}
 
         <h3>Final Verdict</h3>
         <p class="final">${escapeHtml(content.sections?.final_verdict || '')}</p>
