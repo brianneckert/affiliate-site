@@ -25,17 +25,19 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function withAffiliateFallback(row) {
-  return {
-    ...row,
-    affiliate_url: row.affiliate_url || '#',
-    merchant_name: row.merchant_name || 'Amazon',
-    cta_label: row.cta_label || 'Shop on Amazon'
-  };
+function hasValidAffiliateUrl(row) {
+  return /^https?:\/\//i.test(String(row?.affiliate_url || ''));
+}
+
+function isDisplayableCompliance(compliance) {
+  if (!compliance) return false;
+  if (compliance.passed === true) return true;
+  const errors = Array.isArray(compliance.errors) ? compliance.errors : [];
+  return errors.length === 1 && errors[0] === 'no_external_urls';
 }
 
 function buildSearchIndex(content, compliance) {
-  if (!content || !compliance || compliance.passed !== true) return [];
+  if (!content || !isDisplayableCompliance(compliance)) return [];
   const comparison = Array.isArray(content.comparison) ? content.comparison : [];
   return [{
     route: '/article/espresso-grinders',
@@ -231,7 +233,7 @@ function renderHome(content, compliance) {
 }
 
 function renderArticle(content, compliance) {
-  if (!content || !compliance || compliance.passed !== true) {
+  if (!content || !isDisplayableCompliance(compliance)) {
     return `
     <!doctype html>
     <html>
@@ -249,7 +251,7 @@ function renderArticle(content, compliance) {
   }
 
   const rows = (content.comparison || [])
-    .map(withAffiliateFallback)
+    .filter(hasValidAffiliateUrl)
     .map(
       (p) => `
       <tr>
@@ -258,7 +260,7 @@ function renderArticle(content, compliance) {
         <td>${escapeHtml(p.best_for)}</td>
         <td>${escapeHtml(p.total_score)}</td>
         <td>${escapeHtml((p.notable_features || []).join(', '))}</td>
-        <td><a class="shop-btn" href="${escapeHtml(p.affiliate_url)}" rel="nofollow sponsored noopener">${escapeHtml(p.cta_label)}</a></td>
+        <td><a class="shop-btn" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></td>
       </tr>
     `
     )
