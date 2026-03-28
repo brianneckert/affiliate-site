@@ -13,4 +13,4 @@ BATCH_SIZE="${BATCH_SIZE:-8}"
 RUN_DATE="${RUN_DATE:-$(date +%F)}"
 EXTRA_ARGS="${EXTRA_ARGS:-}"
 
-exec "$PYTHON" "$SCRIPT_DIR/run_continuous_batch.py" --date "$RUN_DATE" --batch-size "$BATCH_SIZE" "$@" $=EXTRA_ARGS
+exec "$PYTHON" "$SCRIPT_DIR/run_continuous_batch.py" --date "$RUN_DATE" --batch-size "$BATCH_SIZE" --allow-publish "$@" $=EXTRA_ARGS
