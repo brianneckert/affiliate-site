@@ -420,7 +420,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -454,7 +455,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -488,7 +490,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -522,7 +525,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -556,7 +560,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -778,7 +783,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -812,7 +818,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -2060,7 +2067,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -2368,7 +2376,8 @@
         "oral-b-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -2676,7 +2685,8 @@
         "oral-b-electric-toothbrushes",
         "philips-sonicare-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -2984,7 +2994,8 @@
         "oral-b-electric-toothbrushes",
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -3292,7 +3303,8 @@
         "oral-b-electric-toothbrushes",
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
-        "quiet-electric-toothbrushes"
+        "quiet-electric-toothbrushes",
+        "premium-electric-toothbrushes"
       ],
       "duplicate_of": null
     },
@@ -3395,6 +3407,287 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "premium-electric-toothbrushes",
+      "category": "electric toothbrushes",
+      "title": "Best Premium Electric Toothbrushes",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/premium_electric_toothbrushes.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/premium_electric_toothbrushes.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_toothbrushes.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/premium_electric_toothbrushes",
+      "article_dir": "data/articles/premium-electric-toothbrushes",
+      "topic_family": "electric toothbrushes",
+      "article_family_position": "premium",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:28:06.163862+00:00",
+      "source_article_family": "electric toothbrushes",
+      "related_articles": [
+        "electric-toothbrushes",
+        "electric-toothbrushes-for-sensitive-gums",
+        "electric-toothbrushes-for-travel",
+        "electric-toothbrushes-under-100",
+        "smart-electric-toothbrushes",
+        "sonic-electric-toothbrushes",
+        "electric-toothbrushes-for-beginners",
+        "oral-b-electric-toothbrushes",
+        "philips-sonicare-electric-toothbrushes",
+        "budget-electric-toothbrushes",
+        "quiet-electric-toothbrushes",
+        "family-electric-toothbrushes"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "electric-toothbrushes-for-shared-bathrooms",
+      "category": "electric toothbrushes",
+      "title": "Best Electric Toothbrushes for Shared Bathrooms",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/electric_toothbrushes_for_shared_bathrooms.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/electric_toothbrushes_for_shared_bathrooms.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_toothbrushes.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/electric_toothbrushes_for_shared_bathrooms",
+      "article_dir": "data/articles/electric-toothbrushes-for-shared-bathrooms",
+      "topic_family": "electric toothbrushes",
+      "article_family_position": "shared_bathrooms",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "electric toothbrushes",
+      "related_articles": [
+        "electric-toothbrushes",
+        "electric-toothbrushes-for-sensitive-gums",
+        "electric-toothbrushes-for-travel",
+        "electric-toothbrushes-under-100",
+        "smart-electric-toothbrushes",
+        "sonic-electric-toothbrushes",
+        "electric-toothbrushes-for-beginners",
+        "oral-b-electric-toothbrushes",
+        "philips-sonicare-electric-toothbrushes",
+        "budget-electric-toothbrushes",
+        "quiet-electric-toothbrushes",
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "air-fryers-for-frozen-food",
+      "category": "air fryers",
+      "title": "Best Air Fryers for Frozen Food",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/air_fryers_for_frozen_food.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/air_fryers_for_frozen_food.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_fryers.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/air_fryers_for_frozen_food",
+      "article_dir": "data/articles/air-fryers-for-frozen-food",
+      "topic_family": "air fryers",
+      "article_family_position": "frozen_food",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "air fryers",
+      "related_articles": [
+        "air-fryers",
+        "air-fryers-for-small-kitchens",
+        "air-fryers-under-150",
+        "air-fryers-for-dorm-rooms",
+        "air-fryers-for-apartments",
+        "compact-air-fryers",
+        "fast-preheat-air-fryers",
+        "family-air-fryers",
+        "simple-air-fryers",
+        "weeknight-air-fryers",
+        "easy-clean-air-fryers",
+        "value-air-fryers"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "air-fryers-for-meal-prep",
+      "category": "air fryers",
+      "title": "Best Air Fryers for Meal Prep",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/air_fryers_for_meal_prep.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/air_fryers_for_meal_prep.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_fryers.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/air_fryers_for_meal_prep",
+      "article_dir": "data/articles/air-fryers-for-meal-prep",
+      "topic_family": "air fryers",
+      "article_family_position": "meal_prep",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "air fryers",
+      "related_articles": [
+        "air-fryers",
+        "air-fryers-for-small-kitchens",
+        "air-fryers-under-150",
+        "air-fryers-for-dorm-rooms",
+        "air-fryers-for-apartments",
+        "compact-air-fryers",
+        "fast-preheat-air-fryers",
+        "family-air-fryers",
+        "simple-air-fryers",
+        "weeknight-air-fryers",
+        "easy-clean-air-fryers",
+        "value-air-fryers"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "value-blenders",
+      "category": "blenders",
+      "title": "Best Value Blenders",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/value_blenders.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/value_blenders.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/blenders.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/value_blenders",
+      "article_dir": "data/articles/value-blenders",
+      "topic_family": "blenders",
+      "article_family_position": "value",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "blenders",
+      "related_articles": [
+        "blenders",
+        "blenders-for-smoothies",
+        "quiet-blenders",
+        "blenders-for-protein-shakes",
+        "compact-blenders",
+        "premium-blenders",
+        "blender-value-picks",
+        "smoothie-blenders",
+        "ice-crushing-blenders",
+        "family-blenders",
+        "blenders-for-frozen-drinks",
+        "blenders-with-to-go-cups"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "blenders-for-small-batches",
+      "category": "blenders",
+      "title": "Best Blenders for Small Batches",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/blenders_for_small_batches.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/blenders_for_small_batches.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/blenders.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/blenders_for_small_batches",
+      "article_dir": "data/articles/blenders-for-small-batches",
+      "topic_family": "blenders",
+      "article_family_position": "small_batches",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "blenders",
+      "related_articles": [
+        "blenders",
+        "blenders-for-smoothies",
+        "quiet-blenders",
+        "blenders-for-protein-shakes",
+        "compact-blenders",
+        "premium-blenders",
+        "blender-value-picks",
+        "smoothie-blenders",
+        "ice-crushing-blenders",
+        "family-blenders",
+        "blenders-for-frozen-drinks",
+        "blenders-with-to-go-cups"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "electric-razors-for-beginners",
+      "category": "electric razors",
+      "title": "Best Electric Razors for Beginners",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/electric_razors_for_beginners.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/electric_razors_for_beginners.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_razors.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/electric_razors_for_beginners",
+      "article_dir": "data/articles/electric-razors-for-beginners",
+      "topic_family": "electric razors",
+      "article_family_position": "beginners",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "electric razors",
+      "related_articles": [
+        "electric-razors",
+        "electric-razors-for-sensitive-skin",
+        "travel-electric-razors",
+        "wet-dry-electric-razors",
+        "foil-electric-razors",
+        "rotary-electric-razors",
+        "compact-electric-razors",
+        "budget-electric-razors",
+        "close-shave-electric-razors",
+        "daily-electric-razors",
+        "premium-electric-razors",
+        "easy-clean-electric-razors"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "electric-razors-for-coarse-beards",
+      "category": "electric razors",
+      "title": "Best Electric Razors for Coarse Beards",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/electric_razors_for_coarse_beards.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/electric_razors_for_coarse_beards.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_razors.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/electric_razors_for_coarse_beards",
+      "article_dir": "data/articles/electric-razors-for-coarse-beards",
+      "topic_family": "electric razors",
+      "article_family_position": "coarse_beards",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "ready_to_publish",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": null,
+      "source_article_family": "electric razors",
+      "related_articles": [
+        "electric-razors",
+        "electric-razors-for-sensitive-skin",
+        "travel-electric-razors",
+        "wet-dry-electric-razors",
+        "foil-electric-razors",
+        "rotary-electric-razors",
+        "compact-electric-razors",
+        "budget-electric-razors",
+        "close-shave-electric-razors",
+        "daily-electric-razors",
+        "premium-electric-razors",
+        "easy-clean-electric-razors"
       ],
       "duplicate_of": null
     }
