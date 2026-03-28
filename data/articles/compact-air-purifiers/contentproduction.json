@@ -1,0 +1,452 @@
+{
+  "title": "Best Compact Air Purifiers",
+  "article_slug": "compact-air-purifiers",
+  "category": "air purifiers",
+  "top_pick": "Blueair Blue Pure 311i Max",
+  "summary": "Blueair Blue Pure 311i Max is the top pick based on weighted scoring across filtration performance, noise control, room coverage, and long-term value.",
+  "llm_summary": {
+    "article_title": "Best Compact Air Purifiers",
+    "category": "air purifiers",
+    "top_pick": "Blueair Blue Pure 311i Max",
+    "summary": "Blueair Blue Pure 311i Max is the top pick based on weighted scoring across filtration performance, noise control, room coverage, and long-term value.",
+    "canonical_top_pick_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20"
+  },
+  "top_picks_at_a_glance": [
+    {
+      "product_name": "Blueair Blue Pure 311i Max",
+      "best_for": "Smart large-room coverage",
+      "pricing_tier": "Mid ($169 USD street)",
+      "rating": 4.5,
+      "review_count": 1900,
+      "canonical_product_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Coway Airmega AP-1512HH",
+      "best_for": "Balanced everyday air cleaning",
+      "pricing_tier": "Mid ($154 USD street)",
+      "rating": 4.6,
+      "review_count": 16400,
+      "canonical_product_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Winix 5510",
+      "best_for": "Large rooms on a practical budget",
+      "pricing_tier": "Mid ($136 USD street)",
+      "rating": 4.6,
+      "review_count": 31000,
+      "canonical_product_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20"
+    },
+    {
+      "product_name": "LEVOIT Core 300-P",
+      "best_for": "Budget-conscious bedrooms and small spaces",
+      "pricing_tier": "Entry ($85 USD street)",
+      "rating": 4.7,
+      "review_count": 106400,
+      "canonical_product_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20"
+    },
+    {
+      "product_name": "GermGuardian AC4825E",
+      "best_for": "Affordable entry-level purification",
+      "pricing_tier": "Entry ($79 USD street)",
+      "rating": 4.6,
+      "review_count": 53800,
+      "canonical_product_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20"
+    }
+  ],
+  "comparison": [
+    {
+      "name": "Blueair Blue Pure 311i Max",
+      "price_tier": "Mid ($169 USD street)",
+      "best_for": "Smart large-room coverage",
+      "total_score": 32.4,
+      "notable_features": [
+        "App connectivity",
+        "Large room coverage",
+        "Smart air cleaner controls"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+      "asin": "B0BN2LZ9JH",
+      "rating": 4.5,
+      "review_count": 1900,
+      "prime_eligible": true
+    },
+    {
+      "name": "Coway Airmega AP-1512HH",
+      "price_tier": "Mid ($154 USD street)",
+      "best_for": "Balanced everyday air cleaning",
+      "total_score": 31.4,
+      "notable_features": [
+        "Air quality monitoring",
+        "Auto mode",
+        "Eco mode"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+      "asin": "B01728NLRG",
+      "rating": 4.6,
+      "review_count": 16400,
+      "prime_eligible": true
+    },
+    {
+      "name": "Winix 5510",
+      "price_tier": "Mid ($136 USD street)",
+      "best_for": "Large rooms on a practical budget",
+      "total_score": 31.4,
+      "notable_features": [
+        "App support",
+        "Auto mode",
+        "Large room performance"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+      "asin": "B0DJG1731C",
+      "rating": 4.6,
+      "review_count": 31000,
+      "prime_eligible": true
+    },
+    {
+      "name": "LEVOIT Core 300-P",
+      "price_tier": "Entry ($85 USD street)",
+      "best_for": "Budget-conscious bedrooms and small spaces",
+      "total_score": 31.2,
+      "notable_features": [
+        "Compact footprint",
+        "Sleep mode",
+        "Strong value pricing"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+      "asin": "B07VVK39F7",
+      "rating": 4.7,
+      "review_count": 106400,
+      "prime_eligible": true
+    },
+    {
+      "name": "GermGuardian AC4825E",
+      "price_tier": "Entry ($79 USD street)",
+      "best_for": "Affordable entry-level purification",
+      "total_score": 28.4,
+      "notable_features": [
+        "UV-C light",
+        "Tower design",
+        "Low entry price"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+      "asin": "B004VGIGVY",
+      "rating": 4.6,
+      "review_count": 53800,
+      "prime_eligible": true
+    }
+  ],
+  "comparison_facts": [
+    {
+      "product_name": "Blueair Blue Pure 311i Max",
+      "asin": "B0BN2LZ9JH",
+      "price_position": "Mid ($169 USD street)",
+      "best_for": "Smart large-room coverage",
+      "rating": 4.5,
+      "review_count": 1900,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Coway Airmega AP-1512HH",
+      "asin": "B01728NLRG",
+      "price_position": "Mid ($154 USD street)",
+      "best_for": "Balanced everyday air cleaning",
+      "rating": 4.6,
+      "review_count": 16400,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Winix 5510",
+      "asin": "B0DJG1731C",
+      "price_position": "Mid ($136 USD street)",
+      "best_for": "Large rooms on a practical budget",
+      "rating": 4.6,
+      "review_count": 31000,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20"
+    },
+    {
+      "product_name": "LEVOIT Core 300-P",
+      "asin": "B07VVK39F7",
+      "price_position": "Entry ($85 USD street)",
+      "best_for": "Budget-conscious bedrooms and small spaces",
+      "rating": 4.7,
+      "review_count": 106400,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20"
+    },
+    {
+      "product_name": "GermGuardian AC4825E",
+      "asin": "B004VGIGVY",
+      "price_position": "Entry ($79 USD street)",
+      "best_for": "Affordable entry-level purification",
+      "rating": 4.6,
+      "review_count": 53800,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20"
+    }
+  ],
+  "product_entities": [
+    {
+      "product_name": "Blueair Blue Pure 311i Max",
+      "category": "air purifiers",
+      "short_factual_description": "Strong mainstream smart purifier with broad room coverage",
+      "best_for": "Smart large-room coverage",
+      "key_strengths": [
+        "App connectivity",
+        "Large room coverage",
+        "Smart air cleaner controls"
+      ],
+      "drawbacks": [],
+      "price_position": "Mid ($169 USD street)",
+      "rating": 4.5,
+      "review_count": 1900,
+      "prime_eligible": true,
+      "asin": "B0BN2LZ9JH",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Coway Airmega AP-1512HH",
+      "category": "air purifiers",
+      "short_factual_description": "Well-known all-around purifier with strong long-term value",
+      "best_for": "Balanced everyday air cleaning",
+      "key_strengths": [
+        "Air quality monitoring",
+        "Auto mode",
+        "Eco mode"
+      ],
+      "drawbacks": [],
+      "price_position": "Mid ($154 USD street)",
+      "rating": 4.6,
+      "review_count": 16400,
+      "prime_eligible": true,
+      "asin": "B01728NLRG",
+      "canonical_product_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Winix 5510",
+      "category": "air purifiers",
+      "short_factual_description": "Current-generation Winix option with strong Amazon availability",
+      "best_for": "Large rooms on a practical budget",
+      "key_strengths": [
+        "App support",
+        "Auto mode",
+        "Large room performance"
+      ],
+      "drawbacks": [],
+      "price_position": "Mid ($136 USD street)",
+      "rating": 4.6,
+      "review_count": 31000,
+      "prime_eligible": true,
+      "asin": "B0DJG1731C",
+      "canonical_product_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20"
+    },
+    {
+      "product_name": "LEVOIT Core 300-P",
+      "category": "air purifiers",
+      "short_factual_description": "Popular compact purifier with broad Amazon demand",
+      "best_for": "Budget-conscious bedrooms and small spaces",
+      "key_strengths": [
+        "Compact footprint",
+        "Sleep mode",
+        "Strong value pricing"
+      ],
+      "drawbacks": [],
+      "price_position": "Entry ($85 USD street)",
+      "rating": 4.7,
+      "review_count": 106400,
+      "prime_eligible": true,
+      "asin": "B07VVK39F7",
+      "canonical_product_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20"
+    },
+    {
+      "product_name": "GermGuardian AC4825E",
+      "category": "air purifiers",
+      "short_factual_description": "High-volume budget purifier with clear Amazon listing",
+      "best_for": "Affordable entry-level purification",
+      "key_strengths": [
+        "UV-C light",
+        "Tower design",
+        "Low entry price"
+      ],
+      "drawbacks": [],
+      "price_position": "Entry ($79 USD street)",
+      "rating": 4.6,
+      "review_count": 53800,
+      "prime_eligible": true,
+      "asin": "B004VGIGVY",
+      "canonical_product_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20"
+    }
+  ],
+  "canonical_product_urls": [
+    {
+      "product_name": "Blueair Blue Pure 311i Max",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Coway Airmega AP-1512HH",
+      "canonical_product_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Winix 5510",
+      "canonical_product_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20"
+    },
+    {
+      "product_name": "LEVOIT Core 300-P",
+      "canonical_product_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20"
+    },
+    {
+      "product_name": "GermGuardian AC4825E",
+      "canonical_product_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20"
+    }
+  ],
+  "sections": {
+    "who_is_this_for": [
+      {
+        "product": "Blueair Blue Pure 311i Max",
+        "best_for": "Smart large-room coverage"
+      },
+      {
+        "product": "Coway Airmega AP-1512HH",
+        "best_for": "Balanced everyday air cleaning"
+      },
+      {
+        "product": "Winix 5510",
+        "best_for": "Large rooms on a practical budget"
+      },
+      {
+        "product": "LEVOIT Core 300-P",
+        "best_for": "Budget-conscious bedrooms and small spaces"
+      },
+      {
+        "product": "GermGuardian AC4825E",
+        "best_for": "Affordable entry-level purification"
+      }
+    ],
+    "product_sections": [
+      {
+        "product_name": "Blueair Blue Pure 311i Max",
+        "category": "air purifiers",
+        "short_factual_description": "Strong mainstream smart purifier with broad room coverage",
+        "best_for": "Smart large-room coverage",
+        "key_strengths": [
+          "App connectivity",
+          "Large room coverage",
+          "Smart air cleaner controls"
+        ],
+        "drawbacks": [],
+        "price_position": "Mid ($169 USD street)",
+        "rating": 4.5,
+        "review_count": 1900,
+        "prime_eligible": true,
+        "asin": "B0BN2LZ9JH",
+        "canonical_product_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20"
+      },
+      {
+        "product_name": "Coway Airmega AP-1512HH",
+        "category": "air purifiers",
+        "short_factual_description": "Well-known all-around purifier with strong long-term value",
+        "best_for": "Balanced everyday air cleaning",
+        "key_strengths": [
+          "Air quality monitoring",
+          "Auto mode",
+          "Eco mode"
+        ],
+        "drawbacks": [],
+        "price_position": "Mid ($154 USD street)",
+        "rating": 4.6,
+        "review_count": 16400,
+        "prime_eligible": true,
+        "asin": "B01728NLRG",
+        "canonical_product_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20"
+      },
+      {
+        "product_name": "Winix 5510",
+        "category": "air purifiers",
+        "short_factual_description": "Current-generation Winix option with strong Amazon availability",
+        "best_for": "Large rooms on a practical budget",
+        "key_strengths": [
+          "App support",
+          "Auto mode",
+          "Large room performance"
+        ],
+        "drawbacks": [],
+        "price_position": "Mid ($136 USD street)",
+        "rating": 4.6,
+        "review_count": 31000,
+        "prime_eligible": true,
+        "asin": "B0DJG1731C",
+        "canonical_product_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20"
+      },
+      {
+        "product_name": "LEVOIT Core 300-P",
+        "category": "air purifiers",
+        "short_factual_description": "Popular compact purifier with broad Amazon demand",
+        "best_for": "Budget-conscious bedrooms and small spaces",
+        "key_strengths": [
+          "Compact footprint",
+          "Sleep mode",
+          "Strong value pricing"
+        ],
+        "drawbacks": [],
+        "price_position": "Entry ($85 USD street)",
+        "rating": 4.7,
+        "review_count": 106400,
+        "prime_eligible": true,
+        "asin": "B07VVK39F7",
+        "canonical_product_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20"
+      },
+      {
+        "product_name": "GermGuardian AC4825E",
+        "category": "air purifiers",
+        "short_factual_description": "High-volume budget purifier with clear Amazon listing",
+        "best_for": "Affordable entry-level purification",
+        "key_strengths": [
+          "UV-C light",
+          "Tower design",
+          "Low entry price"
+        ],
+        "drawbacks": [],
+        "price_position": "Entry ($79 USD street)",
+        "rating": 4.6,
+        "review_count": 53800,
+        "prime_eligible": true,
+        "asin": "B004VGIGVY",
+        "canonical_product_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20"
+      }
+    ],
+    "buying_guide": [
+      "Prioritize filtration performance for smoke, dust, and allergies.",
+      "Noise matters more in bedrooms and offices.",
+      "Coverage claims should be read against real room size.",
+      "Long-term value includes filters and upkeep, not just sticker price."
+    ],
+    "faq": [
+      {
+        "question": "Do you need a bigger purifier than your room size?",
+        "answer": "Not necessarily, but stronger real-world coverage can help if you want quieter operation at lower fan speeds."
+      },
+      {
+        "question": "Should buyers focus only on app features?",
+        "answer": "No. Filtration performance, room fit, and long-term filter cost usually matter more."
+      }
+    ],
+    "final_verdict": "If this air-purifier angle matches your needs, choose Blueair Blue Pure 311i Max from this validated Amazon-only test set."
+  }
+}

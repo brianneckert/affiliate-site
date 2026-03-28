@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "espresso_focus": 1.0,
+    "ease_of_use": 0.8,
+    "build_quality": 1.0,
+    "value_retention": 1.0
+  },
+  "products": [
+    {
+      "name": "Baratza Encore ESP",
+      "brand": "Baratza",
+      "price_tier": "Entry ($199 USD MSRP)",
+      "best_for": "Best value espresso-focused pick",
+      "notes": "Strong entry grinder with easy workflow",
+      "notable_features": [
+        "ESP micro-adjustment",
+        "Beginner friendly",
+        "Compact footprint"
+      ],
+      "scores": {
+        "espresso_focus": 8,
+        "ease_of_use": 8,
+        "build_quality": 8,
+        "value_retention": 9,
+        "total_score": 31.4
+      },
+      "persona_fit": "Best value espresso-focused pick",
+      "asin": "B0BW272XCV",
+      "product_title": "Baratza Encore ESP Coffee Grinder ZCG495BLK, Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0BW272XCV?tag=helperscollec-20",
+      "price_usd": null,
+      "rating": 4.3,
+      "review_count": 1100,
+      "prime_eligible": false,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Eureka Mignon Specialita",
+      "brand": "Eureka",
+      "price_tier": "Premium ($699 USD MSRP)",
+      "best_for": "Stretch-budget premium buyers",
+      "notes": "High consistency with premium build",
+      "notable_features": [
+        "Flat burrs",
+        "Quiet operation",
+        "Stepless adjustment"
+      ],
+      "scores": {
+        "espresso_focus": 9,
+        "ease_of_use": 7,
+        "build_quality": 9,
+        "value_retention": 7,
+        "total_score": 30.6
+      },
+      "persona_fit": "Stretch-budget premium buyers",
+      "asin": "B07GFV6HM8",
+      "product_title": "Eureka Mignon Specialita Espresso Grinder | Silent Technology | Stepless 55mm Burrs | Touchscreen | Black",
+      "affiliate_url": "https://www.amazon.com/dp/B07GFV6HM8?tag=helperscollec-20",
+      "price_usd": 649.0,
+      "rating": 4.1,
+      "review_count": 190,
+      "prime_eligible": false,
+      "availability_status": "available",
+      "match_confidence": 0.98,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Fellow Opus",
+      "brand": "Fellow",
+      "price_tier": "Mid ($195 USD MSRP)",
+      "best_for": "Budget-conscious buyers who still want style",
+      "notes": "Stylish option with strong value",
+      "notable_features": [
+        "Modern design",
+        "Wide range",
+        "Fine adjustment system"
+      ],
+      "scores": {
+        "espresso_focus": 8,
+        "ease_of_use": 8,
+        "build_quality": 7,
+        "value_retention": 9,
+        "total_score": 30.4
+      },
+      "persona_fit": "Budget-conscious buyers who still want style",
+      "asin": "B0BV96VPSR",
+      "product_title": "Fellow Opus Conical Burr Coffee Grinder \u2013 Electric Espresso Grinder for Home Use, 41 Adjustable Settings for Drip, French Press, Cold Brew & More, 40mm Stainless Steel Burrs, Matte Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0BV96VPSR?tag=helperscollec-20",
+      "price_usd": 199.95,
+      "rating": 3.9,
+      "review_count": 1700,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Eureka Mignon Silenzio",
+      "brand": "Eureka",
+      "price_tier": "Premium ($549 USD MSRP)",
+      "best_for": "Budget-conscious buyers who value low noise",
+      "notes": "Strong espresso-first option with quieter workflow",
+      "notable_features": [
+        "Silent grind design",
+        "Stepless adjustment",
+        "Timed dosing"
+      ],
+      "scores": {
+        "espresso_focus": 8,
+        "ease_of_use": 8,
+        "build_quality": 8,
+        "value_retention": 8,
+        "total_score": 30.4
+      },
+      "persona_fit": "Budget-conscious buyers who value low noise",
+      "asin": "B0DDRP1WNP",
+      "product_title": "Eureka Mignon Silenzio Espresso Grinder | Silent Technology | Stepless | Timed Dosing | (Chrome, 55mm)",
+      "affiliate_url": "https://www.amazon.com/dp/B0DDRP1WNP?tag=helperscollec-20",
+      "price_usd": 549.0,
+      "rating": 4.3,
+      "review_count": 126,
+      "prime_eligible": false,
+      "availability_status": "available",
+      "match_confidence": 0.98,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Breville Smart Grinder Pro",
+      "brand": "Breville",
+      "price_tier": "Mid ($299 USD MSRP)",
+      "best_for": "Budget shoppers who want more convenience features",
+      "notes": "Feature-rich but not espresso-specialized",
+      "notable_features": [
+        "Digital timer",
+        "Wide grind range",
+        "Programmable dosing"
+      ],
+      "scores": {
+        "espresso_focus": 7,
+        "ease_of_use": 9,
+        "build_quality": 7,
+        "value_retention": 8,
+        "total_score": 29.2
+      },
+      "persona_fit": "Budget shoppers who want more convenience features",
+      "asin": "B0CDM2GWS6",
+      "product_title": "Breville BCG820BST Smart Grinder Pro for Coffee and Espresso, Black Stainless Steel",
+      "affiliate_url": "https://www.amazon.com/dp/B0CDM2GWS6?tag=helperscollec-20",
+      "price_usd": 199.95,
+      "rating": 4.5,
+      "review_count": 6800,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.95,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "Baratza Encore ESP"
+}

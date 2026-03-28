@@ -14,6 +14,8 @@ POLICY_PATH = SITE_ROOT / 'config' / 'automation_policy.json'
 DECISIONS_PATH = SITE_ROOT / 'data' / 'analytics' / 'decisions.json'
 REGISTRY_PATH = SITE_ROOT / 'data' / 'articles' / 'registry.json'
 EXECUTION_LOG_PATH = SITE_ROOT / 'data' / 'analytics' / 'execution_log.json'
+SYNC_SCRIPT = SITE_ROOT / 'scripts' / 'sync_live_repo.py'
+SITEMAP_SCRIPT = SITE_ROOT / 'scripts' / 'generate_sitemap.py'
 
 BASE_AIR_PURIFIER_DATASET = AFFILIATE_OS_ROOT / 'data' / 'samples' / 'air_purifiers.json'
 BASE_AIR_PURIFIER_WORKFLOW = AFFILIATE_OS_ROOT / 'workflows' / 'air_purifier_test.yaml'
@@ -270,7 +272,7 @@ def build_air_purifier_follow_on_workflow(plan):
     }
 
 
-def promote_article_to_published(article_slug, dry_run=False):
+def promote_article_to_published(article_slug, dry_run=False, sync_repo=True):
     registry = load_registry()
     article = next((item for item in registry.get('articles', []) if item.get('article_slug') == article_slug), None)
     if not article:
@@ -279,6 +281,20 @@ def promote_article_to_published(article_slug, dry_run=False):
     required = [article_dir / 'productintelligence.json', article_dir / 'contentproduction.json', article_dir / 'compliance.json']
     if not all(path.exists() for path in required):
         raise SystemExit(f'Cannot promote {article_slug}: missing article bundle files in {article_dir}')
+
+    content = load_json(article_dir / 'contentproduction.json', {})
+    compliance = load_json(article_dir / 'compliance.json', {})
+    intelligence = load_json(article_dir / 'productintelligence.json', {})
+    validation_ok = (
+        article.get('validation_result', {}).get('passed', True) is True
+        and compliance.get('passed') is True
+        and len(content.get('comparison', [])) == 5
+        and len(intelligence.get('products', [])) == 5
+        and all(bool(p.get('affiliate_url')) for p in intelligence.get('products', []))
+    )
+    if not validation_ok:
+        raise SystemExit(f'Cannot promote {article_slug}: validation/compliance checks failed')
+
     if dry_run:
         return {
             'mode': 'promote-dry-run',
@@ -286,16 +302,44 @@ def promote_article_to_published(article_slug, dry_run=False):
             'would_set_publish_status': 'published',
             'would_set_published_at': now_iso()
         }
+    previous_status = article.get('publish_status')
+    previous_published_at = article.get('published_at')
     article['publish_status'] = 'published'
     article['published_at'] = now_iso()
     sync_related_articles(registry, article.get('category'))
     save_registry(registry)
-    return {
+    result = {
         'mode': 'promote-live',
         'article_slug': article_slug,
         'publish_status': article['publish_status'],
         'published_at': article['published_at']
     }
+    if sync_repo:
+        try:
+            result['repo_sync'] = sync_live_repo([article['article_dir']], f'publish: 1 article ({article_slug})')
+        except Exception:
+            article['publish_status'] = previous_status
+            article['published_at'] = previous_published_at
+            sync_related_articles(registry, article.get('category'))
+            save_registry(registry)
+            subprocess.run(['python3', str(SITEMAP_SCRIPT)], cwd=str(SITE_ROOT), check=False)
+            raise
+    return result
+
+
+
+
+def sync_live_repo(paths, message):
+    subprocess.run(['python3', str(SITEMAP_SCRIPT)], cwd=str(SITE_ROOT), check=True)
+    sync_paths = list(dict.fromkeys(list(paths) + ['data/articles/registry.json', 'sitemap.xml']))
+    result = subprocess.run(
+        ['python3', str(SYNC_SCRIPT), '--message', message, '--paths', *sync_paths],
+        cwd=str(SITE_ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(result.stdout)
 
 
 def create_follow_on_article(plan, policy, dry_run=False):
@@ -353,21 +397,27 @@ def create_follow_on_article(plan, policy, dry_run=False):
         'amazon_mapping_dataset_path': str(AIR_PURIFIER_MAPPING),
         'output_dir': str(output_dir),
         'article_dir': f'data/articles/{slug}',
-        'publish_status': 'published' if policy.get('auto_publish_enabled') else 'ready_to_publish',
-        'published_at': now_iso() if policy.get('auto_publish_enabled') else None,
+        'publish_status': 'ready_to_publish',
+        'published_at': None,
         'source_article_family': 'air purifiers',
         'related_articles': []
     })
     sync_related_articles(registry, 'air purifiers')
     save_registry(registry)
 
-    return {
+    result = {
         'mode': 'live-prep',
         'article_slug': slug,
         'created_files': [str(dataset_path), str(workflow_path), str(article_dir / 'productintelligence.json'), str(article_dir / 'contentproduction.json'), str(article_dir / 'compliance.json')],
-        'published': bool(policy.get('auto_publish_enabled')),
-        'publish_status': 'published' if policy.get('auto_publish_enabled') else 'ready_to_publish'
+        'published': False,
+        'publish_status': 'ready_to_publish'
     }
+    if policy.get('auto_publish_enabled'):
+        promoted = promote_article_to_published(slug, dry_run=False, sync_repo=True)
+        result['published'] = True
+        result['publish_status'] = promoted['publish_status']
+        result['repo_sync'] = promoted.get('repo_sync')
+    return result
 
 
 def run_default_decision_loop(policy, decisions, registry):
@@ -402,6 +452,7 @@ def main():
     parser.add_argument('--prepare-follow-on', choices=['air purifiers'])
     parser.add_argument('--promote')
     parser.add_argument('--live', action='store_true')
+    parser.add_argument('--no-sync', action='store_true')
     args = parser.parse_args()
 
     policy = load_policy()
@@ -427,7 +478,7 @@ def main():
         return
 
     if args.promote:
-        result = promote_article_to_published(args.promote, dry_run=not args.live)
+        result = promote_article_to_published(args.promote, dry_run=not args.live, sync_repo=not args.no_sync)
         append_execution_log({
             'timestamp': now_iso(),
             'action_attempted': 'promote_article_to_published',

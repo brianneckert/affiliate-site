@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "cleaning_performance": 1.0,
+    "comfort": 0.8,
+    "battery_convenience": 1.0,
+    "long_term_value": 1.0
+  },
+  "products": [
+    {
+      "name": "Philips Sonicare 4100",
+      "brand": "Philips Sonicare",
+      "price_tier": "Entry ($40 USD street)",
+      "best_for": "Best budget-friendly sonic option",
+      "notes": "Very popular entry Sonicare model that balances comfort, simplicity, and value",
+      "notable_features": [
+        "Pressure sensor",
+        "Two intensity settings",
+        "Slim sonic handle"
+      ],
+      "scores": {
+        "cleaning_performance": 8,
+        "comfort": 9,
+        "battery_convenience": 8,
+        "long_term_value": 10,
+        "total_score": 33.2
+      },
+      "persona_fit": "Best budget-friendly sonic option",
+      "asin": "B09LD7WRVS",
+      "product_title": "Philips Sonicare 4100 Series Electric Toothbrush - Sonic Toothbrush with Advanced Sonic Technology, Pressure Sensor, Two Intensity Settings, Smartimer & Quadpacer, Black, Model HX3681/24",
+      "affiliate_url": "https://www.amazon.com/dp/B09LD7WRVS?tag=helperscollec-20",
+      "price_usd": 39.96,
+      "rating": 4.3,
+      "review_count": 54400,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Aquasonic Black Series",
+      "brand": "Aquasonic",
+      "price_tier": "Budget ($30 USD street)",
+      "best_for": "Maximum accessories per dollar",
+      "notes": "High-volume budget sonic toothbrush package with unusually strong included-accessory value",
+      "notable_features": [
+        "Travel case",
+        "Multiple modes",
+        "8 brush heads included"
+      ],
+      "scores": {
+        "cleaning_performance": 7,
+        "comfort": 8,
+        "battery_convenience": 8,
+        "long_term_value": 10,
+        "total_score": 31.4
+      },
+      "persona_fit": "Maximum accessories per dollar",
+      "asin": "B072YVWBXH",
+      "product_title": "Aquasonic Black Series Ultra Whitening Toothbrush \u2013 ADA Accepted Electric Toothbrush- 8 Brush Heads & Travel Case \u2013 40,000 VPM Electric Motor & Wireless Charging - 4 Modes w Smart Timer",
+      "affiliate_url": "https://www.amazon.com/dp/B072YVWBXH?tag=helperscollec-20",
+      "price_usd": 29.95,
+      "rating": 4.5,
+      "review_count": 133600,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Oral-B Pro 1000",
+      "brand": "Oral-B",
+      "price_tier": "Entry ($50 USD street)",
+      "best_for": "Best overall value Oral-B",
+      "notes": "Strong mainstream entry-level electric toothbrush with broad Amazon demand",
+      "notable_features": [
+        "Pressure sensor",
+        "Built-in timer",
+        "Widely available heads"
+      ],
+      "scores": {
+        "cleaning_performance": 8,
+        "comfort": 7,
+        "battery_convenience": 7,
+        "long_term_value": 10,
+        "total_score": 30.6
+      },
+      "persona_fit": "Best overall value Oral-B",
+      "asin": "B01AKGRTUM",
+      "product_title": "Oral-B Pro 1000 Rechargeable Electric Toothbrush, Black",
+      "affiliate_url": "https://www.amazon.com/dp/B01AKGRTUM?tag=helperscollec-20",
+      "price_usd": 49.94,
+      "rating": 4.5,
+      "review_count": 78300,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Philips Sonicare ExpertClean 7500",
+      "brand": "Philips Sonicare",
+      "price_tier": "Premium ($130 USD street)",
+      "best_for": "Premium budget stretch pick",
+      "notes": "Strong premium Sonicare pick for buyers who want extra polish beyond the budget handles",
+      "notable_features": [
+        "Premium sonic cleaning",
+        "Travel case",
+        "Multiple brushing modes"
+      ],
+      "scores": {
+        "cleaning_performance": 9,
+        "comfort": 9,
+        "battery_convenience": 8,
+        "long_term_value": 6,
+        "total_score": 30.2
+      },
+      "persona_fit": "Premium budget stretch pick",
+      "asin": "B07TGQP8G1",
+      "product_title": "Philips Sonicare ExpertClean 7500 Black, Rechargeable Electric Power Toothbrush, HX9690/05",
+      "affiliate_url": "https://www.amazon.com/dp/B07TGQP8G1?tag=helperscollec-20",
+      "price_usd": 129.96,
+      "rating": 4.4,
+      "review_count": 11700,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Oral-B iO Series 5",
+      "brand": "Oral-B",
+      "price_tier": "Mid ($100 USD street)",
+      "best_for": "Stretch-budget premium Oral-B buyers",
+      "notes": "Higher-end Oral-B option with stronger premium features and gum-pressure guidance",
+      "notable_features": [
+        "Visual pressure sensor",
+        "5 cleaning modes",
+        "Travel case"
+      ],
+      "scores": {
+        "cleaning_performance": 9,
+        "comfort": 8,
+        "battery_convenience": 8,
+        "long_term_value": 6,
+        "total_score": 29.4
+      },
+      "persona_fit": "Stretch-budget premium Oral-B buyers",
+      "asin": "B0B5YPHMW8",
+      "product_title": "Oral-B Rechargeable Electric Toothbrush, iO5 Customizable Clean, 5 Cleaning Modes, Visual Pressure Sensor to Protect Gums, Travel Case, Black",
+      "affiliate_url": "https://www.amazon.com/dp/B0B5YPHMW8?tag=helperscollec-20",
+      "price_usd": 99.99,
+      "rating": 4.4,
+      "review_count": 2000,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "Philips Sonicare 4100"
+}

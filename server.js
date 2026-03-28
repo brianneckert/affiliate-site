@@ -4,6 +4,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SITE_BASE_URL = (process.env.SITE_BASE_URL || 'https://affiliate-site-9r59.onrender.com').replace(/\/$/, '');
 
 app.use(express.json());
 
@@ -153,16 +154,57 @@ function buildSearchIndex() {
   });
 }
 
-function renderHome() {
+function getSiteBaseUrl(req) {
+  if (SITE_BASE_URL) return SITE_BASE_URL;
+  return `${req.protocol}://${req.get('host')}`.replace(/\/$/, '');
+}
+
+function buildAbsoluteUrl(req, route = '/') {
+  const base = getSiteBaseUrl(req);
+  const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
+  return `${base}${normalizedRoute}`;
+}
+
+function buildHomeMeta(req) {
+  return {
+    title: 'Affiliate Site | Product guides and comparison-driven buying picks',
+    description: 'Browse published product guides, comparisons, and top picks across approved categories with crawlable article routes and registry-driven publishing.',
+    canonicalUrl: buildAbsoluteUrl(req, '/')
+  };
+}
+
+function buildArticleMeta(req, content, entry) {
+  const title = content?.title || entry?.title || entry?.article_slug || 'Affiliate article';
+  const description = (content?.summary || `Comparison guide for ${title}`).slice(0, 160);
+  const canonicalUrl = buildAbsoluteUrl(req, `/article/${entry?.article_slug || content?.article_slug || ''}`);
+  return { title, description, canonicalUrl };
+}
+
+function renderSitemapXml(baseUrl) {
+  const urls = [
+    `${baseUrl}/`,
+    ...getPublishedArticles().map((entry) => `${baseUrl}/article/${entry.article_slug}`)
+  ];
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((url) => `  <url>\n    <loc>${escapeHtml(url)}</loc>\n  </url>`).join('\n')}\n</urlset>\n`;
+}
+
+function renderRobotsTxt(baseUrl) {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+}
+
+function renderHome(req) {
   const articleIndex = buildSearchIndex();
   const searchData = JSON.stringify(articleIndex);
   const publishedCount = articleIndex.length;
+  const meta = buildHomeMeta(req);
   return `<!doctype html>
   <html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Affiliate Site</title>
+    <title>${escapeHtml(meta.title)}</title>
+    <meta name="description" content="${escapeHtml(meta.description)}" />
+    <link rel="canonical" href="${escapeHtml(meta.canonicalUrl)}" />
     <style>
       :root {
         --bg1:#060b16;
@@ -333,13 +375,14 @@ function renderHome() {
   </html>`;
 }
 
-function renderArticle(content, compliance, entry = null) {
+function renderArticle(req, content, compliance, entry = null) {
   if (!content || !isDisplayableCompliance(compliance)) {
     return `
     <!doctype html>
     <html>
     <head>
       <meta charset="utf-8" />
+      <meta name="robots" content="noindex,follow" />
       <title>Article unavailable</title>
     </head>
     <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;">
@@ -351,6 +394,7 @@ function renderArticle(content, compliance, entry = null) {
     `;
   }
 
+  const meta = buildArticleMeta(req, content, entry);
   const productEntityMap = new Map((content.product_entities || []).map((item) => [item.product_name, item]));
   const relatedGuides = getPublishedArticles()
     .filter((article) => article.category === (entry?.category || content.category) && article.article_slug !== (entry?.article_slug || content.article_slug))
@@ -426,7 +470,9 @@ function renderArticle(content, compliance, entry = null) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>${escapeHtml(content.title)}</title>
+    <title>${escapeHtml(meta.title)}</title>
+    <meta name="description" content="${escapeHtml(meta.description)}" />
+    <link rel="canonical" href="${escapeHtml(meta.canonicalUrl)}" />
     <style>
       body {
         margin: 0;
@@ -631,14 +677,22 @@ function renderArticle(content, compliance, entry = null) {
   `;
 }
 
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(renderRobotsTxt(getSiteBaseUrl(req)));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml').send(renderSitemapXml(getSiteBaseUrl(req)));
+});
+
 app.get('/', (req, res) => {
-  res.send(renderHome());
+  res.send(renderHome(req));
 });
 
 app.get('/article/:slug', (req, res) => {
   const bundle = readArticleBundle(req.params.slug);
   if (!bundle || bundle.entry?.publish_status !== 'published') {
-    return res.status(404).send(renderArticle(null, null));
+    return res.status(404).send(renderArticle(req, null, null));
   }
   const content = bundle.content;
   const compliance = bundle.compliance;
@@ -650,7 +704,7 @@ app.get('/article/:slug', (req, res) => {
       timestamp: new Date().toISOString()
     });
   }
-  res.send(renderArticle(content, compliance, bundle.entry));
+  res.send(renderArticle(req, content, compliance, bundle.entry));
 });
 
 app.post('/analytics/click', (req, res) => {

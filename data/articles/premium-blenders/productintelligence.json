@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "core_performance": 1.0,
+    "usability": 0.8,
+    "build_quality": 1.0,
+    "long_term_value": 1.0
+  },
+  "products": [
+    {
+      "name": "Vitamix 5200",
+      "brand": "Vitamix",
+      "price_tier": "Premium ($430 USD street)",
+      "best_for": "Best premium blending performance",
+      "notes": "The strongest mainstream premium reference point for texture and long-term durability.",
+      "notable_features": [
+        "64oz container",
+        "Professional-grade motor",
+        "Self-cleaning"
+      ],
+      "scores": {
+        "core_performance": 10,
+        "usability": 8,
+        "build_quality": 10,
+        "long_term_value": 8,
+        "total_score": 34.4
+      },
+      "persona_fit": "Best premium blending performance",
+      "asin": "B008H4SLV6",
+      "product_title": "Vitamix 5200 Blender, Black",
+      "affiliate_url": "https://www.amazon.com/dp/B008H4SLV6?tag=helperscollec-20",
+      "price_usd": 429.95,
+      "rating": 4.3,
+      "review_count": 8100,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Ninja Professional Plus BN701",
+      "brand": "Ninja",
+      "price_tier": "Budget ($90 USD street)",
+      "best_for": "High-value full-size blending",
+      "notes": "Mainstream high-value countertop blender with broad smoothie and frozen-drink appeal.",
+      "notable_features": [
+        "1400W motor",
+        "72oz pitcher",
+        "Auto-IQ programs"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 9,
+        "build_quality": 8,
+        "long_term_value": 9,
+        "total_score": 32.2
+      },
+      "persona_fit": "High-value full-size blending",
+      "asin": "B0855B5Z6F",
+      "product_title": "Ninja Professional Plus Blender, BN701",
+      "affiliate_url": "https://www.amazon.com/dp/B0855B5Z6F?tag=helperscollec-20",
+      "price_usd": 89.99,
+      "rating": 4.6,
+      "review_count": 18800,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Breville Fresh and Furious",
+      "brand": "Breville",
+      "price_tier": "Premium ($200 USD street)",
+      "best_for": "Refined premium mid-size blending",
+      "notes": "Polished premium countertop blender for buyers who want a cleaner interface and stronger fit and finish.",
+      "notable_features": [
+        "Pre-programmed settings",
+        "Quiet relative performance",
+        "Breville fit and finish"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 9,
+        "build_quality": 9,
+        "long_term_value": 7,
+        "total_score": 31.2
+      },
+      "persona_fit": "Refined premium mid-size blending",
+      "asin": "B07GJ24VXV",
+      "product_title": "Breville BBL620SIL Fresh and Furious Blender, Silver",
+      "affiliate_url": "https://www.amazon.com/dp/B07GJ24VXV?tag=helperscollec-20",
+      "price_usd": 199.95,
+      "rating": 4.4,
+      "review_count": 2600,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Oster Pro 1200",
+      "brand": "Oster",
+      "price_tier": "Mid ($130 USD street)",
+      "best_for": "Blend-and-go value with a glass jar",
+      "notes": "Well-known mid-range blender that appeals to shoppers wanting a glass jar and broader versatility.",
+      "notable_features": [
+        "Glass jar",
+        "To-go cup",
+        "1200W peak power"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 8,
+        "build_quality": 8,
+        "long_term_value": 8,
+        "total_score": 30.4
+      },
+      "persona_fit": "Blend-and-go value with a glass jar",
+      "asin": "B00XHXN54K",
+      "product_title": "Oster Pro 1200 Smoothie Blender with Glass Jar & 24oz To-Go Cup",
+      "affiliate_url": "https://www.amazon.com/dp/B00XHXN54K?tag=helperscollec-20",
+      "price_usd": 129.99,
+      "rating": 4.4,
+      "review_count": 21000,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "NutriBullet Pro 900",
+      "brand": "NutriBullet",
+      "price_tier": "Budget ($80 USD street)",
+      "best_for": "Simple smoothies in small kitchens",
+      "notes": "Very popular compact blender for quick smoothies and smaller-space use.",
+      "notable_features": [
+        "900W motor",
+        "Compact footprint",
+        "Personal-blender format"
+      ],
+      "scores": {
+        "core_performance": 7,
+        "usability": 9,
+        "build_quality": 7,
+        "long_term_value": 9,
+        "total_score": 30.2
+      },
+      "persona_fit": "Simple smoothies in small kitchens",
+      "asin": "B0FRH7FG25",
+      "product_title": "NutriBullet Pro Nutrient Extractor, 900W, Matte White",
+      "affiliate_url": "https://www.amazon.com/dp/B0FRH7FG25?tag=helperscollec-20",
+      "price_usd": 79.99,
+      "rating": 4.5,
+      "review_count": 24000,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.98,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "Vitamix 5200"
+}

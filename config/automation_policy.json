@@ -2,10 +2,17 @@
   "approved_categories": [
     "air purifiers"
   ],
-  "max_new_articles_per_day": 1,
+  "max_new_articles_per_day": 8,
+  "max_topics_per_day": 6,
+  "max_articles_generated_per_day": 8,
+  "max_articles_published_per_day": 999,
   "min_confidence_required": 0.7,
-  "auto_publish_enabled": false,
-  "dry_run": true,
+  "auto_generate_enabled": true,
+  "auto_publish_enabled": true,
+  "topic_discovery_enabled": true,
+  "topic_discovery_mode": "catalog",
+  "approved_categories_mode": "allowlist",
+  "dry_run": false,
   "follow_on_strategies": {
     "air purifiers": [
       {

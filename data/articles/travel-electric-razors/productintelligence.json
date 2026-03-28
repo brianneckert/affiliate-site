@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "core_performance": 1.0,
+    "usability": 0.8,
+    "build_quality": 1.0,
+    "long_term_value": 1.0
+  },
+  "products": [
+    {
+      "name": "Braun Series 9 PRO+",
+      "brand": "Braun",
+      "price_tier": "Premium ($340 USD street)",
+      "best_for": "Best premium foil shaving",
+      "notes": "Top-tier premium foil razor for buyers prioritizing closeness and premium extras.",
+      "notable_features": [
+        "Premium foil shave",
+        "SmartCare center",
+        "Wet/dry use"
+      ],
+      "scores": {
+        "core_performance": 10,
+        "usability": 8,
+        "build_quality": 9,
+        "long_term_value": 7,
+        "total_score": 32.4
+      },
+      "persona_fit": "Best premium foil shaving",
+      "asin": "B0FGQQ9X2R",
+      "product_title": "Braun Series 9 PRO+ Electric Shaver, 9697CC, Silver",
+      "affiliate_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20",
+      "price_usd": 339.99,
+      "rating": 4.4,
+      "review_count": 166,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.97,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Panasonic ARC5 ES-LV65-S",
+      "brand": "Panasonic",
+      "price_tier": "Mid ($130 USD street)",
+      "best_for": "Close shave performance per dollar",
+      "notes": "Well-known Arc5 option that gives strong closeness without reaching the priciest premium bracket.",
+      "notable_features": [
+        "5-blade foil system",
+        "Pop-up trimmer",
+        "Wet/dry use"
+      ],
+      "scores": {
+        "core_performance": 9,
+        "usability": 8,
+        "build_quality": 8,
+        "long_term_value": 8,
+        "total_score": 31.4
+      },
+      "persona_fit": "Close shave performance per dollar",
+      "asin": "B00JWP8F3I",
+      "product_title": "Panasonic ARC5 Electric Razor for Men, ES-LV65-S (Silver)",
+      "affiliate_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20",
+      "price_usd": 129.97,
+      "rating": 4.3,
+      "review_count": 15300,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Braun Series 7 7127cs",
+      "brand": "Braun",
+      "price_tier": "Mid ($138 USD street)",
+      "best_for": "Best upper-midrange foil value",
+      "notes": "Strong all-around Braun option for buyers who want premium-adjacent performance below Series 9 pricing.",
+      "notable_features": [
+        "Wet/dry use",
+        "Turbo and gentle modes",
+        "Charging stand"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 8,
+        "build_quality": 8,
+        "long_term_value": 8,
+        "total_score": 30.4
+      },
+      "persona_fit": "Best upper-midrange foil value",
+      "asin": "B0CQKQT6RF",
+      "product_title": "Braun Electric Shaver for Men, Series 7 7127cs",
+      "affiliate_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20",
+      "price_usd": 137.54,
+      "rating": 4.2,
+      "review_count": 5800,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.98,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Philips Norelco OneBlade Face + Body",
+      "brand": "Philips Norelco",
+      "price_tier": "Budget ($50 USD street)",
+      "best_for": "Versatile grooming on a budget",
+      "notes": "Flexible hybrid trimmer/shaver that appeals to buyers who want one affordable grooming tool for multiple use cases.",
+      "notable_features": [
+        "Face + body use",
+        "Adjustable comb",
+        "Hybrid trimmer/shaver"
+      ],
+      "scores": {
+        "core_performance": 7,
+        "usability": 9,
+        "build_quality": 7,
+        "long_term_value": 9,
+        "total_score": 30.2
+      },
+      "persona_fit": "Versatile grooming on a budget",
+      "asin": "B0BZDPFH45",
+      "product_title": "Philips Norelco for Face + Body, Electric Beard Trimmer, Shaver and Groomer, Model QP2834/70",
+      "affiliate_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20",
+      "price_usd": 49.96,
+      "rating": 4.5,
+      "review_count": 46200,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.98,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Braun Series 5 5165ps",
+      "brand": "Braun",
+      "price_tier": "Mid ($120 USD street)",
+      "best_for": "Shoppers who want Braun features below Series 7 pricing",
+      "notes": "Accessible Braun foil option that still carries convenience features and broad Amazon availability.",
+      "notable_features": [
+        "Clean and charge center",
+        "Precision trimmer",
+        "Wet/dry use"
+      ],
+      "scores": {
+        "core_performance": 7,
+        "usability": 8,
+        "build_quality": 8,
+        "long_term_value": 8,
+        "total_score": 29.4
+      },
+      "persona_fit": "Shoppers who want Braun features below Series 7 pricing",
+      "asin": "B0FYRXGTDJ",
+      "product_title": "Braun Electric Razor for Men Series 5, S5 5165ps",
+      "affiliate_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20",
+      "price_usd": 119.94,
+      "rating": 4.1,
+      "review_count": 33,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.95,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "Braun Series 9 PRO+"
+}

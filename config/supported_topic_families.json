@@ -1,0 +1,125 @@
+{
+  "families": [
+    {
+      "topic_family": "air purifiers",
+      "status": "live-ready",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": true,
+      "last_checked_at": "2026-03-27T22:45:00Z",
+      "notes": "Validated cluster exists and is already live.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "espresso grinders",
+      "status": "live-ready",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": true,
+      "last_checked_at": "2026-03-27T22:45:00Z",
+      "notes": "Validated cluster generation succeeded in limited live batch test.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "electric toothbrushes",
+      "status": "live-ready",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": true,
+      "last_checked_at": "2026-03-27T22:45:00Z",
+      "notes": "Validated cluster generation succeeded in limited live batch test.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "air fryers",
+      "status": "live-ready",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": true,
+      "last_checked_at": "2026-03-27T23:05:00Z",
+      "notes": "Main article successfully validated with verified Amazon mapping depth and queued in affiliate_site.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "cordless vacuums",
+      "status": "bootstrapped",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": false,
+      "last_checked_at": null,
+      "notes": "Bootstrapped scaffold only. Requires verified Amazon mapping depth and one successful validation pass before live-ready.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "office chairs",
+      "status": "bootstrapped",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": false,
+      "last_checked_at": null,
+      "notes": "Bootstrapped scaffold only. Requires verified Amazon mapping depth and one successful validation pass before live-ready.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "blenders",
+      "status": "live-ready",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": true,
+      "last_checked_at": "2026-03-27T23:05:00Z",
+      "notes": "Main article successfully validated with verified Amazon mapping depth and queued in affiliate_site.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "standing desks",
+      "status": "bootstrapped",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": false,
+      "last_checked_at": null,
+      "notes": "Bootstrapped scaffold only. Requires verified Amazon mapping depth and one successful validation pass before live-ready.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "baby monitors",
+      "status": "bootstrapped",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": false,
+      "last_checked_at": null,
+      "notes": "Bootstrapped scaffold only. Requires verified Amazon mapping depth and one successful validation pass before live-ready.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "dash cams",
+      "status": "bootstrapped",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": false,
+      "last_checked_at": null,
+      "notes": "Bootstrapped scaffold only. Requires verified Amazon mapping depth and one successful validation pass before live-ready.",
+      "cluster_size_planned": 5
+    },
+    {
+      "topic_family": "electric razors",
+      "status": "live-ready",
+      "dataset_exists": true,
+      "mapping_exists": true,
+      "workflow_cluster_exists": true,
+      "minimum_verified_amazon_depth_confirmed": true,
+      "last_checked_at": "2026-03-27T23:05:00Z",
+      "notes": "Main article successfully validated with verified Amazon mapping depth and queued in affiliate_site.",
+      "cluster_size_planned": 5
+    }
+  ]
+}

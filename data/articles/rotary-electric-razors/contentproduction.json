@@ -1,0 +1,452 @@
+{
+  "title": "Best Rotary Electric Razors",
+  "article_slug": "rotary-electric-razors",
+  "category": "electric razors",
+  "top_pick": "Braun Series 9 PRO+",
+  "summary": "Braun Series 9 PRO+ is the top pick based on weighted scoring across core performance, usability, build quality, and long-term value.",
+  "llm_summary": {
+    "article_title": "Best Rotary Electric Razors",
+    "category": "electric razors",
+    "top_pick": "Braun Series 9 PRO+",
+    "summary": "Braun Series 9 PRO+ is the top pick based on weighted scoring across core performance, usability, build quality, and long-term value.",
+    "canonical_top_pick_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20"
+  },
+  "top_picks_at_a_glance": [
+    {
+      "product_name": "Braun Series 9 PRO+",
+      "best_for": "Best premium foil shaving",
+      "pricing_tier": "Premium ($340 USD street)",
+      "rating": 4.4,
+      "review_count": 166,
+      "canonical_product_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Panasonic ARC5 ES-LV65-S",
+      "best_for": "Close shave performance per dollar",
+      "pricing_tier": "Mid ($130 USD street)",
+      "rating": 4.3,
+      "review_count": 15300,
+      "canonical_product_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 7 7127cs",
+      "best_for": "Best upper-midrange foil value",
+      "pricing_tier": "Mid ($138 USD street)",
+      "rating": 4.2,
+      "review_count": 5800,
+      "canonical_product_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Philips Norelco OneBlade Face + Body",
+      "best_for": "Versatile grooming on a budget",
+      "pricing_tier": "Budget ($50 USD street)",
+      "rating": 4.5,
+      "review_count": 46200,
+      "canonical_product_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 5 5165ps",
+      "best_for": "Shoppers who want Braun features below Series 7 pricing",
+      "pricing_tier": "Mid ($120 USD street)",
+      "rating": 4.1,
+      "review_count": 33,
+      "canonical_product_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20"
+    }
+  ],
+  "comparison": [
+    {
+      "name": "Braun Series 9 PRO+",
+      "price_tier": "Premium ($340 USD street)",
+      "best_for": "Best premium foil shaving",
+      "total_score": 32.4,
+      "notable_features": [
+        "Premium foil shave",
+        "SmartCare center",
+        "Wet/dry use"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20",
+      "asin": "B0FGQQ9X2R",
+      "rating": 4.4,
+      "review_count": 166,
+      "prime_eligible": true
+    },
+    {
+      "name": "Panasonic ARC5 ES-LV65-S",
+      "price_tier": "Mid ($130 USD street)",
+      "best_for": "Close shave performance per dollar",
+      "total_score": 31.4,
+      "notable_features": [
+        "5-blade foil system",
+        "Pop-up trimmer",
+        "Wet/dry use"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20",
+      "asin": "B00JWP8F3I",
+      "rating": 4.3,
+      "review_count": 15300,
+      "prime_eligible": true
+    },
+    {
+      "name": "Braun Series 7 7127cs",
+      "price_tier": "Mid ($138 USD street)",
+      "best_for": "Best upper-midrange foil value",
+      "total_score": 30.4,
+      "notable_features": [
+        "Wet/dry use",
+        "Turbo and gentle modes",
+        "Charging stand"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20",
+      "asin": "B0CQKQT6RF",
+      "rating": 4.2,
+      "review_count": 5800,
+      "prime_eligible": true
+    },
+    {
+      "name": "Philips Norelco OneBlade Face + Body",
+      "price_tier": "Budget ($50 USD street)",
+      "best_for": "Versatile grooming on a budget",
+      "total_score": 30.2,
+      "notable_features": [
+        "Face + body use",
+        "Adjustable comb",
+        "Hybrid trimmer/shaver"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20",
+      "asin": "B0BZDPFH45",
+      "rating": 4.5,
+      "review_count": 46200,
+      "prime_eligible": true
+    },
+    {
+      "name": "Braun Series 5 5165ps",
+      "price_tier": "Mid ($120 USD street)",
+      "best_for": "Shoppers who want Braun features below Series 7 pricing",
+      "total_score": 29.4,
+      "notable_features": [
+        "Clean and charge center",
+        "Precision trimmer",
+        "Wet/dry use"
+      ],
+      "affiliate_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20",
+      "asin": "B0FYRXGTDJ",
+      "rating": 4.1,
+      "review_count": 33,
+      "prime_eligible": true
+    }
+  ],
+  "comparison_facts": [
+    {
+      "product_name": "Braun Series 9 PRO+",
+      "asin": "B0FGQQ9X2R",
+      "price_position": "Premium ($340 USD street)",
+      "best_for": "Best premium foil shaving",
+      "rating": 4.4,
+      "review_count": 166,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Panasonic ARC5 ES-LV65-S",
+      "asin": "B00JWP8F3I",
+      "price_position": "Mid ($130 USD street)",
+      "best_for": "Close shave performance per dollar",
+      "rating": 4.3,
+      "review_count": 15300,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 7 7127cs",
+      "asin": "B0CQKQT6RF",
+      "price_position": "Mid ($138 USD street)",
+      "best_for": "Best upper-midrange foil value",
+      "rating": 4.2,
+      "review_count": 5800,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Philips Norelco OneBlade Face + Body",
+      "asin": "B0BZDPFH45",
+      "price_position": "Budget ($50 USD street)",
+      "best_for": "Versatile grooming on a budget",
+      "rating": 4.5,
+      "review_count": 46200,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 5 5165ps",
+      "asin": "B0FYRXGTDJ",
+      "price_position": "Mid ($120 USD street)",
+      "best_for": "Shoppers who want Braun features below Series 7 pricing",
+      "rating": 4.1,
+      "review_count": 33,
+      "prime_eligible": true,
+      "canonical_product_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20"
+    }
+  ],
+  "product_entities": [
+    {
+      "product_name": "Braun Series 9 PRO+",
+      "category": "electric razors",
+      "short_factual_description": "Top-tier premium foil razor for buyers prioritizing closeness and premium extras.",
+      "best_for": "Best premium foil shaving",
+      "key_strengths": [
+        "Premium foil shave",
+        "SmartCare center",
+        "Wet/dry use"
+      ],
+      "drawbacks": [],
+      "price_position": "Premium ($340 USD street)",
+      "rating": 4.4,
+      "review_count": 166,
+      "prime_eligible": true,
+      "asin": "B0FGQQ9X2R",
+      "canonical_product_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Panasonic ARC5 ES-LV65-S",
+      "category": "electric razors",
+      "short_factual_description": "Well-known Arc5 option that gives strong closeness without reaching the priciest premium bracket.",
+      "best_for": "Close shave performance per dollar",
+      "key_strengths": [
+        "5-blade foil system",
+        "Pop-up trimmer",
+        "Wet/dry use"
+      ],
+      "drawbacks": [],
+      "price_position": "Mid ($130 USD street)",
+      "rating": 4.3,
+      "review_count": 15300,
+      "prime_eligible": true,
+      "asin": "B00JWP8F3I",
+      "canonical_product_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 7 7127cs",
+      "category": "electric razors",
+      "short_factual_description": "Strong all-around Braun option for buyers who want premium-adjacent performance below Series 9 pricing.",
+      "best_for": "Best upper-midrange foil value",
+      "key_strengths": [
+        "Wet/dry use",
+        "Turbo and gentle modes",
+        "Charging stand"
+      ],
+      "drawbacks": [],
+      "price_position": "Mid ($138 USD street)",
+      "rating": 4.2,
+      "review_count": 5800,
+      "prime_eligible": true,
+      "asin": "B0CQKQT6RF",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Philips Norelco OneBlade Face + Body",
+      "category": "electric razors",
+      "short_factual_description": "Flexible hybrid trimmer/shaver that appeals to buyers who want one affordable grooming tool for multiple use cases.",
+      "best_for": "Versatile grooming on a budget",
+      "key_strengths": [
+        "Face + body use",
+        "Adjustable comb",
+        "Hybrid trimmer/shaver"
+      ],
+      "drawbacks": [],
+      "price_position": "Budget ($50 USD street)",
+      "rating": 4.5,
+      "review_count": 46200,
+      "prime_eligible": true,
+      "asin": "B0BZDPFH45",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 5 5165ps",
+      "category": "electric razors",
+      "short_factual_description": "Accessible Braun foil option that still carries convenience features and broad Amazon availability.",
+      "best_for": "Shoppers who want Braun features below Series 7 pricing",
+      "key_strengths": [
+        "Clean and charge center",
+        "Precision trimmer",
+        "Wet/dry use"
+      ],
+      "drawbacks": [],
+      "price_position": "Mid ($120 USD street)",
+      "rating": 4.1,
+      "review_count": 33,
+      "prime_eligible": true,
+      "asin": "B0FYRXGTDJ",
+      "canonical_product_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20",
+      "affiliate_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20"
+    }
+  ],
+  "canonical_product_urls": [
+    {
+      "product_name": "Braun Series 9 PRO+",
+      "canonical_product_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Panasonic ARC5 ES-LV65-S",
+      "canonical_product_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 7 7127cs",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Philips Norelco OneBlade Face + Body",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20"
+    },
+    {
+      "product_name": "Braun Series 5 5165ps",
+      "canonical_product_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20"
+    }
+  ],
+  "sections": {
+    "who_is_this_for": [
+      {
+        "product": "Braun Series 9 PRO+",
+        "best_for": "Best premium foil shaving"
+      },
+      {
+        "product": "Panasonic ARC5 ES-LV65-S",
+        "best_for": "Close shave performance per dollar"
+      },
+      {
+        "product": "Braun Series 7 7127cs",
+        "best_for": "Best upper-midrange foil value"
+      },
+      {
+        "product": "Philips Norelco OneBlade Face + Body",
+        "best_for": "Versatile grooming on a budget"
+      },
+      {
+        "product": "Braun Series 5 5165ps",
+        "best_for": "Shoppers who want Braun features below Series 7 pricing"
+      }
+    ],
+    "product_sections": [
+      {
+        "product_name": "Braun Series 9 PRO+",
+        "category": "electric razors",
+        "short_factual_description": "Top-tier premium foil razor for buyers prioritizing closeness and premium extras.",
+        "best_for": "Best premium foil shaving",
+        "key_strengths": [
+          "Premium foil shave",
+          "SmartCare center",
+          "Wet/dry use"
+        ],
+        "drawbacks": [],
+        "price_position": "Premium ($340 USD street)",
+        "rating": 4.4,
+        "review_count": 166,
+        "prime_eligible": true,
+        "asin": "B0FGQQ9X2R",
+        "canonical_product_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B0FGQQ9X2R?tag=helperscollec-20"
+      },
+      {
+        "product_name": "Panasonic ARC5 ES-LV65-S",
+        "category": "electric razors",
+        "short_factual_description": "Well-known Arc5 option that gives strong closeness without reaching the priciest premium bracket.",
+        "best_for": "Close shave performance per dollar",
+        "key_strengths": [
+          "5-blade foil system",
+          "Pop-up trimmer",
+          "Wet/dry use"
+        ],
+        "drawbacks": [],
+        "price_position": "Mid ($130 USD street)",
+        "rating": 4.3,
+        "review_count": 15300,
+        "prime_eligible": true,
+        "asin": "B00JWP8F3I",
+        "canonical_product_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B00JWP8F3I?tag=helperscollec-20"
+      },
+      {
+        "product_name": "Braun Series 7 7127cs",
+        "category": "electric razors",
+        "short_factual_description": "Strong all-around Braun option for buyers who want premium-adjacent performance below Series 9 pricing.",
+        "best_for": "Best upper-midrange foil value",
+        "key_strengths": [
+          "Wet/dry use",
+          "Turbo and gentle modes",
+          "Charging stand"
+        ],
+        "drawbacks": [],
+        "price_position": "Mid ($138 USD street)",
+        "rating": 4.2,
+        "review_count": 5800,
+        "prime_eligible": true,
+        "asin": "B0CQKQT6RF",
+        "canonical_product_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B0CQKQT6RF?tag=helperscollec-20"
+      },
+      {
+        "product_name": "Philips Norelco OneBlade Face + Body",
+        "category": "electric razors",
+        "short_factual_description": "Flexible hybrid trimmer/shaver that appeals to buyers who want one affordable grooming tool for multiple use cases.",
+        "best_for": "Versatile grooming on a budget",
+        "key_strengths": [
+          "Face + body use",
+          "Adjustable comb",
+          "Hybrid trimmer/shaver"
+        ],
+        "drawbacks": [],
+        "price_position": "Budget ($50 USD street)",
+        "rating": 4.5,
+        "review_count": 46200,
+        "prime_eligible": true,
+        "asin": "B0BZDPFH45",
+        "canonical_product_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B0BZDPFH45?tag=helperscollec-20"
+      },
+      {
+        "product_name": "Braun Series 5 5165ps",
+        "category": "electric razors",
+        "short_factual_description": "Accessible Braun foil option that still carries convenience features and broad Amazon availability.",
+        "best_for": "Shoppers who want Braun features below Series 7 pricing",
+        "key_strengths": [
+          "Clean and charge center",
+          "Precision trimmer",
+          "Wet/dry use"
+        ],
+        "drawbacks": [],
+        "price_position": "Mid ($120 USD street)",
+        "rating": 4.1,
+        "review_count": 33,
+        "prime_eligible": true,
+        "asin": "B0FYRXGTDJ",
+        "canonical_product_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20",
+        "affiliate_url": "https://www.amazon.com/dp/B0FYRXGTDJ?tag=helperscollec-20"
+      }
+    ],
+    "buying_guide": [
+      "Prioritize the core strengths that matter most when shopping electric razors.",
+      "Ease of use and long-term value often matter as much as the headline feature list.",
+      "Compare real buyer use cases instead of relying only on spec-sheet marketing.",
+      "Budget, footprint, and maintenance should stay in the decision loop."
+    ],
+    "faq": [
+      {
+        "question": "What matters most when shopping electric razors?",
+        "answer": "The best pick usually balances performance, usability, quality, and long-term ownership value."
+      },
+      {
+        "question": "Should budget buyers always avoid premium options?",
+        "answer": "Not always. Premium options can make sense if the use case really needs the extra quality or convenience."
+      }
+    ],
+    "final_verdict": "If this electric razors angle matches your needs, choose Braun Series 9 PRO+ from this validated Amazon-only test set."
+  }
+}

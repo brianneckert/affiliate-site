@@ -1,0 +1,14 @@
+{
+  "status": "approved",
+  "passed": true,
+  "checks": {
+    "no_we_tested_language": true,
+    "no_external_urls": true,
+    "title_exists": true,
+    "top_pick_exists": true,
+    "summary_exists": true,
+    "sections_exist": true,
+    "final_verdict_exists": true
+  },
+  "errors": []
+}
