@@ -1,0 +1,162 @@
+{
+  "scoring_method": "weighted_sum",
+  "weights": {
+    "core_performance": 1.0,
+    "usability": 0.8,
+    "build_quality": 1.0,
+    "long_term_value": 1.0
+  },
+  "products": [
+    {
+      "name": "COSORI TurboBlaze 6QT",
+      "brand": "COSORI",
+      "price_tier": "Mid ($90 USD street)",
+      "best_for": "Best all-around family-size value",
+      "notes": "Broad-appeal air fryer with strong value, easy controls, and mainstream Amazon demand.",
+      "notable_features": [
+        "6-quart capacity",
+        "9-in-1 cooking",
+        "Wide temperature range"
+      ],
+      "scores": {
+        "core_performance": 9,
+        "usability": 9,
+        "build_quality": 8,
+        "long_term_value": 9,
+        "total_score": 33.2
+      },
+      "persona_fit": "Best all-around family-size value",
+      "asin": "B0C33CHG99",
+      "product_title": "COSORI 9-in-1 TurboBlaze Air Fryer 6 Qt, Dark Gray",
+      "affiliate_url": "https://www.amazon.com/dp/B0C33CHG99?tag=helperscollec-20",
+      "price_usd": 89.88,
+      "rating": 4.8,
+      "review_count": 14500,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Ninja AF101",
+      "brand": "Ninja",
+      "price_tier": "Mid ($119 USD street)",
+      "best_for": "Balanced everyday air frying",
+      "notes": "Strong mainstream basket air fryer with simple controls and broad buyer appeal.",
+      "notable_features": [
+        "4-quart basket",
+        "4-in-1 cooking",
+        "Dishwasher-safe parts"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 9,
+        "build_quality": 8,
+        "long_term_value": 9,
+        "total_score": 32.2
+      },
+      "persona_fit": "Balanced everyday air frying",
+      "asin": "B07FDJMC9Q",
+      "product_title": "Ninja Air Fryer | 4 QT Capacity | 4-in-1 Roast, Crisp, Roast, Reheats, & Dehydrates | Grey | AF101",
+      "affiliate_url": "https://www.amazon.com/dp/B07FDJMC9Q?tag=helperscollec-20",
+      "price_usd": 119.0,
+      "rating": 4.7,
+      "review_count": 96700,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Philips Premium Airfryer XXL",
+      "brand": "Philips",
+      "price_tier": "Premium ($150 USD street)",
+      "best_for": "Premium-brand buyers who want larger capacity",
+      "notes": "Recognizable premium air fryer with stronger brand positioning and family-size capacity.",
+      "notable_features": [
+        "7-quart size",
+        "Fat removal technology",
+        "Premium digital controls"
+      ],
+      "scores": {
+        "core_performance": 9,
+        "usability": 8,
+        "build_quality": 9,
+        "long_term_value": 7,
+        "total_score": 31.4
+      },
+      "persona_fit": "Premium-brand buyers who want larger capacity",
+      "asin": "B07G3V9K17",
+      "product_title": "Philips Premium Airfryer XXL, Black (HD9650/96)",
+      "affiliate_url": "https://www.amazon.com/dp/B07G3V9K17?tag=helperscollec-20",
+      "price_usd": 149.99,
+      "rating": 4.3,
+      "review_count": 3200,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Instant Vortex Plus 6QT",
+      "brand": "Instant Pot",
+      "price_tier": "Mid ($144 USD street)",
+      "best_for": "Shoppers who want a more polished mid-range build",
+      "notes": "Popular Instant-branded air fryer with strong brand trust and broad mid-range appeal.",
+      "notable_features": [
+        "6-in-1 cooking",
+        "Stainless finish",
+        "Dishwasher-safe basket"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 8,
+        "build_quality": 8,
+        "long_term_value": 8,
+        "total_score": 30.4
+      },
+      "persona_fit": "Shoppers who want a more polished mid-range build",
+      "asin": "B07VHFMZHJ",
+      "product_title": "Instant Pot 6QT VORTEX Plus Air Fryer, 6-in-1, Stainless Steel",
+      "affiliate_url": "https://www.amazon.com/dp/B07VHFMZHJ?tag=helperscollec-20",
+      "price_usd": 143.95,
+      "rating": 4.5,
+      "review_count": 71500,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.99,
+      "mapping_status": "verified"
+    },
+    {
+      "name": "Chefman TurboFry 8QT",
+      "brand": "Chefman",
+      "price_tier": "Budget ($80 USD street)",
+      "best_for": "Large-capacity value shopping",
+      "notes": "High-capacity budget-friendly air fryer for buyers prioritizing space and price.",
+      "notable_features": [
+        "8-quart basket",
+        "4-in-1 cooking",
+        "High-heat crisping"
+      ],
+      "scores": {
+        "core_performance": 8,
+        "usability": 8,
+        "build_quality": 7,
+        "long_term_value": 9,
+        "total_score": 30.4
+      },
+      "persona_fit": "Large-capacity value shopping",
+      "asin": "B08DKYBTPH",
+      "product_title": "Chefman Air Fryer 8 Qt | TurboFry 4-in-1, Stainless Steel",
+      "affiliate_url": "https://www.amazon.com/dp/B08DKYBTPH?tag=helperscollec-20",
+      "price_usd": 79.99,
+      "rating": 4.5,
+      "review_count": 17700,
+      "prime_eligible": true,
+      "availability_status": "available",
+      "match_confidence": 0.98,
+      "mapping_status": "verified"
+    }
+  ],
+  "top_pick": "COSORI TurboBlaze 6QT"
+}

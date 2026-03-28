@@ -421,7 +421,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -456,7 +457,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -491,7 +493,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -526,7 +529,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -561,7 +565,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -595,7 +600,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -629,7 +636,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -663,7 +672,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -784,7 +795,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -819,7 +831,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -853,7 +866,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -887,7 +902,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -921,7 +938,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -955,7 +974,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -989,7 +1010,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -1023,7 +1046,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -1487,7 +1512,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -1521,7 +1548,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -1555,7 +1584,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -1589,7 +1620,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -1623,7 +1656,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -1657,7 +1692,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -1691,7 +1728,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -1725,7 +1764,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -1759,7 +1800,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -1793,7 +1836,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -1827,7 +1872,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -1861,7 +1908,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -2068,7 +2117,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -2102,7 +2152,9 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -2136,7 +2188,9 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -2170,7 +2224,9 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -2377,7 +2433,8 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -2411,7 +2468,9 @@
         "family-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -2445,7 +2504,9 @@
         "smoothie-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -2479,7 +2540,9 @@
         "budget-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -2686,7 +2749,8 @@
         "philips-sonicare-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -2720,7 +2784,9 @@
         "family-air-fryers",
         "simple-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -2754,7 +2820,9 @@
         "smoothie-blenders",
         "ice-crushing-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -2788,7 +2856,9 @@
         "budget-electric-razors",
         "close-shave-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -2995,7 +3065,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -3029,7 +3100,9 @@
         "family-air-fryers",
         "simple-air-fryers",
         "weeknight-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -3063,7 +3136,9 @@
         "smoothie-blenders",
         "ice-crushing-blenders",
         "family-blenders",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -3097,7 +3172,9 @@
         "budget-electric-razors",
         "close-shave-electric-razors",
         "daily-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -3304,7 +3381,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -3338,7 +3416,9 @@
         "family-air-fryers",
         "simple-air-fryers",
         "weeknight-air-fryers",
-        "easy-clean-air-fryers"
+        "easy-clean-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -3372,7 +3452,9 @@
         "smoothie-blenders",
         "ice-crushing-blenders",
         "family-blenders",
-        "blenders-for-frozen-drinks"
+        "blenders-for-frozen-drinks",
+        "value-blenders",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -3406,7 +3488,9 @@
         "budget-electric-razors",
         "close-shave-electric-razors",
         "daily-electric-razors",
-        "premium-electric-razors"
+        "premium-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -3441,7 +3525,8 @@
         "philips-sonicare-electric-toothbrushes",
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
-        "family-electric-toothbrushes"
+        "family-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms"
       ],
       "duplicate_of": null
     },
@@ -3458,11 +3543,11 @@
       "article_family_position": "shared_bathrooms",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.803747+00:00",
       "source_article_family": "electric toothbrushes",
       "related_articles": [
         "electric-toothbrushes",
@@ -3494,11 +3579,11 @@
       "article_family_position": "frozen_food",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.807058+00:00",
       "source_article_family": "air fryers",
       "related_articles": [
         "air-fryers",
@@ -3512,7 +3597,8 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-meal-prep"
       ],
       "duplicate_of": null
     },
@@ -3529,11 +3615,11 @@
       "article_family_position": "meal_prep",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.809837+00:00",
       "source_article_family": "air fryers",
       "related_articles": [
         "air-fryers",
@@ -3547,7 +3633,8 @@
         "simple-air-fryers",
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
-        "value-air-fryers"
+        "value-air-fryers",
+        "air-fryers-for-frozen-food"
       ],
       "duplicate_of": null
     },
@@ -3564,11 +3651,11 @@
       "article_family_position": "value",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.812466+00:00",
       "source_article_family": "blenders",
       "related_articles": [
         "blenders",
@@ -3582,7 +3669,8 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "blenders-for-small-batches"
       ],
       "duplicate_of": null
     },
@@ -3599,11 +3687,11 @@
       "article_family_position": "small_batches",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.814981+00:00",
       "source_article_family": "blenders",
       "related_articles": [
         "blenders",
@@ -3617,7 +3705,8 @@
         "ice-crushing-blenders",
         "family-blenders",
         "blenders-for-frozen-drinks",
-        "blenders-with-to-go-cups"
+        "blenders-with-to-go-cups",
+        "value-blenders"
       ],
       "duplicate_of": null
     },
@@ -3634,11 +3723,11 @@
       "article_family_position": "beginners",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.817584+00:00",
       "source_article_family": "electric razors",
       "related_articles": [
         "electric-razors",
@@ -3652,7 +3741,8 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-coarse-beards"
       ],
       "duplicate_of": null
     },
@@ -3669,11 +3759,11 @@
       "article_family_position": "coarse_beards",
       "source_topic_plan_date": "2026-03-28",
       "generation_status": "ready_to_publish",
-      "publish_status": "ready_to_publish",
+      "publish_status": "published",
       "validation_result": {
         "passed": true
       },
-      "published_at": null,
+      "published_at": "2026-03-28T22:33:07.820156+00:00",
       "source_article_family": "electric razors",
       "related_articles": [
         "electric-razors",
@@ -3687,7 +3777,8 @@
         "close-shave-electric-razors",
         "daily-electric-razors",
         "premium-electric-razors",
-        "easy-clean-electric-razors"
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners"
       ],
       "duplicate_of": null
     }
