@@ -422,7 +422,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -458,7 +460,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -494,7 +498,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -530,7 +536,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -566,7 +574,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -602,7 +612,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -638,7 +650,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -674,7 +688,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -796,7 +812,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -832,7 +850,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -868,7 +888,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -904,7 +926,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -940,7 +964,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -976,7 +1002,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -1012,7 +1040,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -1048,7 +1078,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -1514,7 +1546,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -1550,7 +1584,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -1586,7 +1622,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -1622,7 +1660,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -1658,7 +1698,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -1694,7 +1736,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -1730,7 +1774,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -1766,7 +1812,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -1802,7 +1850,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -1838,7 +1888,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -1874,7 +1926,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -1910,7 +1964,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -2118,7 +2174,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -2154,7 +2212,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -2190,7 +2250,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -2226,7 +2288,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -2434,7 +2498,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -2470,7 +2536,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -2506,7 +2574,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -2542,7 +2612,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -2750,7 +2822,9 @@
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -2786,7 +2860,9 @@
         "easy-clean-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -2822,7 +2898,9 @@
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -2858,7 +2936,9 @@
         "premium-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -3066,7 +3146,9 @@
         "budget-electric-toothbrushes",
         "family-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -3102,7 +3184,9 @@
         "weeknight-air-fryers",
         "value-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -3138,7 +3222,9 @@
         "family-blenders",
         "blenders-with-to-go-cups",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -3174,7 +3260,9 @@
         "daily-electric-razors",
         "easy-clean-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -3382,7 +3470,9 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "premium-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -3418,7 +3508,9 @@
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
         "air-fryers-for-frozen-food",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -3454,7 +3546,9 @@
         "family-blenders",
         "blenders-for-frozen-drinks",
         "value-blenders",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -3490,7 +3584,9 @@
         "daily-electric-razors",
         "premium-electric-razors",
         "electric-razors-for-beginners",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -3526,7 +3622,9 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "electric-toothbrushes-for-shared-bathrooms"
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -3562,7 +3660,9 @@
         "budget-electric-toothbrushes",
         "quiet-electric-toothbrushes",
         "family-electric-toothbrushes",
-        "premium-electric-toothbrushes"
+        "premium-electric-toothbrushes",
+        "sonic-toothbrush-value-picks",
+        "electric-toothbrushes-with-pressure-sensors"
       ],
       "duplicate_of": null
     },
@@ -3598,7 +3698,9 @@
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
         "value-air-fryers",
-        "air-fryers-for-meal-prep"
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -3634,7 +3736,9 @@
         "weeknight-air-fryers",
         "easy-clean-air-fryers",
         "value-air-fryers",
-        "air-fryers-for-frozen-food"
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-two-people",
+        "basket-air-fryers"
       ],
       "duplicate_of": null
     },
@@ -3670,7 +3774,9 @@
         "family-blenders",
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
-        "blenders-for-small-batches"
+        "blenders-for-small-batches",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -3706,7 +3812,9 @@
         "family-blenders",
         "blenders-for-frozen-drinks",
         "blenders-with-to-go-cups",
-        "value-blenders"
+        "value-blenders",
+        "daily-use-blenders",
+        "kitchen-counter-blenders"
       ],
       "duplicate_of": null
     },
@@ -3742,7 +3850,9 @@
         "daily-electric-razors",
         "premium-electric-razors",
         "easy-clean-electric-razors",
-        "electric-razors-for-coarse-beards"
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
     },
@@ -3778,7 +3888,313 @@
         "daily-electric-razors",
         "premium-electric-razors",
         "easy-clean-electric-razors",
-        "electric-razors-for-beginners"
+        "electric-razors-for-beginners",
+        "electric-razors-with-cleaning-stations",
+        "low-maintenance-electric-razors"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "sonic-toothbrush-value-picks",
+      "category": "electric toothbrushes",
+      "title": "Best Sonic Toothbrush Value Picks",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/sonic_toothbrush_value_picks.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/sonic_toothbrush_value_picks.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_toothbrushes.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/sonic_toothbrush_value_picks",
+      "article_dir": "data/articles/sonic-toothbrush-value-picks",
+      "topic_family": "electric toothbrushes",
+      "article_family_position": "sonic_value",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.223533+00:00",
+      "source_article_family": "electric toothbrushes",
+      "related_articles": [
+        "electric-toothbrushes",
+        "electric-toothbrushes-for-sensitive-gums",
+        "electric-toothbrushes-for-travel",
+        "electric-toothbrushes-under-100",
+        "smart-electric-toothbrushes",
+        "sonic-electric-toothbrushes",
+        "electric-toothbrushes-for-beginners",
+        "oral-b-electric-toothbrushes",
+        "philips-sonicare-electric-toothbrushes",
+        "budget-electric-toothbrushes",
+        "quiet-electric-toothbrushes",
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms",
+        "electric-toothbrushes-with-pressure-sensors"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "electric-toothbrushes-with-pressure-sensors",
+      "category": "electric toothbrushes",
+      "title": "Best Electric Toothbrushes with Pressure Sensors",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/electric_toothbrushes_with_pressure_sensors.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/electric_toothbrushes_with_pressure_sensors.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_toothbrushes.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/electric_toothbrushes_with_pressure_sensors",
+      "article_dir": "data/articles/electric-toothbrushes-with-pressure-sensors",
+      "topic_family": "electric toothbrushes",
+      "article_family_position": "pressure_sensors",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.254974+00:00",
+      "source_article_family": "electric toothbrushes",
+      "related_articles": [
+        "electric-toothbrushes",
+        "electric-toothbrushes-for-sensitive-gums",
+        "electric-toothbrushes-for-travel",
+        "electric-toothbrushes-under-100",
+        "smart-electric-toothbrushes",
+        "sonic-electric-toothbrushes",
+        "electric-toothbrushes-for-beginners",
+        "oral-b-electric-toothbrushes",
+        "philips-sonicare-electric-toothbrushes",
+        "budget-electric-toothbrushes",
+        "quiet-electric-toothbrushes",
+        "family-electric-toothbrushes",
+        "premium-electric-toothbrushes",
+        "electric-toothbrushes-for-shared-bathrooms",
+        "sonic-toothbrush-value-picks"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "air-fryers-for-two-people",
+      "category": "air fryers",
+      "title": "Best Air Fryers for Two People",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/air_fryers_for_two_people.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/air_fryers_for_two_people.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_fryers.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/air_fryers_for_two_people",
+      "article_dir": "data/articles/air-fryers-for-two-people",
+      "topic_family": "air fryers",
+      "article_family_position": "two_people",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.286474+00:00",
+      "source_article_family": "air fryers",
+      "related_articles": [
+        "air-fryers",
+        "air-fryers-for-small-kitchens",
+        "air-fryers-under-150",
+        "air-fryers-for-dorm-rooms",
+        "air-fryers-for-apartments",
+        "compact-air-fryers",
+        "fast-preheat-air-fryers",
+        "family-air-fryers",
+        "simple-air-fryers",
+        "weeknight-air-fryers",
+        "easy-clean-air-fryers",
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep",
+        "basket-air-fryers"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "basket-air-fryers",
+      "category": "air fryers",
+      "title": "Best Basket Air Fryers",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/basket_air_fryers.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/basket_air_fryers.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/air_fryers.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/basket_air_fryers",
+      "article_dir": "data/articles/basket-air-fryers",
+      "topic_family": "air fryers",
+      "article_family_position": "basket",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.317225+00:00",
+      "source_article_family": "air fryers",
+      "related_articles": [
+        "air-fryers",
+        "air-fryers-for-small-kitchens",
+        "air-fryers-under-150",
+        "air-fryers-for-dorm-rooms",
+        "air-fryers-for-apartments",
+        "compact-air-fryers",
+        "fast-preheat-air-fryers",
+        "family-air-fryers",
+        "simple-air-fryers",
+        "weeknight-air-fryers",
+        "easy-clean-air-fryers",
+        "value-air-fryers",
+        "air-fryers-for-frozen-food",
+        "air-fryers-for-meal-prep",
+        "air-fryers-for-two-people"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "daily-use-blenders",
+      "category": "blenders",
+      "title": "Best Daily Use Blenders",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/daily_use_blenders.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/daily_use_blenders.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/blenders.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/daily_use_blenders",
+      "article_dir": "data/articles/daily-use-blenders",
+      "topic_family": "blenders",
+      "article_family_position": "daily_use",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.348451+00:00",
+      "source_article_family": "blenders",
+      "related_articles": [
+        "blenders",
+        "blenders-for-smoothies",
+        "quiet-blenders",
+        "blenders-for-protein-shakes",
+        "compact-blenders",
+        "premium-blenders",
+        "blender-value-picks",
+        "smoothie-blenders",
+        "ice-crushing-blenders",
+        "family-blenders",
+        "blenders-for-frozen-drinks",
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches",
+        "kitchen-counter-blenders"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "kitchen-counter-blenders",
+      "category": "blenders",
+      "title": "Best Kitchen Counter Blenders",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/kitchen_counter_blenders.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/kitchen_counter_blenders.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/blenders.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/kitchen_counter_blenders",
+      "article_dir": "data/articles/kitchen-counter-blenders",
+      "topic_family": "blenders",
+      "article_family_position": "countertop",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.379130+00:00",
+      "source_article_family": "blenders",
+      "related_articles": [
+        "blenders",
+        "blenders-for-smoothies",
+        "quiet-blenders",
+        "blenders-for-protein-shakes",
+        "compact-blenders",
+        "premium-blenders",
+        "blender-value-picks",
+        "smoothie-blenders",
+        "ice-crushing-blenders",
+        "family-blenders",
+        "blenders-for-frozen-drinks",
+        "blenders-with-to-go-cups",
+        "value-blenders",
+        "blenders-for-small-batches",
+        "daily-use-blenders"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "electric-razors-with-cleaning-stations",
+      "category": "electric razors",
+      "title": "Best Electric Razors with Cleaning Stations",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/electric_razors_with_cleaning_stations.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/electric_razors_with_cleaning_stations.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_razors.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/electric_razors_with_cleaning_stations",
+      "article_dir": "data/articles/electric-razors-with-cleaning-stations",
+      "topic_family": "electric razors",
+      "article_family_position": "cleaning_stations",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.410222+00:00",
+      "source_article_family": "electric razors",
+      "related_articles": [
+        "electric-razors",
+        "electric-razors-for-sensitive-skin",
+        "travel-electric-razors",
+        "wet-dry-electric-razors",
+        "foil-electric-razors",
+        "rotary-electric-razors",
+        "compact-electric-razors",
+        "budget-electric-razors",
+        "close-shave-electric-razors",
+        "daily-electric-razors",
+        "premium-electric-razors",
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards",
+        "low-maintenance-electric-razors"
+      ],
+      "duplicate_of": null
+    },
+    {
+      "article_slug": "low-maintenance-electric-razors",
+      "category": "electric razors",
+      "title": "Best Low-Maintenance Electric Razors",
+      "workflow_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/workflows/low_maintenance_electric_razors.yaml",
+      "dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/samples/low_maintenance_electric_razors.json",
+      "amazon_mapping_dataset_path": "/Users/brian/.openclaw/workspace/projects/affiliate_os/data/amazon_mapping/electric_razors.json",
+      "output_dir": "/Users/brian/.openclaw/workspace/projects/affiliate_os/runs/manual_tests/low_maintenance_electric_razors",
+      "article_dir": "data/articles/low-maintenance-electric-razors",
+      "topic_family": "electric razors",
+      "article_family_position": "low_maintenance",
+      "source_topic_plan_date": "2026-03-28",
+      "generation_status": "ready_to_publish",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-28T22:34:10.441511+00:00",
+      "source_article_family": "electric razors",
+      "related_articles": [
+        "electric-razors",
+        "electric-razors-for-sensitive-skin",
+        "travel-electric-razors",
+        "wet-dry-electric-razors",
+        "foil-electric-razors",
+        "rotary-electric-razors",
+        "compact-electric-razors",
+        "budget-electric-razors",
+        "close-shave-electric-razors",
+        "daily-electric-razors",
+        "premium-electric-razors",
+        "easy-clean-electric-razors",
+        "electric-razors-for-beginners",
+        "electric-razors-for-coarse-beards",
+        "electric-razors-with-cleaning-stations"
       ],
       "duplicate_of": null
     }
