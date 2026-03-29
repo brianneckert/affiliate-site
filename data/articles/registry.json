@@ -4417,6 +4417,32 @@
         "low-maintenance-electric-razors"
       ],
       "duplicate_of": null
+    },
+    {
+      "article_slug": "best-air-purifiers",
+      "category": "best air purifiers",
+      "title": "Best Air Purifiers",
+      "output_dir": "data/articles/best-air-purifiers",
+      "article_dir": "data/articles/best-air-purifiers",
+      "topic_family": "best air purifiers",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-03-29",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-29T23:42:58.705Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [
+        "air-purifiers",
+        "air-purifiers-for-allergies",
+        "air-purifiers-for-pets",
+        "air-purifiers-for-large-rooms",
+        "quiet-air-purifiers"
+      ],
+      "duplicate_of": null,
+      "source_request_id": "5b9ccc75-72b6-4c6c-8a90-2352f9fc6cc8"
     }
   ]
 }

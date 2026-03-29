@@ -1,0 +1,39 @@
+{
+  "products": [
+    {
+      "product_name": "Blueair Blue Pure 311i Max",
+      "affiliate_url": "https://www.amazon.com/dp/B0BN2LZ9JH?tag=helperscollec-20",
+      "notes": "Strong mainstream smart purifier with broad room coverage",
+      "why_it_won": "",
+      "source_article_slug": "air-purifiers"
+    },
+    {
+      "product_name": "Coway Airmega AP-1512HH",
+      "affiliate_url": "https://www.amazon.com/dp/B01728NLRG?tag=helperscollec-20",
+      "notes": "Well-known all-around purifier with strong long-term value",
+      "why_it_won": "",
+      "source_article_slug": "air-purifiers"
+    },
+    {
+      "product_name": "Winix 5510",
+      "affiliate_url": "https://www.amazon.com/dp/B0DJG1731C?tag=helperscollec-20",
+      "notes": "Current-generation Winix option with strong Amazon availability",
+      "why_it_won": "",
+      "source_article_slug": "air-purifiers"
+    },
+    {
+      "product_name": "LEVOIT Core 300-P",
+      "affiliate_url": "https://www.amazon.com/dp/B07VVK39F7?tag=helperscollec-20",
+      "notes": "Popular compact purifier with broad Amazon demand",
+      "why_it_won": "",
+      "source_article_slug": "air-purifiers"
+    },
+    {
+      "product_name": "GermGuardian AC4825E",
+      "affiliate_url": "https://www.amazon.com/dp/B004VGIGVY?tag=helperscollec-20",
+      "notes": "High-volume budget purifier with clear Amazon listing",
+      "why_it_won": "",
+      "source_article_slug": "air-purifiers"
+    }
+  ]
+}
