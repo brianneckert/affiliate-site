@@ -333,14 +333,14 @@ function renderHome(req) {
     <main class="wrap">
       <section class="hero">
         <div class="eyebrow">Next-generation product research</div>
-        <h1>Search products like Prime — filtered through a smarter research layer.</h1>
-        <p class="sub">Find ranked buying guides, top picks, and comparison-driven recommendations from approved local article intelligence — faster, cleaner, and more focused than a raw marketplace search.</p>
+        <h1>Find the clear winner — every time.</h1>
+        <p class="sub">We compare the top products so you don’t have to. Fast, focused, and built to help you buy with confidence.</p>
         <div class="search-shell">
           <div class="search-row">
             <div class="search-icon">⌕</div>
-            <input id="searchInput" class="search-input" type="text" placeholder="Search grinders, product names, top picks, buying guides..." autofocus>
+            <input id="searchInput" class="search-input" type="text" placeholder="Search products, categories, or comparisons (e.g. air fryers, espresso grinders, best blenders)…" autofocus>
           </div>
-          <div class="assist">Published library: ${publishedCount} approved guides. Search across article titles, categories, top picks, and compared product names.</div>
+          <div class="assist">Search across ranked buying guides, top picks, and comparison-driven results.</div>
         </div>
       </section>
       <section id="results" class="results"></section>
