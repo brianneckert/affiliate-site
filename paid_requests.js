@@ -4,11 +4,13 @@ const crypto = require('crypto');
 
 module.exports = function createPaidRequests({ rootDir }) {
   const analyticsDir = path.join(rootDir, 'data', 'analytics');
+  const paidRequestsStoreDir = process.env.PAID_REQUESTS_STORE_DIR ? path.resolve(process.env.PAID_REQUESTS_STORE_DIR) : analyticsDir;
   const searchQueriesPath = path.join(analyticsDir, 'search_queries.json');
-  const paidRequestsPath = path.join(analyticsDir, 'paid_generation_requests.json');
+  const paidRequestsPath = path.join(paidRequestsStoreDir, 'paid_generation_requests.json');
 
   function ensureStores() {
     if (!fs.existsSync(analyticsDir)) fs.mkdirSync(analyticsDir, { recursive: true });
+    if (!fs.existsSync(paidRequestsStoreDir)) fs.mkdirSync(paidRequestsStoreDir, { recursive: true });
     if (!fs.existsSync(searchQueriesPath)) fs.writeFileSync(searchQueriesPath, '[]\n');
     if (!fs.existsSync(paidRequestsPath)) fs.writeFileSync(paidRequestsPath, '[]\n');
   }
@@ -142,5 +144,6 @@ module.exports = function createPaidRequests({ rootDir }) {
     upsertRequest,
     readSearchQueries,
     readPaidRequests,
+    paidRequestsPath,
   };
 };
