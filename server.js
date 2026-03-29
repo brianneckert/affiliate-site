@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const createAnalytics = require('./analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,7 +11,7 @@ app.use(express.json());
 
 const ARTICLES_PATH = path.join(__dirname, 'data/articles');
 const REGISTRY_PATH = path.join(ARTICLES_PATH, 'registry.json');
-const ANALYTICS_PATH = path.join(__dirname, 'data/analytics/events.json');
+const analytics = createAnalytics({ rootDir: __dirname, registryPath: REGISTRY_PATH });
 
 function readJson(name) {
   const file = path.join(ARTICLES_PATH, name);
@@ -45,68 +46,20 @@ function readArticleBundle(articleSlug) {
   };
 }
 
-function ensureAnalyticsStore() {
-  const dir = path.dirname(ANALYTICS_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(ANALYTICS_PATH)) fs.writeFileSync(ANALYTICS_PATH, '[]\n');
-}
-
 function readEvents() {
-  ensureAnalyticsStore();
-  return JSON.parse(fs.readFileSync(ANALYTICS_PATH, 'utf8'));
+  return analytics.readEvents();
 }
 
-function writeEvents(events) {
-  ensureAnalyticsStore();
-  fs.writeFileSync(ANALYTICS_PATH, JSON.stringify(events, null, 2));
+function readSummary() {
+  return analytics.readSummary();
 }
 
 function logEvent(event) {
-  const events = readEvents();
-  events.push({ ...event, timestamp: event.timestamp || new Date().toISOString() });
-  writeEvents(events);
+  analytics.appendEvent(event);
 }
 
 function buildAnalyticsSummary(events) {
-  const summary = { articles: {}, products: {}, categories: {} };
-  for (const event of events) {
-    const articleSlug = event.article_slug || 'unknown-article';
-    if (!summary.articles[articleSlug]) {
-      summary.articles[articleSlug] = { total_views: 0, total_clicks: 0, ctr: 0, category: event.category || null };
-    }
-    const category = event.category || summary.articles[articleSlug].category || 'unknown-category';
-    summary.articles[articleSlug].category = category;
-    if (!summary.categories[category]) {
-      summary.categories[category] = { total_views: 0, total_clicks: 0, ctr: 0, articles: {} };
-    }
-    if (!summary.categories[category].articles[articleSlug]) {
-      summary.categories[category].articles[articleSlug] = { total_views: 0, total_clicks: 0 };
-    }
-    if (event.type === 'article_view') {
-      summary.articles[articleSlug].total_views += 1;
-      summary.categories[category].total_views += 1;
-      summary.categories[category].articles[articleSlug].total_views += 1;
-    }
-    if (event.type === 'outbound_click') {
-      summary.articles[articleSlug].total_clicks += 1;
-      summary.categories[category].total_clicks += 1;
-      summary.categories[category].articles[articleSlug].total_clicks += 1;
-      const productName = event.product_name || 'unknown-product';
-      if (!summary.products[productName]) {
-        summary.products[productName] = { article_slug: articleSlug, category, clicks: 0, asin: event.asin || null };
-      }
-      summary.products[productName].clicks += 1;
-    }
-  }
-
-  for (const article of Object.values(summary.articles)) {
-    article.ctr = article.total_views ? Number((article.total_clicks / article.total_views).toFixed(4)) : 0;
-  }
-  for (const category of Object.values(summary.categories)) {
-    category.ctr = category.total_views ? Number((category.total_clicks / category.total_views).toFixed(4)) : 0;
-  }
-
-  return summary;
+  return analytics.summarize(events);
 }
 
 function escapeHtml(value) {
@@ -193,6 +146,7 @@ function renderRobotsTxt(baseUrl) {
 }
 
 function renderHome(req) {
+  logEvent(analytics.buildPageViewEvent(req, 'home'));
   const articleIndex = buildSearchIndex();
   const searchData = JSON.stringify(articleIndex);
   const publishedCount = articleIndex.length;
@@ -368,7 +322,29 @@ function renderHome(req) {
         }).join('');
         emptyEl.style.display = matches.length ? 'none' : 'block';
       }
-      input.addEventListener('input', function(e) { renderResults(e.target.value); });
+      let searchTimer = null;
+      function sendSearchAnalytics(query) {
+        const q = String(query || '').trim();
+        if (!q) return;
+        const matches = ARTICLE_INDEX.filter(item => item.search_text.includes(q.toLowerCase()));
+        fetch('/analytics/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event_type: 'search',
+            query: q,
+            results_count: matches.length,
+            has_results: matches.length > 0,
+            timestamp: new Date().toISOString()
+          }),
+          keepalive: true
+        }).catch(function() {});
+      }
+      input.addEventListener('input', function(e) {
+        renderResults(e.target.value);
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function(){ sendSearchAnalytics(e.target.value); }, 500);
+      });
       renderResults('');
     </script>
   </body>
@@ -396,6 +372,7 @@ function renderArticle(req, content, compliance, entry = null) {
 
   const meta = buildArticleMeta(req, content, entry);
   const productEntityMap = new Map((content.product_entities || []).map((item) => [item.product_name, item]));
+  const comparisonRankMap = new Map((content.comparison || []).map((item, index) => [item.name, index + 1]));
   const relatedGuides = getPublishedArticles()
     .filter((article) => article.category === (entry?.category || content.category) && article.article_slug !== (entry?.article_slug || content.article_slug))
     .map((article) => `<a href="/article/${escapeHtml(article.article_slug)}">${escapeHtml(article.title)}</a>`)
@@ -411,7 +388,7 @@ function renderArticle(req, content, compliance, entry = null) {
         <td>${escapeHtml(p.best_for)}</td>
         <td>${escapeHtml(p.total_score)}</td>
         <td>${escapeHtml((p.notable_features || []).join(', '))}</td>
-        <td><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></td>
+        <td><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" data-position-in-article="${comparisonRankMap.get(p.name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (p.name || '').trim())}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></td>
       </tr>
     `
     )
@@ -424,7 +401,7 @@ function renderArticle(req, content, compliance, entry = null) {
         <div><strong>Best for:</strong> ${escapeHtml(item.best_for)}</div>
         <div><strong>Price tier:</strong> ${escapeHtml(item.pricing_tier)}</div>
         <div><strong>Rating:</strong> ${escapeHtml(item.rating)} (${escapeHtml(item.review_count)} reviews)</div>
-        <div style="margin-top:10px;"><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(productEntityMap.get(item.product_name)?.asin || '')}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div>
+        <div style="margin-top:10px;"><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(productEntityMap.get(item.product_name)?.asin || '')}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" data-position-in-article="${comparisonRankMap.get(item.product_name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (item.product_name || '').trim())}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div>
       </div>
     `)
     .join('');
@@ -442,7 +419,7 @@ function renderArticle(req, content, compliance, entry = null) {
         <p><strong>Summary:</strong> ${escapeHtml(item.short_factual_description)}</p>
         <p><strong>Key strengths:</strong> ${escapeHtml((item.key_strengths || []).join(', '))}</p>
         <p><strong>Drawbacks:</strong> ${escapeHtml((item.drawbacks || []).join(', '))}</p>
-        <p><strong>Canonical product URL:</strong> <a class="analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(item.asin)}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">View on Amazon</a></p>
+        <p><strong>Canonical product URL:</strong> <a class="analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(item.asin)}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" data-position-in-article="${comparisonRankMap.get(item.product_name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (item.product_name || '').trim())}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">View on Amazon</a></p>
       </div>
     `)
     .join('');
@@ -661,6 +638,8 @@ function renderArticle(req, content, compliance, entry = null) {
             product_name: link.dataset.productName,
             asin: link.dataset.asin,
             affiliate_url: link.dataset.affiliateUrl,
+            position_in_article: link.dataset.positionInArticle ? Number(link.dataset.positionInArticle) : null,
+            was_top_pick: link.dataset.wasTopPick === 'true',
             timestamp: new Date().toISOString()
           };
           fetch('/analytics/click', {
@@ -671,6 +650,23 @@ function renderArticle(req, content, compliance, entry = null) {
           }).catch(function() {});
         });
       });
+      const pageStart = Date.now();
+      function sendArticleView() {
+        const payload = {
+          event_type: 'article_view',
+          article_slug: ${JSON.stringify(content.article_slug || entry?.article_slug || req.params.slug)},
+          category: ${JSON.stringify(content.category || entry?.category || 'configured category')},
+          time_on_page_ms: Date.now() - pageStart,
+          timestamp: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/analytics/article-view', blob);
+        } else {
+          fetch('/analytics/article-view', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true }).catch(function() {});
+        }
+      }
+      window.addEventListener('pagehide', sendArticleView, { once: true });
     </script>
   </body>
   </html>
@@ -696,19 +692,12 @@ app.get('/article/:slug', (req, res) => {
   }
   const content = bundle.content;
   const compliance = bundle.compliance;
-  if (content && isDisplayableCompliance(compliance)) {
-    logEvent({
-      type: 'article_view',
-      article_slug: content.article_slug || req.params.slug,
-      category: content.category || bundle?.entry?.category || 'configured category',
-      timestamp: new Date().toISOString()
-    });
-  }
+  logEvent(analytics.buildPageViewEvent(req, req.params.slug));
   res.send(renderArticle(req, content, compliance, bundle.entry));
 });
 
 app.post('/analytics/click', (req, res) => {
-  const { article_slug, category, product_name, asin, affiliate_url, timestamp } = req.body || {};
+  const { article_slug, category, product_name, asin, affiliate_url, position_in_article, was_top_pick, timestamp } = req.body || {};
   if (!article_slug || !product_name || !affiliate_url) {
     return res.status(400).json({ ok: false, error: 'missing_required_fields' });
   }
@@ -719,6 +708,35 @@ app.post('/analytics/click', (req, res) => {
     product_name,
     asin: asin || null,
     affiliate_url,
+    position_in_article: Number.isFinite(Number(position_in_article)) ? Number(position_in_article) : null,
+    was_top_pick: Boolean(was_top_pick),
+    timestamp: timestamp || new Date().toISOString()
+  });
+  res.json({ ok: true });
+});
+
+
+app.post('/analytics/search', (req, res) => {
+  const { query, results_count, has_results, timestamp } = req.body || {};
+  if (!String(query || '').trim()) return res.status(400).json({ ok: false, error: 'missing_query' });
+  logEvent({
+    event_type: 'search',
+    query: String(query).trim(),
+    results_count: Number(results_count || 0),
+    has_results: Boolean(has_results),
+    timestamp: timestamp || new Date().toISOString()
+  });
+  res.json({ ok: true });
+});
+
+app.post('/analytics/article-view', (req, res) => {
+  const { article_slug, category, time_on_page_ms, timestamp } = req.body || {};
+  if (!article_slug) return res.status(400).json({ ok: false, error: 'missing_article_slug' });
+  logEvent({
+    event_type: 'article_view',
+    article_slug,
+    category: category || 'configured category',
+    time_on_page_ms: Math.max(0, Number(time_on_page_ms || 0)),
     timestamp: timestamp || new Date().toISOString()
   });
   res.json({ ok: true });
@@ -729,7 +747,7 @@ app.get('/analytics/events', (req, res) => {
 });
 
 app.get('/analytics/summary', (req, res) => {
-  res.json(buildAnalyticsSummary(readEvents()));
+  res.json(readSummary());
 });
 
 app.listen(PORT, () => {
