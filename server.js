@@ -3,10 +3,14 @@ const fs = require('fs');
 const path = require('path');
 const createAnalytics = require('./analytics');
 const createPaidRequests = require('./paid_requests');
+const Stripe = require('stripe');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const SITE_BASE_URL = (process.env.SITE_BASE_URL || 'https://www.bestofprime.online').replace(/\/$/, '');
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+const STRIPE_PRICE_IN_CENTS = Number(process.env.STRIPE_PRICE_IN_CENTS || 100);
+const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
 app.use(express.json());
 
@@ -118,6 +122,45 @@ function buildAbsoluteUrl(req, route = '/') {
   const base = getSiteBaseUrl(req);
   const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
   return `${base}${normalizedRoute}`;
+}
+
+
+function renderInstantAnswerStatusPage(title, message) {
+  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>${escapeHtml(title)}</title></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;color:#0f172a;"><a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`;
+}
+
+async function createInstantAnswerCheckoutSession({ raw_query, requested_by = null, notes = null }) {
+  if (!stripe) throw new Error('stripe_not_configured');
+  const request = paidRequests.createPaidRequest({ raw_query, requested_by, notes });
+  const successUrl = `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(request.request_id)}`;
+  const cancelUrl = `${SITE_BASE_URL}/instant-answer/cancel?request_id=${encodeURIComponent(request.request_id)}`;
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    line_items: [{
+      price_data: {
+        currency: 'usd',
+        unit_amount: STRIPE_PRICE_IN_CENTS,
+        product_data: {
+          name: 'Instant Answer Request',
+          description: `Request for: ${String(raw_query).slice(0, 120)}`
+        }
+      },
+      quantity: 1
+    }],
+    metadata: {
+      request_id: request.request_id,
+      normalized_query: request.normalized_query
+    }
+  });
+  const updated = paidRequests.updateRequestStatus(request.request_id, {
+    stripe_checkout_session_id: session.id,
+    stripe_payment_status: session.payment_status || 'unpaid',
+    payment_status: 'awaiting_payment',
+    request_status: 'awaiting_payment'
+  });
+  return { request: updated, session };
 }
 
 function buildHomeMeta(req) {
@@ -781,6 +824,25 @@ app.post('/analytics/article-view', (req, res) => {
     timestamp: timestamp || new Date().toISOString()
   });
   res.json({ ok: true });
+});
+
+app.post('/api/instant-answer/checkout', async (req, res) => {
+  const { raw_query, requested_by, notes } = req.body || {};
+  if (!String(raw_query || '').trim()) return res.status(400).json({ ok: false, error: 'missing_raw_query' });
+  try {
+    const { request, session } = await createInstantAnswerCheckoutSession({ raw_query: String(raw_query).trim(), requested_by: requested_by || null, notes: notes || null });
+    res.json({ ok: true, request_id: request.request_id, checkout_url: session.url });
+  } catch (error) {
+    res.status(500).json({ ok: false, error: error.message || 'checkout_session_failed' });
+  }
+});
+
+app.get('/instant-answer/success', (req, res) => {
+  res.send(renderInstantAnswerStatusPage('Instant Answer payment received', 'Your payment session completed. We have your request id recorded. Fulfillment is not triggered from this page yet.'));
+});
+
+app.get('/instant-answer/cancel', (req, res) => {
+  res.send(renderInstantAnswerStatusPage('Instant Answer checkout cancelled', 'Your request was saved, but payment is not complete. You can restart checkout later.'));
 });
 
 app.get('/analytics/events', (req, res) => {
