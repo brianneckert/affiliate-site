@@ -98,6 +98,10 @@ module.exports = function createPaidRequests({ rootDir }) {
     return readJson(paidRequestsPath).find((x) => x.request_id === requestId) || null;
   }
 
+  function getRequestByStripeCheckoutSessionId(sessionId) {
+    return readJson(paidRequestsPath).find((x) => x.stripe_checkout_session_id === sessionId) || null;
+  }
+
   function readSearchQueries() {
     return readJson(searchQueriesPath);
   }
@@ -115,6 +119,7 @@ module.exports = function createPaidRequests({ rootDir }) {
     createPaidRequest,
     updateRequestStatus,
     getRequestById,
+    getRequestByStripeCheckoutSessionId,
     readSearchQueries,
     readPaidRequests,
   };

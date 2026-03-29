@@ -10,9 +10,10 @@ const PORT = process.env.PORT || 3000;
 const SITE_BASE_URL = (process.env.SITE_BASE_URL || 'https://www.bestofprime.online').replace(/\/$/, '');
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_PRICE_IN_CENTS = Number(process.env.STRIPE_PRICE_IN_CENTS || 100);
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
-app.use(express.json());
+app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 
 const ARTICLES_PATH = path.join(__dirname, 'data/articles');
 const REGISTRY_PATH = path.join(ARTICLES_PATH, 'registry.json');
@@ -824,6 +825,43 @@ app.post('/analytics/article-view', (req, res) => {
     timestamp: timestamp || new Date().toISOString()
   });
   res.json({ ok: true });
+});
+
+
+app.post('/api/instant-answer/webhook', (req, res) => {
+  if (!stripe || !STRIPE_WEBHOOK_SECRET) {
+    return res.status(500).json({ ok: false, error: 'stripe_webhook_not_configured' });
+  }
+  const signature = req.headers['stripe-signature'];
+  if (!signature) return res.status(400).json({ ok: false, error: 'missing_stripe_signature' });
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, signature, STRIPE_WEBHOOK_SECRET);
+  } catch (error) {
+    return res.status(400).json({ ok: false, error: 'invalid_signature' });
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const request = paidRequests.getRequestByStripeCheckoutSessionId(session.id) || paidRequests.getRequestById(session.metadata?.request_id || '');
+    if (!request) {
+      return res.json({ ok: true, handled: false, reason: 'request_not_found' });
+    }
+    if (request.payment_status === 'paid' || request.paid_at) {
+      return res.json({ ok: true, handled: true, idempotent: true, request_id: request.request_id });
+    }
+    const updated = paidRequests.updateRequestStatus(request.request_id, {
+      payment_status: 'paid',
+      request_status: 'paid',
+      paid_at: new Date().toISOString(),
+      stripe_payment_status: session.payment_status || 'paid',
+      stripe_last_event_id: event.id
+    });
+    return res.json({ ok: true, handled: true, request_id: updated.request_id });
+  }
+
+  res.json({ ok: true, handled: false, ignored_event_type: event.type });
 });
 
 app.post('/api/instant-answer/checkout', async (req, res) => {
