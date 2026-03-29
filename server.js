@@ -895,12 +895,13 @@ app.post('/api/stripe/webhook', (req, res) => {
     return res.status(500).json({ ok: false, error: 'stripe_webhook_not_configured' });
   }
   const signature = req.headers['stripe-signature'];
-  if (!signature) return res.status(400).json({ ok: false, error: 'missing_stripe_signature' });
+  if (!signature) { console.log('[instant-answer webhook] missing signature'); return res.status(400).json({ ok: false, error: 'missing_stripe_signature' }); }
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(req.rawBody, signature, STRIPE_WEBHOOK_SECRET);
   } catch (error) {
+    console.log('[instant-answer webhook] invalid signature');
     return res.status(400).json({ ok: false, error: 'invalid_signature' });
   }
 
@@ -934,27 +935,22 @@ app.post('/api/stripe/webhook', (req, res) => {
       });
     }
     if (!request) {
+      console.log('[instant-answer webhook] request not found', { session_id: session.id, request_id: session.metadata?.request_id || null });
       return res.json({ ok: true, handled: false, reason: 'request_not_found' });
     }
     if (request.payment_status === 'paid' || request.paid_at) {
+      console.log('[instant-answer webhook] idempotent delivery', { request_id: request.request_id, session_id: session.id });
       return res.json({ ok: true, handled: true, idempotent: true, request_id: request.request_id });
     }
     const updated = paidRequests.updateRequestStatus(request.request_id, {
       payment_status: 'paid',
-      request_status: 'ready_for_generation',
+      request_status: 'paid_pending',
       paid_at: new Date().toISOString(),
       stripe_payment_status: 'completed',
       stripe_last_event_id: event.id
     });
-    try {
-      const { execFileSync } = require('child_process');
-      execFileSync('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', updated.request_id], { cwd: __dirname });
-      const refreshed = paidRequests.getRequestById(updated.request_id);
-      return res.json({ ok: true, handled: true, request_id: refreshed.request_id, generated_article_slug: refreshed.generated_article_slug || null });
-    } catch (error) {
-      paidRequests.updateRequestStatus(updated.request_id, { request_status: 'failed', error: String(error.message || error) });
-      return res.status(500).json({ ok: false, handled: true, request_id: updated.request_id, error: String(error.message || error) });
-    }
+    console.log('[instant-answer webhook] payment confirmed', { request_id: updated.request_id, session_id: session.id });
+    return res.json({ ok: true, handled: true, request_id: updated.request_id });
   }
 
   res.json({ ok: true, handled: false, ignored_event_type: event.type });
