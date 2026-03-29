@@ -950,7 +950,15 @@ app.post('/api/stripe/webhook', (req, res) => {
       stripe_last_event_id: event.id
     });
     console.log('[instant-answer webhook] payment confirmed', { request_id: updated.request_id, session_id: session.id });
-    return res.json({ ok: true, handled: true, request_id: updated.request_id });
+    try {
+      const { execFileSync } = require('child_process');
+      execFileSync('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', updated.request_id], { cwd: __dirname });
+      const refreshed = paidRequests.getRequestById(updated.request_id);
+      return res.json({ ok: true, handled: true, request_id: refreshed.request_id, generated_article_slug: refreshed.generated_article_slug || null, request_status: refreshed.request_status });
+    } catch (error) {
+      paidRequests.updateRequestStatus(updated.request_id, { request_status: 'failed', error: String(error.message || error) });
+      return res.status(500).json({ ok: false, handled: true, request_id: updated.request_id, error: String(error.message || error) });
+    }
   }
 
   res.json({ ok: true, handled: false, ignored_event_type: event.type });
