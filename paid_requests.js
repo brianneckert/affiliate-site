@@ -58,6 +58,16 @@ module.exports = function createPaidRequests({ rootDir }) {
     return entry;
   }
 
+
+  function upsertRequest(record) {
+    const rows = readJson(paidRequestsPath);
+    const idx = rows.findIndex((x) => x.request_id === record.request_id);
+    if (idx >= 0) rows[idx] = { ...rows[idx], ...record };
+    else rows.push(record);
+    writeJson(paidRequestsPath, rows);
+    return idx >= 0 ? rows[idx] : record;
+  }
+
   function buildRequestRecord({ raw_query, requested_by = null, notes = null }) {
     const normalized = normalizeSearchQuery(raw_query);
     return {
@@ -70,6 +80,12 @@ module.exports = function createPaidRequests({ rootDir }) {
       request_status: 'awaiting_payment',
       generated_article_slug: null,
       fulfillment_status: null,
+      publish_status: null,
+      published_at: null,
+      published_slug: null,
+      published_url: null,
+      source_request_id: null,
+      content_hash: null,
       generation_attempts: 0,
       fulfillment_output_path: null,
       notes: notes || null,
@@ -123,6 +139,7 @@ module.exports = function createPaidRequests({ rootDir }) {
     updateRequestStatus,
     getRequestById,
     getRequestByStripeCheckoutSessionId,
+    upsertRequest,
     readSearchQueries,
     readPaidRequests,
   };

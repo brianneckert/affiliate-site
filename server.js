@@ -857,7 +857,40 @@ app.post('/analytics/article-view', (req, res) => {
 });
 
 
-app.post('/api/instant-answer/webhook', (req, res) => {
+
+async function recoverRequestFromStripe(requestId) {
+  if (!stripe || !requestId) return null;
+  const sessions = await stripe.checkout.sessions.list({ limit: 20 });
+  const session = (sessions.data || []).find((s) => s.metadata && s.metadata.request_id === requestId);
+  if (!session) return null;
+  const recovered = paidRequests.upsertRequest({
+    request_id: requestId,
+    raw_query: session.metadata?.raw_query || session.metadata?.normalized_query || requestId,
+    normalized_query: session.metadata?.normalized_query || session.metadata?.raw_query || requestId,
+    created_at: new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString(),
+    requested_by: session.metadata?.requested_by || null,
+    payment_status: session.payment_status === 'paid' ? 'paid' : 'awaiting_payment',
+    request_status: session.payment_status === 'paid' ? 'paid' : 'awaiting_payment',
+    generated_article_slug: null,
+    fulfillment_status: null,
+    publish_status: null,
+    published_at: null,
+    published_slug: null,
+    published_url: null,
+    source_request_id: null,
+    content_hash: null,
+    generation_attempts: 0,
+    fulfillment_output_path: null,
+    notes: 'recovered_from_stripe_session',
+    error: null,
+    stripe_checkout_session_id: session.id,
+    stripe_payment_status: session.payment_status || null,
+    paid_at: session.payment_status === 'paid' ? new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString() : null
+  });
+  return recovered;
+}
+
+app.post('/api/stripe/webhook', (req, res) => {
   if (!stripe || !STRIPE_WEBHOOK_SECRET) {
     return res.status(500).json({ ok: false, error: 'stripe_webhook_not_configured' });
   }
@@ -873,7 +906,33 @@ app.post('/api/instant-answer/webhook', (req, res) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const request = paidRequests.getRequestByStripeCheckoutSessionId(session.id) || paidRequests.getRequestById(session.metadata?.request_id || '');
+    let request = paidRequests.getRequestByStripeCheckoutSessionId(session.id) || paidRequests.getRequestById(session.metadata?.request_id || '');
+    if (!request) {
+      request = paidRequests.upsertRequest({
+        request_id: session.metadata?.request_id || session.id,
+        raw_query: session.metadata?.raw_query || session.metadata?.normalized_query || session.id,
+        normalized_query: session.metadata?.normalized_query || session.metadata?.raw_query || session.id,
+        created_at: new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString(),
+        requested_by: session.metadata?.requested_by || null,
+        payment_status: 'awaiting_payment',
+        request_status: 'awaiting_payment',
+        generated_article_slug: null,
+        fulfillment_status: null,
+        publish_status: null,
+        published_at: null,
+        published_slug: null,
+        published_url: null,
+        source_request_id: null,
+        content_hash: null,
+        generation_attempts: 0,
+        fulfillment_output_path: null,
+        notes: 'recovered_in_webhook',
+        error: null,
+        stripe_checkout_session_id: session.id,
+        stripe_payment_status: session.payment_status || null,
+        paid_at: null
+      });
+    }
     if (!request) {
       return res.json({ ok: true, handled: false, reason: 'request_not_found' });
     }
@@ -882,12 +941,20 @@ app.post('/api/instant-answer/webhook', (req, res) => {
     }
     const updated = paidRequests.updateRequestStatus(request.request_id, {
       payment_status: 'paid',
-      request_status: 'paid',
+      request_status: 'ready_for_generation',
       paid_at: new Date().toISOString(),
-      stripe_payment_status: session.payment_status || 'paid',
+      stripe_payment_status: 'completed',
       stripe_last_event_id: event.id
     });
-    return res.json({ ok: true, handled: true, request_id: updated.request_id });
+    try {
+      const { execFileSync } = require('child_process');
+      execFileSync('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', updated.request_id], { cwd: __dirname });
+      const refreshed = paidRequests.getRequestById(updated.request_id);
+      return res.json({ ok: true, handled: true, request_id: refreshed.request_id, generated_article_slug: refreshed.generated_article_slug || null });
+    } catch (error) {
+      paidRequests.updateRequestStatus(updated.request_id, { request_status: 'failed', error: String(error.message || error) });
+      return res.status(500).json({ ok: false, handled: true, request_id: updated.request_id, error: String(error.message || error) });
+    }
   }
 
   res.json({ ok: true, handled: false, ignored_event_type: event.type });
@@ -912,8 +979,9 @@ app.get('/instant-answer/cancel', (req, res) => {
   res.send(renderInstantAnswerStatusPage('Instant Answer checkout cancelled', 'Your request was saved, but payment is not complete. You can restart checkout later.'));
 });
 
-app.get('/api/instant-answer/request/:id', (req, res) => {
-  const request = paidRequests.getRequestById(req.params.id);
+app.get('/api/instant-answer/request/:id', async (req, res) => {
+  let request = paidRequests.getRequestById(req.params.id);
+  if (!request) request = await recoverRequestFromStripe(req.params.id);
   if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
   res.json({ ok: true, request });
 });
