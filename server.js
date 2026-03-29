@@ -344,7 +344,10 @@ function renderHome(req) {
         </div>
       </section>
       <section id="results" class="results"></section>
-      <section id="empty" class="empty" style="display:none;">No matching approved article found. Try a product name, top pick, or category phrase.</section>
+      <section id="empty" class="empty" style="display:none;">
+        <div id="emptyText">No matching approved article found. Try a product name, top pick, or category phrase.</div>
+        <div style="margin-top:14px;"><button id="instantAnswerBtn" style="display:none;background:#0f172a;color:#fff;border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer;">Get an Instant Answer for $1</button></div>
+      </section>
       <div class="footer-note">Local-only experience. Only compliance-approved article content is surfaced here.</div>
     </main>
     <script>
@@ -352,6 +355,7 @@ function renderHome(req) {
       const input = document.getElementById('searchInput');
       const resultsEl = document.getElementById('results');
       const emptyEl = document.getElementById('empty');
+      const instantAnswerBtn = document.getElementById('instantAnswerBtn');
       function renderResults(query) {
         const q = String(query || '').trim().toLowerCase();
         const matches = !q ? ARTICLE_INDEX : ARTICLE_INDEX.filter(item => item.search_text.includes(q));
@@ -367,6 +371,7 @@ function renderHome(req) {
             '</a>';
         }).join('');
         emptyEl.style.display = matches.length ? 'none' : 'block';
+        instantAnswerBtn.style.display = (!matches.length && q) ? 'inline-block' : 'none';
       }
       const sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'sess-' + Math.random().toString(36).slice(2);
       function sendPresence(closed) {
@@ -397,6 +402,30 @@ function renderHome(req) {
           keepalive: true
         }).catch(function() {});
       }
+      instantAnswerBtn.addEventListener('click', async function() {
+        const q = String(input.value || '').trim();
+        if (!q) return;
+        instantAnswerBtn.disabled = true;
+        instantAnswerBtn.textContent = 'Creating checkout…';
+        try {
+          const res = await fetch('/api/instant-answer/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ raw_query: q, notes: 'search miss instant answer' })
+          });
+          const data = await res.json();
+          if (res.ok && data.checkout_url) {
+            window.location.href = data.checkout_url;
+            return;
+          }
+          alert(data.error || 'Unable to create checkout right now.');
+        } catch (err) {
+          alert('Unable to create checkout right now.');
+        } finally {
+          instantAnswerBtn.disabled = false;
+          instantAnswerBtn.textContent = 'Get an Instant Answer for $1';
+        }
+      });
       input.addEventListener('input', function(e) {
         renderResults(e.target.value);
         clearTimeout(searchTimer);
@@ -881,6 +910,12 @@ app.get('/instant-answer/success', (req, res) => {
 
 app.get('/instant-answer/cancel', (req, res) => {
   res.send(renderInstantAnswerStatusPage('Instant Answer checkout cancelled', 'Your request was saved, but payment is not complete. You can restart checkout later.'));
+});
+
+app.get('/api/instant-answer/request/:id', (req, res) => {
+  const request = paidRequests.getRequestById(req.params.id);
+  if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
+  res.json({ ok: true, request });
 });
 
 app.get('/analytics/events', (req, res) => {
