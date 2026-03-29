@@ -18,7 +18,6 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
   }
 
   function defaultSummary() {
-    const activeNow = cleanupActiveSessions(readActiveSessions());
     return {
       generated_at: new Date().toISOString(),
       traffic: {},
