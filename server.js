@@ -4,7 +4,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SITE_BASE_URL = (process.env.SITE_BASE_URL || 'https://affiliate-site-9r59.onrender.com').replace(/\/$/, '');
+const SITE_BASE_URL = (process.env.SITE_BASE_URL || 'https://www.bestofprime.online').replace(/\/$/, '');
 
 app.use(express.json());
 
