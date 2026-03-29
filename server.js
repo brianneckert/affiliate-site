@@ -322,6 +322,16 @@ function renderHome(req) {
         }).join('');
         emptyEl.style.display = matches.length ? 'none' : 'block';
       }
+      const sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'sess-' + Math.random().toString(36).slice(2);
+      function sendPresence(closed) {
+        const payload = { session_id: sessionId, article_slug: 'home', path: location.pathname, closed_at: closed ? new Date().toISOString() : null };
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        if (navigator.sendBeacon) navigator.sendBeacon('/analytics/presence', blob);
+        else fetch('/analytics/presence', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload), keepalive:true }).catch(function(){});
+      }
+      sendPresence(false);
+      setInterval(function(){ sendPresence(false); }, 30000);
+      window.addEventListener('pagehide', function(){ sendPresence(true); }, { once: true });
       let searchTimer = null;
       function sendSearchAnalytics(query) {
         const q = String(query || '').trim();
@@ -650,6 +660,15 @@ function renderArticle(req, content, compliance, entry = null) {
           }).catch(function() {});
         });
       });
+      const sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'sess-' + Math.random().toString(36).slice(2);
+      function sendPresence(closed) {
+        const payload = { session_id: sessionId, article_slug: ${JSON.stringify(content.article_slug || entry?.article_slug || req.params.slug)}, path: location.pathname, closed_at: closed ? new Date().toISOString() : null };
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        if (navigator.sendBeacon) navigator.sendBeacon('/analytics/presence', blob);
+        else fetch('/analytics/presence', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload), keepalive:true }).catch(function(){});
+      }
+      sendPresence(false);
+      setInterval(function(){ sendPresence(false); }, 30000);
       const pageStart = Date.now();
       function sendArticleView() {
         const payload = {
@@ -666,7 +685,7 @@ function renderArticle(req, content, compliance, entry = null) {
           fetch('/analytics/article-view', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true }).catch(function() {});
         }
       }
-      window.addEventListener('pagehide', sendArticleView, { once: true });
+      window.addEventListener('pagehide', function(){ sendArticleView(); sendPresence(true); }, { once: true });
     </script>
   </body>
   </html>
@@ -715,6 +734,22 @@ app.post('/analytics/click', (req, res) => {
   res.json({ ok: true });
 });
 
+
+app.post('/analytics/presence', (req, res) => {
+  const { session_id, article_slug, path: current_path, closed_at } = req.body || {};
+  if (!session_id) return res.status(400).json({ ok: false, error: 'missing_session_id' });
+  const payload = analytics.updatePresence({
+    session_id,
+    article_slug: article_slug || 'home',
+    path: current_path || '/',
+    closed_at: closed_at || null
+  });
+  res.json({ ok: true, current_viewers: payload.current_viewers });
+});
+
+app.get('/analytics/realtime', (req, res) => {
+  res.json(analytics.readActiveSessions());
+});
 
 app.post('/analytics/search', (req, res) => {
   const { query, results_count, has_results, timestamp } = req.body || {};

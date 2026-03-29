@@ -6,6 +6,7 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
   const analyticsDir = path.join(rootDir, 'data/analytics');
   const eventsPath = path.join(analyticsDir, 'events.json');
   const summaryPath = path.join(analyticsDir, 'summary.json');
+  const activeSessionsPath = path.join(analyticsDir, 'active_sessions.json');
   let queue = [];
   let flushTimer = null;
 
@@ -13,9 +14,11 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
     if (!fs.existsSync(analyticsDir)) fs.mkdirSync(analyticsDir, { recursive: true });
     if (!fs.existsSync(eventsPath)) fs.writeFileSync(eventsPath, '[]\n');
     if (!fs.existsSync(summaryPath)) fs.writeFileSync(summaryPath, JSON.stringify(defaultSummary(), null, 2));
+    if (!fs.existsSync(activeSessionsPath)) fs.writeFileSync(activeSessionsPath, JSON.stringify({ generated_at: new Date().toISOString(), current_viewers: 0, sessions: [] }, null, 2));
   }
 
   function defaultSummary() {
+    const activeNow = cleanupActiveSessions(readActiveSessions());
     return {
       generated_at: new Date().toISOString(),
       traffic: {},
@@ -25,6 +28,7 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
       monetization: {},
       search_intelligence: {},
       charts: {},
+      realtime: { current_viewers: 0, active_sessions: [] },
       events_count: 0,
     };
   }
@@ -42,6 +46,11 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
   function readSummary() {
     ensureStores();
     return JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+  }
+
+  function readActiveSessions() {
+    ensureStores();
+    return JSON.parse(fs.readFileSync(activeSessionsPath, 'utf8'));
   }
 
   function hashIp(ip) {
@@ -106,6 +115,34 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
       ...classifyTrafficSource(referrer),
       timestamp: new Date().toISOString(),
     };
+  }
+
+
+  function cleanupActiveSessions(payload) {
+    const now = Date.now();
+    const sessions = (payload.sessions || []).filter((s) => now - new Date(s.last_seen_at || 0).getTime() <= 90000 && !s.closed_at);
+    return {
+      generated_at: new Date().toISOString(),
+      current_viewers: sessions.length,
+      sessions,
+    };
+  }
+
+  function updatePresence(session) {
+    ensureStores();
+    const payload = cleanupActiveSessions(readActiveSessions());
+    const sessions = payload.sessions || [];
+    const idx = sessions.findIndex((s) => s.session_id === session.session_id);
+    if (session.closed_at) {
+      if (idx >= 0) sessions.splice(idx, 1);
+    } else if (idx >= 0) {
+      sessions[idx] = { ...sessions[idx], ...session, last_seen_at: new Date().toISOString() };
+    } else {
+      sessions.push({ ...session, last_seen_at: new Date().toISOString() });
+    }
+    const next = cleanupActiveSessions({ sessions });
+    fs.writeFileSync(activeSessionsPath, JSON.stringify(next, null, 2));
+    return next;
   }
 
   function summarize(events) {
@@ -203,6 +240,7 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
       item.avg_time_on_page_seconds = item.views ? Number((item.total_time_on_page_ms / item.views / 1000).toFixed(2)) : 0;
     }
 
+    const activeNow = cleanupActiveSessions(readActiveSessions());
     return {
       generated_at: new Date().toISOString(),
       events_count: events.length,
@@ -238,6 +276,10 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
       charts: {
         traffic_over_time: Object.entries(trafficByDay).sort((a,b)=>a[0].localeCompare(b[0])).map(([date,page_views]) => ({ date, page_views })),
         clicks_over_time: Object.entries(clicksByDay).sort((a,b)=>a[0].localeCompare(b[0])).map(([date, clicks]) => ({ date, clicks })),
+      },
+      realtime: {
+        current_viewers: activeNow.current_viewers,
+        active_sessions: activeNow.sessions
       }
     };
   }
@@ -262,5 +304,5 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
     fs.writeFileSync(summaryPath, JSON.stringify(summarize(readEvents()), null, 2));
   } catch {}
 
-  return { ensureStores, readEvents, readSummary, appendEvent, summarize, buildPageViewEvent, classifyTrafficSource, getReferrerDomain, getDeviceType };
+  return { ensureStores, readEvents, readSummary, readActiveSessions, appendEvent, summarize, buildPageViewEvent, classifyTrafficSource, getReferrerDomain, getDeviceType, updatePresence };
 };
