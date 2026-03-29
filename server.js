@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const createAnalytics = require('./analytics');
+const createPaidRequests = require('./paid_requests');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(express.json());
 const ARTICLES_PATH = path.join(__dirname, 'data/articles');
 const REGISTRY_PATH = path.join(ARTICLES_PATH, 'registry.json');
 const analytics = createAnalytics({ rootDir: __dirname, registryPath: REGISTRY_PATH });
+const paidRequests = createPaidRequests({ rootDir: __dirname });
 
 function readJson(name) {
   const file = path.join(ARTICLES_PATH, name);
@@ -345,6 +347,7 @@ function renderHome(req) {
             query: q,
             results_count: matches.length,
             has_results: matches.length > 0,
+            matched_article_slug: matches[0] ? String(matches[0].route || '').replace('/article/', '') : null,
             timestamp: new Date().toISOString()
           }),
           keepalive: true
@@ -752,15 +755,18 @@ app.get('/analytics/realtime', (req, res) => {
 });
 
 app.post('/analytics/search', (req, res) => {
-  const { query, results_count, has_results, timestamp } = req.body || {};
+  const { query, results_count, has_results, matched_article_slug, timestamp } = req.body || {};
   if (!String(query || '').trim()) return res.status(400).json({ ok: false, error: 'missing_query' });
+  const cleanedQuery = String(query).trim();
   logEvent({
     event_type: 'search',
-    query: String(query).trim(),
+    query: cleanedQuery,
     results_count: Number(results_count || 0),
     has_results: Boolean(has_results),
+    matched_article_slug: matched_article_slug || null,
     timestamp: timestamp || new Date().toISOString()
   });
+  paidRequests.appendSearchQuery({ raw_query: cleanedQuery, matched_article_slug: matched_article_slug || null, timestamp: timestamp || new Date().toISOString() });
   res.json({ ok: true });
 });
 
