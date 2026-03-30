@@ -202,8 +202,8 @@ async function createInstantAnswerCheckoutSession({ raw_query, requested_by = nu
 
 function buildHomeMeta(req) {
   return {
-    title: 'Affiliate Site | Product guides and comparison-driven buying picks',
-    description: 'Browse published product guides, comparisons, and top picks across approved categories with crawlable article routes and registry-driven publishing.',
+    title: 'Best of Amazon Prime - Every Time | Next Generation Product Research Tool',
+    description: 'Best of Amazon Prime - Every Time | Next Generation Product Research Tool',
     canonicalUrl: buildAbsoluteUrl(req, '/'),
     imageUrl: getSocialImageUrl(req)
   };
