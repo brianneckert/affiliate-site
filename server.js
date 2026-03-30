@@ -165,6 +165,165 @@ function renderInstantAnswerStatusPage(title, message) {
   return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>${escapeHtml(title)}</title>${renderFaviconMarkup()}</head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;color:#0f172a;"><a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`;
 }
 
+function renderInstantAnswerSuccessPage(requestId) {
+  return `<!doctype html>
+  <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Building your Instant Answer</title>
+    ${renderFaviconMarkup()}
+    <style>
+      :root {
+        --bg1:#060b16;
+        --bg2:#0b1220;
+        --text:#f8fafc;
+        --muted:#c8d3e6;
+        --panel:rgba(255,255,255,.07);
+        --panelBorder:rgba(255,255,255,.12);
+        --green1:#22c55e;
+        --green2:#16a34a;
+      }
+      * { box-sizing:border-box; }
+      body {
+        margin:0;
+        min-height:100vh;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        color:var(--text);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(96,165,250,.18), transparent 28%),
+          radial-gradient(circle at 80% 10%, rgba(94,234,212,.12), transparent 22%),
+          linear-gradient(180deg, var(--bg1), var(--bg2));
+      }
+      .wrap { max-width:860px; margin:0 auto; padding:56px 20px 80px; }
+      .back { color:#93c5fd; text-decoration:none; font-weight:700; }
+      .card {
+        margin-top:18px;
+        background:var(--panel);
+        border:1px solid var(--panelBorder);
+        border-radius:28px;
+        padding:30px;
+        backdrop-filter:blur(18px);
+        box-shadow:0 20px 60px rgba(0,0,0,.35);
+      }
+      h1 { margin:0 0 10px; font-size:42px; line-height:1.05; }
+      .sub { color:var(--muted); font-size:18px; line-height:1.7; }
+      .bar-shell { margin:24px 0 18px; width:100%; height:16px; border-radius:999px; background:rgba(255,255,255,.10); overflow:hidden; }
+      .bar { height:100%; width:8%; border-radius:999px; background:linear-gradient(90deg,var(--green1),var(--green2)); transition:width .35s ease; }
+      .status-badge {
+        display:inline-block; margin-top:12px; padding:8px 12px; border-radius:999px;
+        background:rgba(34,197,94,.12); color:#bbf7d0; border:1px solid rgba(34,197,94,.24); font-size:13px; font-weight:700;
+      }
+      .steps { margin:22px 0 0; display:grid; gap:12px; }
+      .step {
+        display:flex; gap:12px; align-items:flex-start; padding:14px 16px; border-radius:18px;
+        border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.03);
+      }
+      .dot { width:12px; height:12px; margin-top:5px; border-radius:50%; background:rgba(255,255,255,.24); flex:0 0 12px; }
+      .step.done .dot, .step.active .dot { background:#22c55e; box-shadow:0 0 0 6px rgba(34,197,94,.14); }
+      .step-title { font-weight:800; margin-bottom:4px; }
+      .step-copy { color:var(--muted); line-height:1.55; }
+      .cta { margin-top:24px; display:none; }
+      .cta a {
+        display:inline-block; background:linear-gradient(180deg,var(--green1),var(--green2)); color:white; text-decoration:none;
+        padding:16px 22px; border-radius:16px; font-weight:800; font-size:20px;
+      }
+      .small { margin-top:14px; color:#93a5c3; font-size:14px; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <a class="back" href="/">← Back</a>
+      <section class="card">
+        <h1 id="title">Payment received. Building your Instant Answer now.</h1>
+        <div id="sub" class="sub">We’re gathering data, comparing the top 5 Amazon options, and selecting a clear winner for you.</div>
+        <div class="status-badge" id="badge">Working on it</div>
+        <div class="bar-shell"><div class="bar" id="bar"></div></div>
+        <div class="steps">
+          <div class="step active" id="step-payment"><div class="dot"></div><div><div class="step-title">Payment confirmed</div><div class="step-copy">Your request is recorded and queued.</div></div></div>
+          <div class="step" id="step-data"><div class="dot"></div><div><div class="step-title">Gathering Amazon product data</div><div class="step-copy">Finding the top 5 best matches for your search.</div></div></div>
+          <div class="step" id="step-compare"><div class="dot"></div><div><div class="step-title">Comparing and selecting a winner</div><div class="step-copy">Ranking the strongest options and choosing a clear top pick.</div></div></div>
+          <div class="step" id="step-publish"><div class="dot"></div><div><div class="step-title">Publishing your article</div><div class="step-copy">Preparing the final article page and redirecting you automatically.</div></div></div>
+        </div>
+        <div class="cta" id="cta"><a id="articleLink" href="#">Open your article</a></div>
+        <div class="small" id="small">Request ID: ${escapeHtml(requestId || '')}</div>
+      </section>
+    </main>
+    <script>
+      const requestId = ${JSON.stringify(requestId || '')};
+      const titleEl = document.getElementById('title');
+      const subEl = document.getElementById('sub');
+      const badgeEl = document.getElementById('badge');
+      const barEl = document.getElementById('bar');
+      const ctaEl = document.getElementById('cta');
+      const articleLinkEl = document.getElementById('articleLink');
+      const steps = {
+        payment: document.getElementById('step-payment'),
+        data: document.getElementById('step-data'),
+        compare: document.getElementById('step-compare'),
+        publish: document.getElementById('step-publish')
+      };
+
+      function setStepState(activeKey, doneKeys, progress, badge, sub) {
+        Object.entries(steps).forEach(([key, el]) => {
+          el.classList.remove('active', 'done');
+          if (doneKeys.includes(key)) el.classList.add('done');
+          if (key === activeKey) el.classList.add('active');
+        });
+        barEl.style.width = progress + '%';
+        badgeEl.textContent = badge;
+        if (sub) subEl.textContent = sub;
+      }
+
+      function applyRequestState(req) {
+        const status = req?.request_status || '';
+        const payment = req?.payment_status || '';
+        const targetUrl = req?.published_url || (req?.published_slug ? '/article/' + req.published_slug : null);
+
+        if (targetUrl && (status === 'published' || req?.publish_status === 'published')) {
+          setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your Instant Answer is ready. Redirecting you now...');
+          titleEl.textContent = 'Your Instant Answer is ready.';
+          ctaEl.style.display = 'block';
+          articleLinkEl.href = targetUrl;
+          setTimeout(() => { window.location.href = targetUrl; }, 1200);
+          return true;
+        }
+
+        if (payment === 'paid' && (status === 'generating' || status === 'paid_pending')) {
+          setStepState('data', ['payment'], 45, 'Gathering data', 'We are collecting the strongest Amazon matches for your query.');
+        } else if (payment === 'paid' && status === 'validated') {
+          setStepState('compare', ['payment','data'], 72, 'Comparing options', 'We have the candidates and are selecting the clearest winner now.');
+        } else if (payment === 'paid') {
+          setStepState('publish', ['payment','data','compare'], 88, 'Publishing article', 'We are finalizing and publishing your comparison page.');
+        } else {
+          setStepState('payment', [], 16, 'Waiting for payment confirmation', 'Your payment completed. We are waiting for the payment confirmation to finish syncing.');
+        }
+        return false;
+      }
+
+      async function poll() {
+        if (!requestId) return;
+        try {
+          const res = await fetch('/api/instant-answer/request/' + encodeURIComponent(requestId), { cache: 'no-store' });
+          const data = await res.json();
+          if (res.ok && data.request) {
+            const done = applyRequestState(data.request);
+            if (done) return;
+          } else {
+            badgeEl.textContent = 'Looking for your request';
+          }
+        } catch {
+          badgeEl.textContent = 'Reconnecting';
+        }
+        setTimeout(poll, 2000);
+      }
+
+      poll();
+    </script>
+  </body>
+  </html>`;
+}
+
 async function createInstantAnswerCheckoutSession({ raw_query, requested_by = null, notes = null }) {
   if (!stripe) throw new Error('stripe_not_configured');
   const request = paidRequests.createPaidRequest({ raw_query, requested_by, notes });
@@ -1076,7 +1235,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
 });
 
 app.get('/instant-answer/success', (req, res) => {
-  res.send(renderInstantAnswerStatusPage('Instant Answer payment received', 'Your payment session completed. We have your request id recorded. Fulfillment is not triggered from this page yet.'));
+  res.send(renderInstantAnswerSuccessPage(req.query.request_id || ''));
 });
 
 app.get('/instant-answer/cancel', (req, res) => {
