@@ -153,15 +153,12 @@ function renderFaviconMarkup() {
 function renderFaviconSvg() {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#60a5fa"/>
-      <stop offset="100%" stop-color="#2dd4bf"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="16" fill="#0b1220"/>
-  <path d="M17 43V21h11.5c8.3 0 13.5 4 13.5 10.9 0 7.1-5.3 11.1-13.5 11.1H17Zm8-6h3.1c3.8 0 5.8-1.8 5.8-5.1 0-3.2-2-4.9-5.8-4.9H25V37Z" fill="url(#g)"/>
-  <path d="M44 19l3 3-14 23-7-7 3.1-3.1 3 3z" fill="#f8fafc" opacity="0.95"/>
+  <rect width="64" height="64" rx="16" fill="#ffffff"/>
+  <rect x="17" y="10" width="6" height="44" rx="3" fill="#FF9900"/>
+  <circle cx="27" cy="20" r="8" fill="none" stroke="#232F3E" stroke-width="5"/>
+  <circle cx="37" cy="32" r="14" fill="none" stroke="#232F3E" stroke-width="5.5"/>
+  <circle cx="27" cy="44" r="8" fill="none" stroke="#232F3E" stroke-width="5"/>
+  <path d="M43 17l2.6 2.7-11.8 17.8-5.5-5.4 2.8-2.8 2.5 2.4z" fill="#FF9900"/>
 </svg>`;
 }
 
