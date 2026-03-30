@@ -230,7 +230,7 @@ function renderRobotsTxt(baseUrl) {
 function renderHome(req) {
   logEvent(analytics.buildPageViewEvent(req, 'home'));
   const articleIndex = buildSearchIndex();
-  const searchData = JSON.stringify(articleIndex);
+  const searchData = JSON.stringify(articleIndex).replace(/</g, '\\u003c');
   const publishedCount = articleIndex.length;
   const meta = buildHomeMeta(req);
   return `<!doctype html>
@@ -419,8 +419,9 @@ function renderHome(req) {
       </section>
       <div class="footer-note">Local-only experience. Only compliance-approved article content is surfaced here.</div>
     </main>
+    <script id="articleIndexData" type="application/json">${searchData}</script>
     <script>
-      const ARTICLE_INDEX = ${searchData};
+      const ARTICLE_INDEX = JSON.parse(document.getElementById('articleIndexData').textContent || '[]');
       const input = document.getElementById('searchInput');
       const resultsEl = document.getElementById('results');
       const emptyEl = document.getElementById('empty');
@@ -452,7 +453,7 @@ function renderHome(req) {
         if (!matches.length && q) {
           emptyEl.style.display = 'block';
           instantAnswerBtn.style.display = 'inline-block';
-          emptyText.innerHTML = 'We will create an instant comparison for you now. Pay $1 to save time and money on your shopping.<br><br><strong>What you'll get:</strong> a comparison of the top 5 <strong>' + escapeHtml(raw) + '</strong> available on Amazon.com with a clear winner selected + a link to the exact products we compare.<br><br>Let our deep learning AI model do the heavy lifting.';
+          emptyText.innerHTML = "We will create an instant comparison for you now. Pay $1 to save time and money on your shopping.<br><br><strong>What you'll get:</strong> a comparison of the top 5 <strong>" + escapeHtml(raw) + "</strong> available on Amazon.com with a clear winner selected + a link to the exact products we compare.<br><br>Let our deep learning AI model do the heavy lifting.";
         } else {
           emptyEl.style.display = matches.length ? 'none' : 'block';
           instantAnswerBtn.style.display = 'none';
