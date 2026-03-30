@@ -4,6 +4,7 @@ const crypto = require('crypto');
 
 module.exports = function createAnalytics({ rootDir, registryPath }) {
   const analyticsDir = path.join(rootDir, 'data/analytics');
+  const REPORT_TIME_ZONE = 'America/Los_Angeles';
   const eventsPath = path.join(analyticsDir, 'events.json');
   const summaryPath = path.join(analyticsDir, 'summary.json');
   const activeSessionsPath = path.join(analyticsDir, 'active_sessions.json');
@@ -42,9 +43,32 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
     return JSON.parse(fs.readFileSync(eventsPath, 'utf8'));
   }
 
+  function formatDayKey(dateLike) {
+    const date = new Date(dateLike || Date.now());
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: REPORT_TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(date);
+    const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+    return `${map.year}-${map.month}-${map.day}`;
+  }
+
+  function getLastNDays(count = 30) {
+    const days = [];
+    const now = new Date();
+    for (let i = count - 1; i >= 0; i -= 1) {
+      days.push(formatDayKey(now.getTime() - i * 24 * 60 * 60 * 1000));
+    }
+    return days;
+  }
+
   function readSummary() {
     ensureStores();
-    return JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+    const next = summarize(readEvents());
+    fs.writeFileSync(summaryPath, JSON.stringify(next, null, 2));
+    return next;
   }
 
   function readActiveSessions() {
@@ -153,6 +177,7 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
 
     const trafficByDay = {};
     const clicksByDay = {};
+    const last30Days = getLastNDays(30);
     const sourceCounts = {};
     const referrerCounts = {};
     const countryCounts = {};
@@ -169,7 +194,7 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
 
     for (const event of events) {
       const ts = new Date(event.timestamp || Date.now());
-      const day = ts.toISOString().slice(0, 10);
+      const day = formatDayKey(ts);
       const slug = event.article_slug || 'home';
       const ipHash = event.ip_hash || 'unknown';
 
@@ -239,6 +264,11 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
       item.avg_time_on_page_seconds = item.views ? Number((item.total_time_on_page_ms / item.views / 1000).toFixed(2)) : 0;
     }
 
+    for (const day of last30Days) {
+      if (!(day in trafficByDay)) trafficByDay[day] = 0;
+      if (!(day in clicksByDay)) clicksByDay[day] = 0;
+    }
+
     const activeNow = cleanupActiveSessions(readActiveSessions());
     return {
       generated_at: new Date().toISOString(),
@@ -273,8 +303,8 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
         queries_with_no_results: Object.entries(zeroSearches).sort((a,b)=>b[1]-a[1]).slice(0,20).map(([query,count]) => ({ query, count })),
       },
       charts: {
-        traffic_over_time: Object.entries(trafficByDay).sort((a,b)=>a[0].localeCompare(b[0])).map(([date,page_views]) => ({ date, page_views })),
-        clicks_over_time: Object.entries(clicksByDay).sort((a,b)=>a[0].localeCompare(b[0])).map(([date, clicks]) => ({ date, clicks })),
+        traffic_over_time: last30Days.map((date) => ({ date, page_views: trafficByDay[date] || 0 })),
+        clicks_over_time: last30Days.map((date) => ({ date, clicks: clicksByDay[date] || 0 })),
       },
       realtime: {
         current_viewers: activeNow.current_viewers,

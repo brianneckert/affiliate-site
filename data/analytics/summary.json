@@ -1,0 +1,452 @@
+{
+  "generated_at": "2026-03-30T14:32:34.769Z",
+  "events_count": 38,
+  "traffic": {
+    "total_visitors_today": 2,
+    "total_visitors_week": 2,
+    "page_views_today": 6,
+    "page_views_week": 34,
+    "unique_visitors_today_approx": 2,
+    "unique_visitors_week_approx": 2
+  },
+  "sources": {
+    "traffic_by_source": [
+      {
+        "source": "unknown",
+        "count": 29
+      },
+      {
+        "source": "direct",
+        "count": 3
+      },
+      {
+        "source": "google",
+        "count": 2
+      }
+    ],
+    "top_referrers": [
+      {
+        "referrer_domain": "google.com",
+        "count": 2
+      }
+    ]
+  },
+  "geography": {
+    "traffic_by_country": [
+      {
+        "country": "unknown",
+        "count": 29
+      },
+      {
+        "country": "UNKNOWN",
+        "count": 5
+      }
+    ]
+  },
+  "content_performance": {
+    "articles_published": 111,
+    "most_viewed_articles": [
+      {
+        "article_slug": "air-purifiers",
+        "views": 7,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-purifiers-for-allergies",
+        "views": 4,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-purifiers-for-pets",
+        "views": 3,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-purifiers-for-large-rooms",
+        "views": 2,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "quiet-air-purifiers",
+        "views": 2,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "value-blenders",
+        "views": 1,
+        "clicks": 1,
+        "ctr": 1,
+        "avg_time_on_page_seconds": 12.35
+      },
+      {
+        "article_slug": "air-fryers",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-fryers-for-dorm-rooms",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-fryers-for-small-kitchens",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-purifiers-for-smoke",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "air-purifiers-under-200",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "blenders",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "blenders-for-protein-shakes",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "electric-toothbrushes",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "espresso-grinders",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      },
+      {
+        "article_slug": "flat-burr-espresso-grinders",
+        "views": 1,
+        "clicks": 0,
+        "ctr": 0,
+        "avg_time_on_page_seconds": 0
+      }
+    ],
+    "average_ctr_per_article": 0.0625
+  },
+  "monetization": {
+    "total_clicks": 1,
+    "clicks_per_article": [
+      {
+        "article_slug": "value-blenders",
+        "clicks": 1
+      }
+    ],
+    "most_clicked_products": [
+      {
+        "product_name": "Vitamix 5200",
+        "article_slug": "value-blenders",
+        "clicks": 1,
+        "position_in_article": 1,
+        "was_top_pick": true,
+        "asin": "B008H4SLV6",
+        "ctr_per_product": 1
+      }
+    ]
+  },
+  "search_intelligence": {
+    "top_search_queries": [
+      {
+        "query": "mini waffle maker",
+        "count": 2
+      },
+      {
+        "query": "best blenders",
+        "count": 1
+      }
+    ],
+    "queries_with_no_results": [
+      {
+        "query": "mini waffle maker",
+        "count": 2
+      }
+    ]
+  },
+  "charts": {
+    "traffic_over_time": [
+      {
+        "date": "2026-03-01",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-02",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-03",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-04",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-05",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-06",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-07",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-08",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-09",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-10",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-11",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-12",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-13",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-14",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-15",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-16",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-17",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-18",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-19",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-20",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-21",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-22",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-23",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-24",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-25",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-26",
+        "page_views": 0
+      },
+      {
+        "date": "2026-03-27",
+        "page_views": 24
+      },
+      {
+        "date": "2026-03-28",
+        "page_views": 4
+      },
+      {
+        "date": "2026-03-29",
+        "page_views": 6
+      },
+      {
+        "date": "2026-03-30",
+        "page_views": 0
+      }
+    ],
+    "clicks_over_time": [
+      {
+        "date": "2026-03-01",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-02",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-03",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-04",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-05",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-06",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-07",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-08",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-09",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-10",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-11",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-12",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-13",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-14",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-15",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-16",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-17",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-18",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-19",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-20",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-21",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-22",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-23",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-24",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-25",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-26",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-27",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-28",
+        "clicks": 0
+      },
+      {
+        "date": "2026-03-29",
+        "clicks": 1
+      },
+      {
+        "date": "2026-03-30",
+        "clicks": 0
+      }
+    ]
+  },
+  "realtime": {
+    "current_viewers": 0,
+    "active_sessions": []
+  }
+}
