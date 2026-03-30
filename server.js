@@ -126,6 +126,16 @@ function buildAbsoluteUrl(req, route = '/') {
   return `${base}${normalizedRoute}`;
 }
 
+function slugifyQuery(value) {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 function getSocialImageUrl(req) {
   return buildAbsoluteUrl(req, '/social-share.jpg?v=20260330a');
 }
@@ -1282,6 +1292,23 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     }
   }
   if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
+  if (!request.generated_article_slug && !request.published_slug && ['validated', 'generating', 'paid_pending'].includes(request.request_status)) {
+    const inferredSlug = slugifyQuery(request.normalized_query || request.raw_query);
+    const registry = readRegistry();
+    const published = (registry.articles || []).find((a) => a.article_slug === inferredSlug && a.publish_status === 'published');
+    if (published) {
+      request = paidRequests.updateRequestStatus(request.request_id, {
+        generated_article_slug: inferredSlug,
+        published_slug: inferredSlug,
+        published_url: `${SITE_BASE_URL}/article/${inferredSlug}`,
+        publish_status: 'published',
+        request_status: 'published',
+        fulfillment_status: 'completed',
+        published_at: new Date().toISOString(),
+        error: null
+      }) || request;
+    }
+  }
   if (request.payment_status === 'paid' && request.request_status === 'paid_pending') {
     kickOffInstantAnswerProcessing(request.request_id);
   }
