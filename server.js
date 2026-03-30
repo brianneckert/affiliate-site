@@ -360,12 +360,40 @@ function renderHome(req) {
         max-width:920px;
         margin:18px auto 0;
         text-align:center;
-        color:#9fb0c8;
-        padding:28px;
-        border:1px dashed rgba(255,255,255,.16);
-        border-radius:18px;
-        background:rgba(255,255,255,.03);
+        color:#dbe7f7;
+        padding:30px 26px;
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:22px;
+        background:rgba(255,255,255,.04);
+        box-shadow:var(--shadow);
       }
+      .empty-title {
+        font-size:24px;
+        font-weight:800;
+        color:#ffffff;
+        margin-bottom:16px;
+      }
+      .instant-answer-btn {
+        display:none;
+        background:linear-gradient(180deg,#22c55e,#16a34a);
+        color:#ffffff;
+        border:0;
+        border-radius:18px;
+        padding:18px 28px;
+        font-size:24px;
+        font-weight:800;
+        cursor:pointer;
+        box-shadow:0 16px 34px rgba(34,197,94,.28);
+      }
+      .instant-answer-btn:hover { transform:translateY(-1px); }
+      .empty-copy {
+        max-width:760px;
+        margin:18px auto 0;
+        color:#c8d3e6;
+        font-size:16px;
+        line-height:1.7;
+      }
+      .empty-copy strong { color:#ffffff; }
       .footer-note { margin-top:26px; text-align:center; color:#7f91ac; font-size:13px; }
     </style>
   </head>
@@ -385,8 +413,9 @@ function renderHome(req) {
       </section>
       <section id="results" class="results"></section>
       <section id="empty" class="empty" style="display:none;">
-        <div id="emptyText">No matching approved article found. Try a product name, top pick, or category phrase.</div>
-        <div style="margin-top:14px;"><button id="instantAnswerBtn" style="display:none;background:#0f172a;color:#fff;border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer;">Get an Instant Answer for $1</button></div>
+        <div class="empty-title">No matching approved article found.</div>
+        <button id="instantAnswerBtn" class="instant-answer-btn">Get an Instant Answer for $1</button>
+        <div id="emptyText" class="empty-copy"></div>
       </section>
       <div class="footer-note">Local-only experience. Only compliance-approved article content is surfaced here.</div>
     </main>
@@ -396,8 +425,17 @@ function renderHome(req) {
       const resultsEl = document.getElementById('results');
       const emptyEl = document.getElementById('empty');
       const instantAnswerBtn = document.getElementById('instantAnswerBtn');
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
       function renderResults(query) {
-        const q = String(query || '').trim().toLowerCase();
+        const raw = String(query || '').trim();
+        const q = raw.toLowerCase();
         const matches = !q ? ARTICLE_INDEX : ARTICLE_INDEX.filter(item => item.search_text.includes(q));
         resultsEl.innerHTML = matches.map(function(item) {
           const chips = (item.products || []).map(function(name) {
@@ -410,8 +448,15 @@ function renderHome(req) {
             '<div class="chips">' + chips + '</div>' +
             '</a>';
         }).join('');
-        emptyEl.style.display = matches.length ? 'none' : 'block';
-        instantAnswerBtn.style.display = (!matches.length && q) ? 'inline-block' : 'none';
+        if (!matches.length && q) {
+          emptyEl.style.display = 'block';
+          instantAnswerBtn.style.display = 'inline-block';
+          emptyText.innerHTML = 'We will create an instant comparison for you now. Pay $1 to save time and money on your shopping.<br><br><strong>What you'll get:</strong> a comparison of the top 5 <strong>' + escapeHtml(raw) + '</strong> available on Amazon.com with a clear winner selected + a link to the exact products we compare.<br><br>Let our deep learning AI model do the heavy lifting.';
+        } else {
+          emptyEl.style.display = matches.length ? 'none' : 'block';
+          instantAnswerBtn.style.display = 'none';
+          emptyText.innerHTML = '';
+        }
       }
       const sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'sess-' + Math.random().toString(36).slice(2);
       function sendPresence(closed) {
