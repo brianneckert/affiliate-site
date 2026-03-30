@@ -1309,7 +1309,7 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
       }) || request;
     }
   }
-  if (request.payment_status === 'paid' && request.request_status === 'paid_pending') {
+  if (request.payment_status === 'paid' && ['paid_pending', 'validated'].includes(request.request_status)) {
     kickOffInstantAnswerProcessing(request.request_id);
   }
   res.json({ ok: true, request });

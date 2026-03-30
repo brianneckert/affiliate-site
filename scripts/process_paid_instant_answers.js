@@ -236,7 +236,7 @@ async function main() {
   fs.writeFileSync(lockPath, String(Date.now()));
   try {
     const all = paidRequests.readPaidRequests();
-    const queue = all.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && r.request_status === 'paid_pending');
+    const queue = all.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated'].includes(r.request_status));
     const results = [];
     for (const item of queue) results.push(await processOne(item));
     console.log(JSON.stringify({ ok: true, processed: results.length, results }, null, 2));
