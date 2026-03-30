@@ -126,7 +126,7 @@ function buildAbsoluteUrl(req, route = '/') {
 }
 
 function getSocialImageUrl(req) {
-  return buildAbsoluteUrl(req, '/social-share.jpg');
+  return buildAbsoluteUrl(req, '/social-share.jpg?v=20260330a');
 }
 
 function renderSocialMeta(meta) {
@@ -136,6 +136,10 @@ function renderSocialMeta(meta) {
     <meta property="og:description" content="${escapeHtml(meta.description)}" />
     <meta property="og:url" content="${escapeHtml(meta.canonicalUrl)}" />
     <meta property="og:image" content="${escapeHtml(meta.imageUrl)}" />
+    <meta property="og:image:secure_url" content="${escapeHtml(meta.imageUrl)}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1264" />
+    <meta property="og:image:height" content="944" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeHtml(meta.title)}" />
     <meta name="twitter:description" content="${escapeHtml(meta.description)}" />
