@@ -125,6 +125,23 @@ function buildAbsoluteUrl(req, route = '/') {
   return `${base}${normalizedRoute}`;
 }
 
+function getSocialImageUrl(req) {
+  return buildAbsoluteUrl(req, '/social-share.jpg');
+}
+
+function renderSocialMeta(meta) {
+  return `
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="${escapeHtml(meta.title)}" />
+    <meta property="og:description" content="${escapeHtml(meta.description)}" />
+    <meta property="og:url" content="${escapeHtml(meta.canonicalUrl)}" />
+    <meta property="og:image" content="${escapeHtml(meta.imageUrl)}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(meta.title)}" />
+    <meta name="twitter:description" content="${escapeHtml(meta.description)}" />
+    <meta name="twitter:image" content="${escapeHtml(meta.imageUrl)}" />`;
+}
+
 function renderFaviconMarkup() {
   return '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />';
 }
@@ -187,7 +204,8 @@ function buildHomeMeta(req) {
   return {
     title: 'Affiliate Site | Product guides and comparison-driven buying picks',
     description: 'Browse published product guides, comparisons, and top picks across approved categories with crawlable article routes and registry-driven publishing.',
-    canonicalUrl: buildAbsoluteUrl(req, '/')
+    canonicalUrl: buildAbsoluteUrl(req, '/'),
+    imageUrl: getSocialImageUrl(req)
   };
 }
 
@@ -195,7 +213,7 @@ function buildArticleMeta(req, content, entry) {
   const title = content?.title || entry?.title || entry?.article_slug || 'Affiliate article';
   const description = (content?.summary || `Comparison guide for ${title}`).slice(0, 160);
   const canonicalUrl = buildAbsoluteUrl(req, `/article/${entry?.article_slug || content?.article_slug || ''}`);
-  return { title, description, canonicalUrl };
+  return { title, description, canonicalUrl, imageUrl: getSocialImageUrl(req) };
 }
 
 function renderSitemapXml(baseUrl) {
@@ -226,6 +244,8 @@ function renderHome(req) {
     ${renderFaviconMarkup()}
     <meta name="description" content="${escapeHtml(meta.description)}" />
     <link rel="canonical" href="${escapeHtml(meta.canonicalUrl)}" />
+    ${renderSocialMeta(meta)}
+    ${renderSocialMeta(meta)}
     <style>
       :root {
         --bg1:#060b16;
@@ -796,6 +816,10 @@ app.get('/favicon.svg', (req, res) => {
 
 app.get('/favicon.ico', (req, res) => {
   res.redirect(302, '/favicon.svg');
+});
+
+app.get('/social-share.jpg', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets', 'social-share.jpg'));
 });
 
 app.get('/robots.txt', (req, res) => {
