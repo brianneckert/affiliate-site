@@ -4443,6 +4443,26 @@
       ],
       "duplicate_of": null,
       "source_request_id": "5b9ccc75-72b6-4c6c-8a90-2352f9fc6cc8"
+    },
+    {
+      "article_slug": "vacuum",
+      "category": "vacuum",
+      "title": "Best Vacuum",
+      "output_dir": "data/articles/vacuum",
+      "article_dir": "data/articles/vacuum",
+      "topic_family": "vacuum",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-03-30",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-03-30T16:55:50.953Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [],
+      "duplicate_of": null,
+      "source_request_id": "49eb4433-fe36-430f-9f93-4cb602427b01"
     }
   ]
 }
