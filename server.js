@@ -153,12 +153,10 @@ function renderFaviconMarkup() {
 function renderFaviconSvg() {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#ffffff"/>
-  <rect x="17" y="10" width="6" height="44" rx="3" fill="#FF9900"/>
-  <circle cx="27" cy="20" r="8" fill="none" stroke="#232F3E" stroke-width="5"/>
-  <circle cx="37" cy="32" r="14" fill="none" stroke="#232F3E" stroke-width="5.5"/>
-  <circle cx="27" cy="44" r="8" fill="none" stroke="#232F3E" stroke-width="5"/>
-  <path d="M43 17l2.6 2.7-11.8 17.8-5.5-5.4 2.8-2.8 2.5 2.4z" fill="#FF9900"/>
+  <rect width="64" height="64" rx="16" fill="#2563EB"/>
+  <rect x="16" y="12" width="6.5" height="40" rx="3.25" fill="#FF9900"/>
+  <circle cx="35" cy="32" r="13.5" fill="none" stroke="#F8FAFC" stroke-width="5.5"/>
+  <path d="M43 18l2.6 2.7-11.6 17.5-5.4-5.3 2.8-2.8 2.5 2.4z" fill="#FF9900"/>
 </svg>`;
 }
 
