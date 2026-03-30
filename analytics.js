@@ -171,13 +171,13 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
   function summarize(events) {
     const registry = readRegistry();
     const publishedArticles = (registry.articles || []).filter((x) => x.publish_status === 'published');
-    const now = new Date();
-    const dayAgo = new Date(now.getTime() - 24*60*60*1000);
-    const weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+    const todayKey = formatDayKey(new Date());
+    const last30Days = getLastNDays(30);
+    const last7Days = getLastNDays(7);
+    const last7DaySet = new Set(last7Days);
 
     const trafficByDay = {};
     const clicksByDay = {};
-    const last30Days = getLastNDays(30);
     const sourceCounts = {};
     const referrerCounts = {};
     const countryCounts = {};
@@ -205,8 +205,8 @@ module.exports = function createAnalytics({ rootDir, registryPath }) {
         sourceCounts[event.traffic_source || 'unknown'] = (sourceCounts[event.traffic_source || 'unknown'] || 0) + 1;
         if (event.referrer_domain) referrerCounts[event.referrer_domain] = (referrerCounts[event.referrer_domain] || 0) + 1;
         countryCounts[event.country || 'unknown'] = (countryCounts[event.country || 'unknown'] || 0) + 1;
-        if (ts >= dayAgo) { pageViewsToday += 1; visitorsToday.add(ipHash); }
-        if (ts >= weekAgo) { pageViewsWeek += 1; visitorsWeek.add(ipHash); }
+        if (day === todayKey) { pageViewsToday += 1; visitorsToday.add(ipHash); }
+        if (last7DaySet.has(day)) { pageViewsWeek += 1; visitorsWeek.add(ipHash); }
       }
 
       if (eventType === 'article_view') {

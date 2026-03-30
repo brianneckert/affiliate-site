@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-03-30T14:32:34.769Z",
+  "generated_at": "2026-03-30T14:41:21.651Z",
   "events_count": 38,
   "traffic": {
-    "total_visitors_today": 2,
+    "total_visitors_today": 0,
     "total_visitors_week": 2,
-    "page_views_today": 6,
+    "page_views_today": 0,
     "page_views_week": 34,
-    "unique_visitors_today_approx": 2,
+    "unique_visitors_today_approx": 0,
     "unique_visitors_week_approx": 2
   },
   "sources": {
