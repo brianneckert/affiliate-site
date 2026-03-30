@@ -251,6 +251,7 @@ function renderInstantAnswerSuccessPage(requestId) {
     </main>
     <script>
       const requestId = ${JSON.stringify(requestId || '')};
+      const sessionId = new URLSearchParams(window.location.search).get('session_id') || '';
       const titleEl = document.getElementById('title');
       const subEl = document.getElementById('sub');
       const badgeEl = document.getElementById('badge');
@@ -304,7 +305,8 @@ function renderInstantAnswerSuccessPage(requestId) {
       async function poll() {
         if (!requestId) return;
         try {
-          const res = await fetch('/api/instant-answer/request/' + encodeURIComponent(requestId), { cache: 'no-store' });
+          const qs = sessionId ? ('?session_id=' + encodeURIComponent(sessionId)) : '';
+          const res = await fetch('/api/instant-answer/request/' + encodeURIComponent(requestId) + qs, { cache: 'no-store' });
           const data = await res.json();
           if (res.ok && data.request) {
             const done = applyRequestState(data.request);
@@ -327,7 +329,7 @@ function renderInstantAnswerSuccessPage(requestId) {
 async function createInstantAnswerCheckoutSession({ raw_query, requested_by = null, notes = null }) {
   if (!stripe) throw new Error('stripe_not_configured');
   const request = paidRequests.createPaidRequest({ raw_query, requested_by, notes });
-  const successUrl = `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(request.request_id)}`;
+  const successUrl = `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(request.request_id)}&session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${SITE_BASE_URL}/instant-answer/cancel?request_id=${encodeURIComponent(request.request_id)}`;
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
@@ -1117,36 +1119,49 @@ app.post('/analytics/article-view', (req, res) => {
 
 
 
-async function recoverRequestFromStripe(requestId) {
-  if (!stripe || !requestId) return null;
-  const sessions = await stripe.checkout.sessions.list({ limit: 20 });
-  const session = (sessions.data || []).find((s) => s.metadata && s.metadata.request_id === requestId);
-  if (!session) return null;
-  const recovered = paidRequests.upsertRequest({
+async function syncRequestFromStripeSession(session, existingRequest = null) {
+  if (!session) return existingRequest || null;
+  const requestId = existingRequest?.request_id || session.metadata?.request_id || session.id;
+  const alreadyPublished = existingRequest && (existingRequest.request_status === 'published' || existingRequest.publish_status === 'published');
+  const patch = {
     request_id: requestId,
-    raw_query: session.metadata?.raw_query || session.metadata?.normalized_query || requestId,
-    normalized_query: session.metadata?.normalized_query || session.metadata?.raw_query || requestId,
-    created_at: new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString(),
-    requested_by: session.metadata?.requested_by || null,
-    payment_status: session.payment_status === 'paid' ? 'paid' : 'awaiting_payment',
-    request_status: session.payment_status === 'paid' ? 'paid' : 'awaiting_payment',
-    generated_article_slug: null,
-    fulfillment_status: null,
-    publish_status: null,
-    published_at: null,
-    published_slug: null,
-    published_url: null,
-    source_request_id: null,
-    content_hash: null,
-    generation_attempts: 0,
-    fulfillment_output_path: null,
-    notes: 'recovered_from_stripe_session',
-    error: null,
+    raw_query: existingRequest?.raw_query || session.metadata?.raw_query || session.metadata?.normalized_query || requestId,
+    normalized_query: existingRequest?.normalized_query || session.metadata?.normalized_query || session.metadata?.raw_query || requestId,
+    created_at: existingRequest?.created_at || new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString(),
+    requested_by: existingRequest?.requested_by || session.metadata?.requested_by || null,
+    payment_status: session.payment_status === 'paid' ? 'paid' : (existingRequest?.payment_status || 'awaiting_payment'),
+    request_status: alreadyPublished ? existingRequest.request_status : (session.payment_status === 'paid' ? (existingRequest?.request_status && existingRequest.request_status !== 'awaiting_payment' ? existingRequest.request_status : 'paid_pending') : (existingRequest?.request_status || 'awaiting_payment')),
+    generated_article_slug: existingRequest?.generated_article_slug || null,
+    fulfillment_status: existingRequest?.fulfillment_status || null,
+    publish_status: existingRequest?.publish_status || null,
+    published_at: existingRequest?.published_at || null,
+    published_slug: existingRequest?.published_slug || null,
+    published_url: existingRequest?.published_url || null,
+    source_request_id: existingRequest?.source_request_id || null,
+    content_hash: existingRequest?.content_hash || null,
+    generation_attempts: existingRequest?.generation_attempts || 0,
+    fulfillment_output_path: existingRequest?.fulfillment_output_path || null,
+    notes: existingRequest?.notes || 'recovered_from_stripe_session',
+    error: existingRequest?.error || null,
     stripe_checkout_session_id: session.id,
     stripe_payment_status: session.payment_status || null,
-    paid_at: session.payment_status === 'paid' ? new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString() : null
-  });
-  return recovered;
+    paid_at: session.payment_status === 'paid' ? (existingRequest?.paid_at || new Date((session.created || Math.floor(Date.now()/1000)) * 1000).toISOString()) : (existingRequest?.paid_at || null)
+  };
+  return paidRequests.upsertRequest(patch);
+}
+
+async function recoverRequestFromStripe(requestId, sessionId = null) {
+  if (!stripe || (!requestId && !sessionId)) return null;
+  let session = null;
+  if (sessionId) {
+    try { session = await stripe.checkout.sessions.retrieve(sessionId); } catch {}
+  }
+  if (!session && requestId) {
+    const sessions = await stripe.checkout.sessions.list({ limit: 50 });
+    session = (sessions.data || []).find((s) => s.metadata && s.metadata.request_id === requestId) || null;
+  }
+  if (!session) return null;
+  return await syncRequestFromStripeSession(session, paidRequests.getRequestById(requestId || session.metadata?.request_id || session.id));
 }
 
 app.post('/api/stripe/webhook', (req, res) => {
@@ -1244,7 +1259,21 @@ app.get('/instant-answer/cancel', (req, res) => {
 
 app.get('/api/instant-answer/request/:id', async (req, res) => {
   let request = paidRequests.getRequestById(req.params.id);
-  if (!request) request = await recoverRequestFromStripe(req.params.id);
+  const sessionId = String(req.query.session_id || '').trim() || null;
+  if (!request) {
+    request = await recoverRequestFromStripe(req.params.id, sessionId);
+  } else if (stripe && (request.payment_status !== 'paid' || request.request_status === 'awaiting_payment')) {
+    let session = null;
+    if (sessionId) {
+      try { session = await stripe.checkout.sessions.retrieve(sessionId); } catch {}
+    }
+    if (!session && request.stripe_checkout_session_id) {
+      try { session = await stripe.checkout.sessions.retrieve(request.stripe_checkout_session_id); } catch {}
+    }
+    if (session) {
+      request = await syncRequestFromStripeSession(session, request);
+    }
+  }
   if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
   res.json({ ok: true, request });
 });
