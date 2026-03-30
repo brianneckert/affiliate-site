@@ -424,6 +424,7 @@ function renderHome(req) {
       const input = document.getElementById('searchInput');
       const resultsEl = document.getElementById('results');
       const emptyEl = document.getElementById('empty');
+      const emptyText = document.getElementById('emptyText');
       const instantAnswerBtn = document.getElementById('instantAnswerBtn');
       function escapeHtml(value) {
         return String(value || '')
