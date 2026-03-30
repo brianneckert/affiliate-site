@@ -125,9 +125,28 @@ function buildAbsoluteUrl(req, route = '/') {
   return `${base}${normalizedRoute}`;
 }
 
+function renderFaviconMarkup() {
+  return '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />';
+}
+
+function renderFaviconSvg() {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#0b1220"/>
+  <path d="M17 43V21h11.5c8.3 0 13.5 4 13.5 10.9 0 7.1-5.3 11.1-13.5 11.1H17Zm8-6h3.1c3.8 0 5.8-1.8 5.8-5.1 0-3.2-2-4.9-5.8-4.9H25V37Z" fill="url(#g)"/>
+  <path d="M44 19l3 3-14 23-7-7 3.1-3.1 3 3z" fill="#f8fafc" opacity="0.95"/>
+</svg>`;
+}
+
 
 function renderInstantAnswerStatusPage(title, message) {
-  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>${escapeHtml(title)}</title></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;color:#0f172a;"><a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>${escapeHtml(title)}</title>${renderFaviconMarkup()}</head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;color:#0f172a;"><a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`;
 }
 
 async function createInstantAnswerCheckoutSession({ raw_query, requested_by = null, notes = null }) {
@@ -203,6 +222,8 @@ function renderHome(req) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>${escapeHtml(meta.title)}</title>
+    ${renderFaviconMarkup()}
+    ${renderFaviconMarkup()}
     <meta name="description" content="${escapeHtml(meta.description)}" />
     <link rel="canonical" href="${escapeHtml(meta.canonicalUrl)}" />
     <style>
@@ -446,6 +467,7 @@ function renderArticle(req, content, compliance, entry = null) {
       <meta charset="utf-8" />
       <meta name="robots" content="noindex,follow" />
       <title>Article unavailable</title>
+      ${renderFaviconMarkup()}
     </head>
     <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;">
       <a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a>
@@ -767,6 +789,14 @@ function renderArticle(req, content, compliance, entry = null) {
   </html>
   `;
 }
+
+app.get('/favicon.svg', (req, res) => {
+  res.type('image/svg+xml').send(renderFaviconSvg());
+});
+
+app.get('/favicon.ico', (req, res) => {
+  res.redirect(302, '/favicon.svg');
+});
 
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send(renderRobotsTxt(getSiteBaseUrl(req)));
