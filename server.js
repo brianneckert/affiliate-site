@@ -19,6 +19,7 @@ const ARTICLES_PATH = path.join(__dirname, 'data/articles');
 const REGISTRY_PATH = path.join(ARTICLES_PATH, 'registry.json');
 const analytics = createAnalytics({ rootDir: __dirname, registryPath: REGISTRY_PATH });
 const paidRequests = createPaidRequests({ rootDir: __dirname });
+const { execFile } = require('child_process');
 
 function readJson(name) {
   const file = path.join(ARTICLES_PATH, name);
@@ -163,6 +164,12 @@ function renderFaviconSvg() {
 
 function renderInstantAnswerStatusPage(title, message) {
   return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>${escapeHtml(title)}</title>${renderFaviconMarkup()}</head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;color:#0f172a;"><a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`;
+}
+
+
+function kickOffInstantAnswerProcessing(requestId) {
+  if (!requestId) return;
+  execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, () => {});
 }
 
 function renderInstantAnswerSuccessPage(requestId) {
@@ -1275,6 +1282,9 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     }
   }
   if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
+  if (request.payment_status === 'paid' && request.request_status === 'paid_pending') {
+    kickOffInstantAnswerProcessing(request.request_id);
+  }
   res.json({ ok: true, request });
 });
 
