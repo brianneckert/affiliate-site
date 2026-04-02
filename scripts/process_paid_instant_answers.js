@@ -73,21 +73,38 @@ async function fetchAmazonProducts(query) {
 
 function buildFromExisting(request, published) {
   const q = normalize(request.raw_query);
-  const qTokens = q.split(' ').filter(Boolean);
+  const rawTokens = q.split(' ').filter(Boolean);
+  const stopwords = new Set(['best', 'for', 'the', 'and', 'with', 'from', 'that', 'this', 'your', 'into', 'under', 'over', 'vs', 'comparison', 'guide', 'buy', 'top', 'amazon']);
+  const qTokens = rawTokens.filter((token) => token.length >= 3 && !stopwords.has(token));
+  if (!qTokens.length) return { ok: false, error: 'query_too_generic_for_existing_match' };
+
   const matches = published.map((item) => {
-    const score = qTokens.reduce((acc, token) => acc + (item.search_text.includes(token) ? 1 : 0), 0);
-    return { ...item, score };
-  }).filter((item) => item.score > 0).sort((a,b) => b.score - a.score).slice(0, 5);
+    const titleText = normalize(`${item.title || ''} ${item.category || ''} ${item.top_pick || ''}`);
+    const productNames = (item.intelligence?.products || []).map((p) => normalize(p.product_name || p.name || ''));
+    const titleHits = qTokens.filter((token) => titleText.includes(token)).length;
+    const productHits = qTokens.filter((token) => productNames.some((name) => name.includes(token))).length;
+    const score = (titleHits * 3) + productHits;
+    const overlapRatio = qTokens.length ? (Math.max(titleHits, productHits) / qTokens.length) : 0;
+    return { ...item, score, titleHits, productHits, overlapRatio };
+  }).filter((item) => {
+    return item.titleHits >= 1 && item.overlapRatio >= 0.6 && item.score >= 3;
+  }).sort((a,b) => b.score - a.score).slice(0, 5);
+
   if (!matches.length) return { ok: false, error: 'no_relevant_content_found' };
+
   const products = [];
   const seen = new Set();
   for (const match of matches) {
     for (const p of (match.intelligence.products || [])) {
-      const key = (p.product_name || p.name || '').trim().toLowerCase();
+      const productName = p.product_name || p.name || '';
+      const key = productName.trim().toLowerCase();
+      const normalizedName = normalize(productName);
+      const productTokenHits = qTokens.filter((token) => normalizedName.includes(token)).length;
       if (!key || seen.has(key)) continue;
+      if (productTokenHits === 0 && match.titleHits < 2) continue;
       seen.add(key);
       products.push({
-        product_name: p.product_name || p.name,
+        product_name: productName,
         affiliate_url: p.affiliate_url,
         notes: p.notes || '',
         why_it_won: p.why_it_won || '',
@@ -99,7 +116,9 @@ function buildFromExisting(request, published) {
     }
     if (products.length >= 5) break;
   }
-  if (!products.length) return { ok: false, error: 'no_valid_amazon_products_found' };
+
+  if (products.length < 3) return { ok: false, error: 'existing_content_match_too_weak' };
+
   return {
     ok: true,
     strategy: 'existing_content',
@@ -108,7 +127,7 @@ function buildFromExisting(request, published) {
     normalized_query: request.normalized_query,
     generated_at: new Date().toISOString(),
     top_matches: matches.map((m) => ({ article_slug: m.article_slug, title: m.title, score: m.score, top_pick: m.top_pick })),
-    answer_summary: `Built from ${matches.length} existing published guide(s) using valid Amazon-linked products.`,
+    answer_summary: `Built from ${matches.length} strongly matching published guide(s) using valid Amazon-linked products.`,
     products
   };
 }
