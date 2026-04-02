@@ -892,11 +892,11 @@ function renderArticle(req, content, compliance, entry = null) {
       .wrap {
         max-width: 1250px;
         margin: 0 auto;
-        padding: 28px 32px 60px;
+        padding: 20px 20px 60px;
       }
       .back {
         display: inline-block;
-        margin-bottom: 22px;
+        margin-bottom: 18px;
         color: #2563eb;
         text-decoration: none;
         font-weight: 700;
@@ -910,23 +910,25 @@ function renderArticle(req, content, compliance, entry = null) {
         box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
       }
       h1 {
-        font-size: 64px;
+        font-size: clamp(42px, 8vw, 64px);
         line-height: 1.02;
-        margin: 0 0 24px;
+        margin: 0 0 20px;
         font-weight: 800;
+        letter-spacing: -0.03em;
+        word-break: break-word;
       }
       .summary {
-        font-size: 24px;
+        font-size: clamp(20px, 4.8vw, 24px);
         line-height: 1.55;
         color: #334155;
-        margin-bottom: 34px;
+        margin-bottom: 28px;
       }
       .top-pick {
         background: #f3f4f6;
         border: 1px solid #d1d5db;
         border-radius: 22px;
         padding: 22px 26px;
-        margin-bottom: 32px;
+        margin-bottom: 28px;
       }
       .glance-grid,
       .product-grid {
@@ -942,14 +944,16 @@ function renderArticle(req, content, compliance, entry = null) {
       }
       .mini-card,
       .product-card,
-      .faq-item {
+      .faq-item,
+      .comparison-card {
         background: #f8fafc;
         border: 1px solid #dbe2ea;
         border-radius: 18px;
         padding: 18px;
       }
       .mini-title,
-      .product-card h4 {
+      .product-card h4,
+      .comparison-card-title {
         margin: 0 0 10px;
         font-size: 22px;
         font-weight: 800;
@@ -963,8 +967,10 @@ function renderArticle(req, content, compliance, entry = null) {
         margin-bottom: 10px;
       }
       .top-name {
-        font-size: 34px;
+        font-size: clamp(28px, 7vw, 34px);
         font-weight: 800;
+        line-height: 1.08;
+        word-break: break-word;
       }
       h3 {
         font-size: 16px;
@@ -972,6 +978,12 @@ function renderArticle(req, content, compliance, entry = null) {
         text-transform: uppercase;
         color: #6b7280;
         margin: 28px 0 18px;
+      }
+      .comparison-table-shell {
+        overflow-x: auto;
+        border-radius: 18px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
       }
       table {
         width: 100%;
@@ -993,6 +1005,30 @@ function renderArticle(req, content, compliance, entry = null) {
         border-top: 1px solid #e5e7eb;
         font-size: 18px;
       }
+      .comparison-cards {
+        display: none;
+        gap: 14px;
+      }
+      .comparison-row {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 10px;
+        padding: 8px 0;
+        border-top: 1px solid #e5e7eb;
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      .comparison-row:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+      .comparison-label {
+        color: #64748b;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-size: 12px;
+      }
       .shop-btn {
         display: inline-block;
         background: #0f172a;
@@ -1007,10 +1043,64 @@ function renderArticle(req, content, compliance, entry = null) {
         font-size: 20px;
         line-height: 1.6;
         color: #334155;
+        padding-left: 22px;
       }
       p.final {
         font-size: 22px;
         line-height: 1.6;
+      }
+      @media (max-width: 768px) {
+        .wrap {
+          padding: 14px 12px 36px;
+        }
+        .back {
+          margin-bottom: 14px;
+          font-size: 16px;
+        }
+        .card {
+          border-radius: 22px;
+          padding: 24px 18px;
+        }
+        .summary {
+          margin-bottom: 20px;
+        }
+        .top-pick {
+          padding: 18px 16px;
+          margin-bottom: 22px;
+        }
+        .mini-title,
+        .product-card h4,
+        .comparison-card-title {
+          font-size: 20px;
+          line-height: 1.2;
+        }
+        h3 {
+          margin: 22px 0 14px;
+          font-size: 13px;
+        }
+        .glance-grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .comparison-table-shell {
+          display: none;
+        }
+        .comparison-cards {
+          display: grid;
+        }
+        ul {
+          font-size: 18px;
+          line-height: 1.55;
+        }
+        p.final {
+          font-size: 19px;
+          line-height: 1.55;
+        }
+        .shop-btn {
+          width: 100%;
+          text-align: center;
+          padding: 14px 16px;
+        }
       }
     </style>
   </head>
@@ -1032,17 +1122,31 @@ function renderArticle(req, content, compliance, entry = null) {
         ${glance ? `<h3>Top Picks at a Glance</h3><div class="glance-grid">${glance}</div>` : ''}
 
         <h3>Comparison</h3>
-        <table>
-          <tr>
-            <th>Product</th>
-            <th>Price Tier</th>
-            <th>Best For</th>
-            <th>Score</th>
-            <th>Notable Features</th>
-            <th>Shop</th>
-          </tr>
-          ${rows}
-        </table>
+        <div class="comparison-table-shell">
+          <table>
+            <tr>
+              <th>Product</th>
+              <th>Price Tier</th>
+              <th>Best For</th>
+              <th>Score</th>
+              <th>Notable Features</th>
+              <th>Shop</th>
+            </tr>
+            ${rows}
+          </table>
+        </div>
+        <div class="comparison-cards">
+          ${(content.comparison || []).filter(hasValidAffiliateUrl).map((p) => `
+            <div class="comparison-card">
+              <div class="comparison-card-title">${escapeHtml(p.name)}</div>
+              <div class="comparison-row"><div class="comparison-label">Price tier</div><div>${escapeHtml(p.price_tier)}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Best for</div><div>${escapeHtml(p.best_for)}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Score</div><div>${escapeHtml(p.total_score)}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Features</div><div>${escapeHtml((p.notable_features || []).join(', '))}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Shop</div><div><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" data-position-in-article="${comparisonRankMap.get(p.name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (p.name || '').trim())}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div></div>
+            </div>
+          `).join('')}
+        </div>
 
         <h3>Who is this for</h3>
         <ul>${who}</ul>
