@@ -1,16 +1,23 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const createAnalytics = require('./analytics');
 const createPaidRequests = require('./paid_requests');
 const Stripe = require('stripe');
 
 const app = express();
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 3000;
 const SITE_BASE_URL = (process.env.SITE_BASE_URL || 'https://www.bestofprime.online').replace(/\/$/, '');
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
-const STRIPE_PRICE_IN_CENTS = Number(process.env.STRIPE_PRICE_IN_CENTS || 100);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+const BUNDLE_20_PRICE_IN_CENTS = Number(process.env.BUNDLE_20_PRICE_IN_CENTS || 1499);
+const BUNDLE_100_PRICE_IN_CENTS = Number(process.env.BUNDLE_100_PRICE_IN_CENTS || 5900);
+const ARTICLE_BUNDLES = {
+  article_bundle_20: { code: 'article_bundle_20', credits: 20, unit_amount: BUNDLE_20_PRICE_IN_CENTS, label: '20 comparison articles', description: '20 comparison articles for $14.99 (about $0.75 each)' },
+  article_bundle_100: { code: 'article_bundle_100', credits: 100, unit_amount: BUNDLE_100_PRICE_IN_CENTS, label: '100 comparison articles', description: '100 comparison articles for $59.00 (about $0.59 each)' }
+};
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
 app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
@@ -176,6 +183,55 @@ function renderInstantAnswerStatusPage(title, message) {
   return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>${escapeHtml(title)}</title>${renderFaviconMarkup()}</head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:40px;background:#eef2f7;color:#0f172a;"><a href="/" style="color:#2563eb;text-decoration:none;font-weight:700;">← Back</a><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`;
 }
 
+
+function getClientIp(req) {
+  const forwarded = String(req.headers['x-forwarded-for'] || '').split(',').map((part) => part.trim()).filter(Boolean);
+  const raw = forwarded[0] || req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.ip || req.socket?.remoteAddress || '';
+  return String(raw || '').replace(/^::ffff:/, '').trim();
+}
+
+function getRequestCountry(req) {
+  const country = String(req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || req.headers['x-country-code'] || '').trim().toUpperCase();
+  return country || null;
+}
+
+function hashIp(ip) {
+  if (!ip) return null;
+  return crypto.createHash('sha256').update(String(ip)).digest('hex');
+}
+
+function buildInstantAnswerAccess(req) {
+  const ip = getClientIp(req);
+  const ipHash = hashIp(ip);
+  const country = getRequestCountry(req);
+  const userKey = paidRequests.getUserKey({ ip_hash: ipHash });
+  const userRecord = userKey ? paidRequests.getUserRecord(userKey, { ip_hash: ipHash, country }) : null;
+  const freeArticlesUsed = Number(userRecord?.free_articles_used || 0);
+  const paidBalance = Number(userRecord?.articles_remaining_balance || 0);
+  const isUs = country === 'US';
+  const freeRemaining = isUs ? Math.max(0, 3 - freeArticlesUsed) : 0;
+  const hasFreeAccess = isUs && freeArticlesUsed < 3;
+  const hasPaidBalance = paidBalance > 0;
+  const canGenerate = hasFreeAccess || hasPaidBalance;
+  const accessMode = hasFreeAccess ? 'free' : (hasPaidBalance ? 'bundle' : 'paid');
+
+  return {
+    ip,
+    ipHash,
+    userKey,
+    country,
+    isUs,
+    userRecord,
+    successfulGenerations: paidRequests.countSuccessfulGenerationsByIpHash(ipHash),
+    freeArticlesUsed,
+    paidBalance,
+    freeRemaining,
+    canGenerate,
+    hasFreeAccess,
+    hasPaidBalance,
+    accessMode
+  };
+}
 
 function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
@@ -343,9 +399,11 @@ function renderInstantAnswerSuccessPage(requestId) {
   </html>`;
 }
 
-async function createInstantAnswerCheckoutSession({ raw_query, requested_by = null, notes = null }) {
+async function createInstantAnswerCheckoutSession({ raw_query, requested_by = null, notes = null, requestMeta = null, bundleCode = 'article_bundle_20' }) {
   if (!stripe) throw new Error('stripe_not_configured');
-  const request = paidRequests.createPaidRequest({ raw_query, requested_by, notes });
+  const bundle = ARTICLE_BUNDLES[bundleCode];
+  if (!bundle) throw new Error('invalid_bundle_code');
+  const request = paidRequests.createPaidRequest({ raw_query, requested_by, notes, request_meta: { ...(requestMeta || {}), bundle_code: bundle.code, bundle_credits: bundle.credits } });
   const successUrl = `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(request.request_id)}&session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${SITE_BASE_URL}/instant-answer/cancel?request_id=${encodeURIComponent(request.request_id)}`;
   const session = await stripe.checkout.sessions.create({
@@ -355,17 +413,22 @@ async function createInstantAnswerCheckoutSession({ raw_query, requested_by = nu
     line_items: [{
       price_data: {
         currency: 'usd',
-        unit_amount: STRIPE_PRICE_IN_CENTS,
+        unit_amount: bundle.unit_amount,
         product_data: {
-          name: 'Instant Answer Request',
-          description: `Request for: ${String(raw_query).slice(0, 120)}`
+          name: bundle.label,
+          description: bundle.description
         }
       },
       quantity: 1
     }],
     metadata: {
       request_id: request.request_id,
-      normalized_query: request.normalized_query
+      normalized_query: request.normalized_query,
+      bundle_code: bundle.code,
+      bundle_credits: String(bundle.credits),
+      user_key: requestMeta?.user_key || '',
+      ip_hash: requestMeta?.ip_hash || '',
+      country: requestMeta?.country || ''
     }
   });
   const updated = paidRequests.updateRequestStatus(request.request_id, {
@@ -374,7 +437,7 @@ async function createInstantAnswerCheckoutSession({ raw_query, requested_by = nu
     payment_status: 'awaiting_payment',
     request_status: 'awaiting_payment'
   });
-  return { request: updated, session };
+  return { request: updated, session, bundle };
 }
 
 function buildHomeMeta(req) {
@@ -592,7 +655,10 @@ function renderHome(req) {
       <section id="results" class="results"></section>
       <section id="empty" class="empty" style="display:none;">
         <div class="empty-title">No matching approved article found.</div>
-        <button id="instantAnswerBtn" class="instant-answer-btn">Get an Instant Answer for $1</button>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button id="instantAnswerBtn20" class="instant-answer-btn">Get Instant Answer</button>
+          <button id="instantAnswerBtn100" class="instant-answer-btn" style="display:none;background:linear-gradient(180deg,#0ea5e9,#2563eb);">Buy 100-article bundle</button>
+        </div>
         <div id="emptyText" class="empty-copy"></div>
       </section>
       <div class="footer-note">Local-only experience. Only compliance-approved article content is surfaced here.</div>
@@ -604,7 +670,8 @@ function renderHome(req) {
       const resultsEl = document.getElementById('results');
       const emptyEl = document.getElementById('empty');
       const emptyText = document.getElementById('emptyText');
-      const instantAnswerBtn = document.getElementById('instantAnswerBtn');
+      const instantAnswerBtn20 = document.getElementById('instantAnswerBtn20');
+      const instantAnswerBtn100 = document.getElementById('instantAnswerBtn100');
       function escapeHtml(value) {
         return String(value || '')
           .replace(/&/g, '&amp;')
@@ -630,11 +697,14 @@ function renderHome(req) {
         }).join('');
         if (!matches.length && q) {
           emptyEl.style.display = 'block';
-          instantAnswerBtn.style.display = 'inline-block';
-          emptyText.innerHTML = "We will create an instant comparison for you now. Pay $1 to save time and money on your shopping.<br><br><strong>What you'll get:</strong> a comparison of the top 5 <strong>" + escapeHtml(raw) + "</strong> available on Amazon.com with a clear winner selected + a link to the exact products we compare.<br><br>Let our deep learning AI model do the heavy lifting.";
+          instantAnswerBtn20.style.display = 'inline-block';
+          instantAnswerBtn100.style.display = 'inline-block';
+          instantAnswerBtn20.textContent = 'Get Instant Answer / Buy 20-article bundle';
+          emptyText.innerHTML = "Your first 3 articles are free. After that, unlock prepaid bundles only:<br><br><strong>$5 value per article</strong><br>20 articles for <strong>$14.99</strong> (about $0.75 each)<br>100 articles for <strong>$59.00</strong> (about $0.59 each)<br><br><strong>What you'll get:</strong> a comparison of the top 5 <strong>" + escapeHtml(raw) + "</strong> available on Amazon.com with a clear winner selected + a link to the exact products we compare.<br><br>Let our deep learning AI model do the heavy lifting.";
         } else {
           emptyEl.style.display = matches.length ? 'none' : 'block';
-          instantAnswerBtn.style.display = 'none';
+          instantAnswerBtn20.style.display = 'none';
+          instantAnswerBtn100.style.display = 'none';
           emptyText.innerHTML = '';
         }
       }
@@ -667,29 +737,39 @@ function renderHome(req) {
           keepalive: true
         }).catch(function() {});
       }
-      instantAnswerBtn.addEventListener('click', async function() {
+      async function startInstantAnswer(bundleCode, buttonEl, busyText, idleText) {
         const q = String(input.value || '').trim();
         if (!q) return;
-        instantAnswerBtn.disabled = true;
-        instantAnswerBtn.textContent = 'Creating checkout…';
+        buttonEl.disabled = true;
+        buttonEl.textContent = busyText;
         try {
           const res = await fetch('/api/instant-answer/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ raw_query: q, notes: 'search miss instant answer' })
+            body: JSON.stringify({ raw_query: q, notes: 'search miss instant answer', bundle_code: bundleCode })
           });
           const data = await res.json();
           if (res.ok && data.checkout_url) {
             window.location.href = data.checkout_url;
             return;
           }
+          if (res.ok && data.success_url) {
+            window.location.href = data.success_url;
+            return;
+          }
           alert(data.error || 'Unable to create checkout right now.');
         } catch (err) {
           alert('Unable to create checkout right now.');
         } finally {
-          instantAnswerBtn.disabled = false;
-          instantAnswerBtn.textContent = 'Get an Instant Answer for $1';
+          buttonEl.disabled = false;
+          buttonEl.textContent = idleText;
         }
+      }
+      instantAnswerBtn20.addEventListener('click', function() {
+        startInstantAnswer('article_bundle_20', instantAnswerBtn20, 'Checking access…', 'Get Instant Answer / Buy 20-article bundle');
+      });
+      instantAnswerBtn100.addEventListener('click', function() {
+        startInstantAnswer('article_bundle_100', instantAnswerBtn100, 'Creating checkout…', 'Buy 100-article bundle');
       });
       input.addEventListener('input', function(e) {
         renderResults(e.target.value);
@@ -1233,34 +1313,130 @@ app.post('/api/stripe/webhook', (req, res) => {
       console.log('[instant-answer webhook] idempotent delivery', { request_id: request.request_id, session_id: session.id });
       return res.json({ ok: true, handled: true, idempotent: true, request_id: request.request_id });
     }
+    const bundleCode = session.metadata?.bundle_code || request?.request_meta?.bundle_code || 'article_bundle_20';
+    const bundle = ARTICLE_BUNDLES[bundleCode];
+    const userKey = session.metadata?.user_key || request?.request_meta?.user_key || request?.request_meta?.ip_hash || null;
+    const ipHash = session.metadata?.ip_hash || request?.request_meta?.ip_hash || null;
+    const country = session.metadata?.country || request?.request_meta?.country || null;
+
+    if (!bundle) {
+      return res.status(400).json({ ok: false, handled: false, error: 'invalid_bundle_code' });
+    }
+
+    const creditResult = paidRequests.applyBundlePurchase({
+      userKey,
+      bundleSize: bundle.credits,
+      stripeCustomerId: session.customer || null,
+      checkoutSessionId: session.id,
+      purchasedAt: new Date().toISOString(),
+      ipHash,
+      country
+    });
+
     const updated = paidRequests.updateRequestStatus(request.request_id, {
       payment_status: 'paid',
-      request_status: 'paid_pending',
-      paid_at: new Date().toISOString(),
+      request_status: 'awaiting_bundle_use',
+      paid_at: request.paid_at || new Date().toISOString(),
       stripe_payment_status: 'completed',
-      stripe_last_event_id: event.id
+      stripe_last_event_id: event.id,
+      request_meta: {
+        ...(request.request_meta || {}),
+        access_mode: 'paid',
+        bundle_code: bundle.code,
+        bundle_credits: bundle.credits,
+        user_key: userKey,
+        ip_hash: ipHash,
+        country
+      }
     });
-    console.log('[instant-answer webhook] payment confirmed', { request_id: updated.request_id, session_id: session.id });
-    try {
-      const { execFileSync } = require('child_process');
-      execFileSync('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', updated.request_id], { cwd: __dirname });
-      const refreshed = paidRequests.getRequestById(updated.request_id);
-      return res.json({ ok: true, handled: true, request_id: refreshed.request_id, generated_article_slug: refreshed.generated_article_slug || null, request_status: refreshed.request_status });
-    } catch (error) {
-      paidRequests.updateRequestStatus(updated.request_id, { request_status: 'failed', error: String(error.message || error) });
-      return res.status(500).json({ ok: false, handled: true, request_id: updated.request_id, error: String(error.message || error) });
-    }
+    console.log('[instant-answer webhook] bundle credited', { request_id: updated.request_id, session_id: session.id, bundle_code: bundle.code, credits: bundle.credits, already_processed: creditResult?.alreadyProcessed === true });
+    return res.json({ ok: true, handled: true, request_id: updated.request_id, bundle_code: bundle.code, credits_added: creditResult?.alreadyProcessed ? 0 : bundle.credits, already_processed: creditResult?.alreadyProcessed === true });
   }
 
   res.json({ ok: true, handled: false, ignored_event_type: event.type });
 });
 
 app.post('/api/instant-answer/checkout', async (req, res) => {
-  const { raw_query, requested_by, notes } = req.body || {};
+  const { raw_query, requested_by, notes, bundle_code } = req.body || {};
   if (!String(raw_query || '').trim()) return res.status(400).json({ ok: false, error: 'missing_raw_query' });
+
+  const access = buildInstantAnswerAccess(req);
+  const requestMeta = {
+    user_key: access.userKey,
+    ip_hash: access.ipHash,
+    country: access.country,
+    access_mode: access.accessMode,
+    successful_generations_before_request: access.successfulGenerations,
+    free_articles_used_before_request: access.freeArticlesUsed,
+    articles_remaining_balance_before_request: access.paidBalance
+  };
+
   try {
-    const { request, session } = await createInstantAnswerCheckoutSession({ raw_query: String(raw_query).trim(), requested_by: requested_by || null, notes: notes || null });
-    res.json({ ok: true, request_id: request.request_id, checkout_url: session.url });
+    if (access.hasFreeAccess) {
+      paidRequests.upsertUserRecord(access.userKey, { ip_hash: access.ipHash, country: access.country });
+      const request = paidRequests.createPaidRequest({
+        raw_query: String(raw_query).trim(),
+        requested_by: requested_by || null,
+        notes: notes || null,
+        request_meta: { ...requestMeta, access_mode: 'free' }
+      });
+      const updated = paidRequests.updateRequestStatus(request.request_id, {
+        payment_status: 'paid',
+        request_status: 'paid_pending',
+        paid_at: new Date().toISOString(),
+        stripe_payment_status: 'free_access'
+      });
+      kickOffInstantAnswerProcessing(updated.request_id);
+      return res.json({
+        ok: true,
+        request_id: updated.request_id,
+        access_mode: 'free',
+        free_articles_remaining_after_this: Math.max(0, 3 - (access.freeArticlesUsed + 1)),
+        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}`
+      });
+    }
+
+    if (access.hasPaidBalance) {
+      const request = paidRequests.createPaidRequest({
+        raw_query: String(raw_query).trim(),
+        requested_by: requested_by || null,
+        notes: notes || null,
+        request_meta: { ...requestMeta, access_mode: 'bundle' }
+      });
+      const updated = paidRequests.updateRequestStatus(request.request_id, {
+        payment_status: 'paid',
+        request_status: 'paid_pending',
+        paid_at: new Date().toISOString(),
+        stripe_payment_status: 'credit_balance'
+      });
+      kickOffInstantAnswerProcessing(updated.request_id);
+      return res.json({
+        ok: true,
+        request_id: updated.request_id,
+        access_mode: 'bundle',
+        articles_remaining_balance: access.paidBalance,
+        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}`
+      });
+    }
+
+    const selectedBundleCode = ARTICLE_BUNDLES[bundle_code] ? bundle_code : 'article_bundle_20';
+    const { request, session, bundle } = await createInstantAnswerCheckoutSession({
+      raw_query: String(raw_query).trim(),
+      requested_by: requested_by || null,
+      notes: notes || null,
+      requestMeta: { ...requestMeta, access_mode: 'paid', selected_bundle_code: selectedBundleCode },
+      bundleCode: selectedBundleCode
+    });
+    res.json({
+      ok: true,
+      request_id: request.request_id,
+      access_mode: 'paid',
+      checkout_url: session.url,
+      selected_bundle_code: bundle.code,
+      selected_bundle_credits: bundle.credits,
+      free_articles_remaining_after_this: access.freeRemaining,
+      articles_remaining_balance: access.paidBalance
+    });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message || 'checkout_session_failed' });
   }

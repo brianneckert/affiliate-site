@@ -7,12 +7,14 @@ module.exports = function createPaidRequests({ rootDir }) {
   const paidRequestsStoreDir = process.env.PAID_REQUESTS_STORE_DIR ? path.resolve(process.env.PAID_REQUESTS_STORE_DIR) : analyticsDir;
   const searchQueriesPath = path.join(analyticsDir, 'search_queries.json');
   const paidRequestsPath = path.join(paidRequestsStoreDir, 'paid_generation_requests.json');
+  const userBalancesPath = path.join(paidRequestsStoreDir, 'article_user_balances.json');
 
   function ensureStores() {
     if (!fs.existsSync(analyticsDir)) fs.mkdirSync(analyticsDir, { recursive: true });
     if (!fs.existsSync(paidRequestsStoreDir)) fs.mkdirSync(paidRequestsStoreDir, { recursive: true });
     if (!fs.existsSync(searchQueriesPath)) fs.writeFileSync(searchQueriesPath, '[]\n');
     if (!fs.existsSync(paidRequestsPath)) fs.writeFileSync(paidRequestsPath, '[]\n');
+    if (!fs.existsSync(userBalancesPath)) fs.writeFileSync(userBalancesPath, '{}\n');
   }
 
   function readJson(filePath) {
@@ -60,6 +62,113 @@ module.exports = function createPaidRequests({ rootDir }) {
     return entry;
   }
 
+  function readUserBalances() {
+    const payload = readJson(userBalancesPath);
+    return payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+  }
+
+  function writeUserBalances(payload) {
+    writeJson(userBalancesPath, payload);
+  }
+
+  function getUserKey(input = {}) {
+    return input.user_key || input.ip_hash || null;
+  }
+
+  function buildDefaultUserRecord(userKey, patch = {}) {
+    return {
+      user_key: userKey,
+      ip_hash: patch.ip_hash || userKey,
+      country: patch.country || null,
+      free_articles_used: Number(patch.free_articles_used || 0),
+      articles_remaining_balance: Number(patch.articles_remaining_balance || 0),
+      total_articles_purchased: Number(patch.total_articles_purchased || 0),
+      total_articles_generated: Number(patch.total_articles_generated || 0),
+      total_paid_articles_consumed: Number(patch.total_paid_articles_consumed || 0),
+      total_free_articles_consumed: Number(patch.total_free_articles_consumed || 0),
+      last_purchase_at: patch.last_purchase_at || null,
+      stripe_customer_id: patch.stripe_customer_id || null,
+      processed_checkout_sessions: Array.isArray(patch.processed_checkout_sessions) ? patch.processed_checkout_sessions : [],
+      created_at: patch.created_at || new Date().toISOString(),
+      updated_at: patch.updated_at || new Date().toISOString()
+    };
+  }
+
+  function getUserRecord(userKey, defaults = {}) {
+    if (!userKey) return null;
+    const users = readUserBalances();
+    const existing = users[userKey];
+    if (existing) return existing;
+    return buildDefaultUserRecord(userKey, defaults);
+  }
+
+  function upsertUserRecord(userKey, patch = {}) {
+    if (!userKey) return null;
+    const users = readUserBalances();
+    const existing = users[userKey] || buildDefaultUserRecord(userKey, patch);
+    const merged = {
+      ...existing,
+      ...patch,
+      user_key: userKey,
+      ip_hash: patch.ip_hash || existing.ip_hash || userKey,
+      processed_checkout_sessions: Array.isArray(patch.processed_checkout_sessions)
+        ? patch.processed_checkout_sessions
+        : (existing.processed_checkout_sessions || []),
+      updated_at: new Date().toISOString()
+    };
+    users[userKey] = merged;
+    writeUserBalances(users);
+    return merged;
+  }
+
+  function applySuccessfulGeneration({ userKey, accessMode }) {
+    if (!userKey) return null;
+    const users = readUserBalances();
+    const existing = users[userKey] || buildDefaultUserRecord(userKey);
+    const next = { ...existing };
+
+    if (accessMode === 'free') {
+      next.free_articles_used = Number(next.free_articles_used || 0) + 1;
+      next.total_free_articles_consumed = Number(next.total_free_articles_consumed || 0) + 1;
+    } else if (accessMode === 'bundle') {
+      const currentBalance = Number(next.articles_remaining_balance || 0);
+      if (currentBalance <= 0) {
+        throw new Error('insufficient_bundle_balance');
+      }
+      next.articles_remaining_balance = currentBalance - 1;
+      next.total_paid_articles_consumed = Number(next.total_paid_articles_consumed || 0) + 1;
+    }
+
+    next.total_articles_generated = Number(next.total_articles_generated || 0) + 1;
+    next.updated_at = new Date().toISOString();
+    users[userKey] = next;
+    writeUserBalances(users);
+    return next;
+  }
+
+  function applyBundlePurchase({ userKey, bundleSize, stripeCustomerId = null, checkoutSessionId = null, purchasedAt = null, ipHash = null, country = null }) {
+    if (!userKey) return null;
+    const users = readUserBalances();
+    const existing = users[userKey] || buildDefaultUserRecord(userKey, { ip_hash: ipHash || userKey, country });
+    const processed = Array.isArray(existing.processed_checkout_sessions) ? existing.processed_checkout_sessions : [];
+
+    if (checkoutSessionId && processed.includes(checkoutSessionId)) {
+      return { user: existing, alreadyProcessed: true };
+    }
+
+    const next = { ...existing };
+    next.articles_remaining_balance = Number(next.articles_remaining_balance || 0) + Number(bundleSize || 0);
+    next.total_articles_purchased = Number(next.total_articles_purchased || 0) + Number(bundleSize || 0);
+    next.last_purchase_at = purchasedAt || new Date().toISOString();
+    next.stripe_customer_id = stripeCustomerId || next.stripe_customer_id || null;
+    next.ip_hash = ipHash || next.ip_hash || userKey;
+    next.country = country || next.country || null;
+    next.processed_checkout_sessions = checkoutSessionId ? [...processed, checkoutSessionId] : processed;
+    next.updated_at = new Date().toISOString();
+    users[userKey] = next;
+    writeUserBalances(users);
+    return { user: next, alreadyProcessed: false };
+  }
 
   function upsertRequest(record) {
     const rows = readJson(paidRequestsPath);
@@ -70,7 +179,7 @@ module.exports = function createPaidRequests({ rootDir }) {
     return idx >= 0 ? rows[idx] : record;
   }
 
-  function buildRequestRecord({ raw_query, requested_by = null, notes = null }) {
+  function buildRequestRecord({ raw_query, requested_by = null, notes = null, request_meta = null }) {
     const normalized = normalizeSearchQuery(raw_query);
     return {
       request_id: crypto.randomUUID(),
@@ -95,6 +204,7 @@ module.exports = function createPaidRequests({ rootDir }) {
       stripe_checkout_session_id: null,
       stripe_payment_status: null,
       paid_at: null,
+      request_meta: request_meta || null,
     };
   }
 
@@ -104,6 +214,12 @@ module.exports = function createPaidRequests({ rootDir }) {
     rows.push(record);
     writeJson(paidRequestsPath, rows);
     return record;
+  }
+
+  function countSuccessfulGenerationsByIpHash(ipHash) {
+    if (!ipHash) return 0;
+    const user = getUserRecord(ipHash);
+    return Number(user?.free_articles_used || 0) + Number(user?.total_paid_articles_consumed || 0);
   }
 
   function updateRequestStatus(requestId, patch) {
@@ -144,6 +260,14 @@ module.exports = function createPaidRequests({ rootDir }) {
     upsertRequest,
     readSearchQueries,
     readPaidRequests,
+    readUserBalances,
+    getUserRecord,
+    upsertUserRecord,
+    applySuccessfulGeneration,
+    applyBundlePurchase,
+    getUserKey,
+    countSuccessfulGenerationsByIpHash,
     paidRequestsPath,
+    userBalancesPath,
   };
 };
