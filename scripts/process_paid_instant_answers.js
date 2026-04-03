@@ -45,10 +45,18 @@ function cleanText(str = '') {
 }
 
 function extractSourceType(url = '', fallback = '') {
-  const value = `${url} ${fallback}`.toLowerCase();
+  const rawUrl = String(url || '');
+  let decodedUrl = rawUrl;
+  try {
+    const parsed = new URL(rawUrl, 'https://duckduckgo.com');
+    const uddg = parsed.searchParams.get('uddg');
+    if (uddg) decodedUrl = decodeURIComponent(uddg);
+  } catch {}
+  const value = `${decodedUrl} ${fallback}`.toLowerCase();
   if (value.includes('reddit')) return 'reddit';
   if (value.includes('youtube') || value.includes('youtu.be')) return 'youtube';
   if (value.includes('google') || value.includes('g2.com') || value.includes('trustpilot') || value.includes('consumer reports')) return 'google_reviews';
+  if (value.includes('forum') || value.includes('archerytalk') || value.includes('bbs') || value.includes('board')) return 'forum';
   return 'forum';
 }
 
@@ -364,9 +372,10 @@ async function buildCategoryIntelligence(request) {
 
   const searchQueries = [
     `${query} google reviews`,
-    `${query} reddit reviews`,
-    `${query} youtube review`,
+    `${query} site:reddit.com review`,
+    `${query} site:youtube.com review`,
     `${query} forum discussion`,
+    `${query} site:archerytalk.com discussion`,
     `${query} buyer complaints`,
     `${query} what matters most`
   ];
@@ -595,9 +604,9 @@ async function buildProductAnalysis(product, request, categoryIntelligence) {
   const searchQueries = [
     `${productName} amazon reviews`,
     `${productName} google reviews`,
-    `${productName} reddit review`,
+    `${productName} site:reddit.com review`,
     `${productName} forum discussion`,
-    `${productName} youtube review`
+    `${productName} site:youtube.com review`
   ];
 
   const sources = [];
