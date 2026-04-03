@@ -981,12 +981,15 @@ function renderArticle(req, content, compliance, entry = null) {
         <p><strong>Best for:</strong> ${escapeHtml(item.best_for)}</p>
         <p><strong>Price position:</strong> ${escapeHtml(item.price_position)}</p>
         <p><strong>Rating:</strong> ${escapeHtml(item.rating)} (${escapeHtml(item.review_count)} reviews)</p>
+        ${item.product_score?.final_score ? `<p><strong>Weighted score:</strong> ${escapeHtml(item.product_score.final_score)}</p>` : ''}
         <p><strong>Prime eligible:</strong> ${escapeHtml(item.prime_eligible)}</p>
         <p><strong>ASIN:</strong> ${escapeHtml(item.asin)}</p>
         <p><strong>Category:</strong> ${escapeHtml(item.category)}</p>
         <p><strong>Summary:</strong> ${escapeHtml(item.short_factual_description)}</p>
         <p><strong>Key strengths:</strong> ${escapeHtml((item.key_strengths || []).join(', '))}</p>
         <p><strong>Drawbacks:</strong> ${escapeHtml((item.drawbacks || []).join(', '))}</p>
+        ${item.matches_praises?.length ? `<p><strong>Aligns with buyer priorities:</strong> ${escapeHtml(item.matches_praises.join(', '))}</p>` : ''}
+        ${item.matches_complaints?.length ? `<p><strong>Complaint overlap:</strong> ${escapeHtml(item.matches_complaints.join(', '))}</p>` : ''}
         <p><strong>Canonical product URL:</strong> <a class="analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(item.asin)}" data-affiliate-url="${escapeHtml(item.canonical_product_url)}" data-position-in-article="${comparisonRankMap.get(item.product_name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (item.product_name || '').trim())}" href="${escapeHtml(item.canonical_product_url)}" target="_blank" rel="noopener noreferrer">View on Amazon</a></p>
       </div>
     `)
@@ -1064,6 +1067,28 @@ function renderArticle(req, content, compliance, entry = null) {
         border: 1px solid #d1d5db;
         border-radius: 22px;
         padding: 22px 26px;
+        margin-bottom: 28px;
+      }
+      .winner-hero {
+        background: linear-gradient(180deg, #f8fafc, #eef2ff);
+        border: 1px solid #cbd5e1;
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 28px;
+      }
+      .winner-summary {
+        font-size: 20px;
+        line-height: 1.6;
+        color: #334155;
+        margin: 14px 0 18px;
+      }
+      .winner-link-row {
+        margin-top: 16px;
+      }
+      .winner-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1fr 1fr;
         margin-bottom: 28px;
       }
       .glance-grid,
@@ -1189,6 +1214,9 @@ function renderArticle(req, content, compliance, entry = null) {
         .wrap {
           padding: 14px 12px 36px;
         }
+        .winner-grid {
+          grid-template-columns: 1fr;
+        }
         .back {
           margin-bottom: 14px;
           font-size: 16px;
@@ -1248,9 +1276,31 @@ function renderArticle(req, content, compliance, entry = null) {
         <h1>${escapeHtml(content.title)}</h1>
         <div class="summary">${escapeHtml(content.summary)}</div>
 
-        <div class="top-pick">
-          <div class="eyebrow">Top pick</div>
-          <div class="top-name">${escapeHtml(content.top_pick)}</div>
+        <div class="winner-hero">
+          <div class="eyebrow">Winner</div>
+          <div class="top-name">${escapeHtml(content.winner_selection?.best_overall?.product_name || content.top_pick)}</div>
+          <div class="winner-summary">${escapeHtml(content.winner_summary || content.summary)}</div>
+          <div class="winner-link-row">
+            ${(() => {
+              const winner = (content.top_picks_at_a_glance || []).find((item) => item.product_name === (content.winner_selection?.best_overall?.product_name || content.top_pick));
+              return winner?.canonical_product_url
+                ? `<a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(winner.product_name)}" data-asin="${escapeHtml(productEntityMap.get(winner.product_name)?.asin || '')}" data-affiliate-url="${escapeHtml(winner.canonical_product_url)}" data-position-in-article="${comparisonRankMap.get(winner.product_name) || ''}" data-was-top-pick="true" href="${escapeHtml(winner.canonical_product_url)}" target="_blank" rel="noopener noreferrer">Shop the Winner on Amazon</a>`
+                : '';
+            })()}
+          </div>
+        </div>
+
+        <div class="winner-grid">
+          <div class="mini-card">
+            <div class="eyebrow">Why it won</div>
+            <ul>${(content.winner_why_it_won || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+          </div>
+          <div class="mini-card">
+            <div class="eyebrow">Category pros & cons</div>
+            <p><strong>People typically love:</strong> ${escapeHtml((content.category_pros_cons?.typically_loved || []).join(', '))}</p>
+            <p><strong>Common complaints:</strong> ${escapeHtml((content.category_pros_cons?.common_complaints || []).join(', '))}</p>
+            <p><strong>Good vs bad products:</strong> ${escapeHtml((content.category_pros_cons?.separates_good_vs_bad || []).join(', '))}</p>
+          </div>
         </div>
 
         ${relatedGuides ? `<h3>Related Guides</h3><p>${relatedGuides}</p>` : ''}

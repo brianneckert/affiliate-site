@@ -758,6 +758,21 @@ function ensurePublish(registry, request, output) {
     avoid_if: p.product_analysis?.avoid_if || '',
     product_score: p.product_score || null
   }));
+  const bestOverallProduct = output.products.find((p) => p.product_name === output.winner_selection?.best_overall?.product_name) || output.products[0];
+  const winnerSummary = `${bestOverallProduct.product_name} is the strongest overall choice for ${request.raw_query} because it best matches buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall performance and value'}. It also shows less overlap with common complaint patterns than the alternatives.`;
+  const winnerWhyItWon = [
+    ...((bestOverallProduct.product_analysis?.matches_praises || []).slice(0, 2).map((item) => `Excels in ${item}`)),
+    ...((output.category_intelligence?.top_complaints || []).slice(0, 2).map((item) => `Avoids ${item}`))
+  ].slice(0, 4);
+  const categoryProsCons = {
+    typically_loved: (output.category_intelligence?.top_praises || []).slice(0, 5),
+    common_complaints: (output.category_intelligence?.top_complaints || []).slice(0, 5),
+    separates_good_vs_bad: [
+      ...((output.category_intelligence?.decision_drivers || []).slice(0, 3)),
+      ...((output.category_intelligence?.failure_points || []).slice(0, 2).map((item) => `Avoid products with ${item}`))
+    ].slice(0, 5)
+  };
+
   const content = {
     article_slug: slug,
     category: request.normalized_query,
@@ -765,6 +780,9 @@ function ensurePublish(registry, request, output) {
     summary: output.answer_summary,
     top_pick: output.winner_selection?.best_overall?.product_name || output.products[0].product_name,
     winner_selection: output.winner_selection,
+    winner_summary: winnerSummary,
+    winner_why_it_won: winnerWhyItWon,
+    category_pros_cons: categoryProsCons,
     category_intelligence: output.category_intelligence,
     top_picks_at_a_glance: output.products.slice(0, 5).map((p, idx) => ({
       product_name: p.product_name,
