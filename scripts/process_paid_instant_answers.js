@@ -141,6 +141,119 @@ function pickBestPhrase(fragments = [], queryTokens = [], fallback = '') {
   return ranked[0] || fallback;
 }
 
+function buildWeightedCriteria(categoryIntelligence = {}) {
+  const driverText = normalize([
+    ...(categoryIntelligence.decision_drivers || []),
+    ...(categoryIntelligence.top_praises || []),
+    ...(categoryIntelligence.top_complaints || []),
+    ...(categoryIntelligence.failure_points || [])
+  ].join(' '));
+
+  const criteria = [
+    {
+      key: 'core_performance',
+      label: 'Core performance',
+      weight: 0.30,
+      signals: ['performance', 'results', 'power', 'effectiveness', 'consistent', 'output']
+    },
+    {
+      key: 'speed_responsiveness',
+      label: 'Speed / responsiveness',
+      weight: 0.20,
+      signals: ['speed', 'fast', 'responsive', 'quick', 'lag', 'slow']
+    },
+    {
+      key: 'reliability',
+      label: 'Reliability',
+      weight: 0.15,
+      signals: ['reliable', 'durable', 'lasting', 'stopped working', 'failure', 'break', 'consistent']
+    },
+    {
+      key: 'build_quality',
+      label: 'Build quality',
+      weight: 0.15,
+      signals: ['build quality', 'materials', 'solid', 'premium', 'flimsy', 'cheap', 'construction']
+    },
+    {
+      key: 'value_for_price',
+      label: 'Value for price',
+      weight: 0.10,
+      signals: ['value', 'worth it', 'price', 'overpriced', 'budget', 'cost']
+    },
+    {
+      key: 'ease_of_use',
+      label: 'Ease of use',
+      weight: 0.10,
+      signals: ['easy', 'simple', 'setup', 'clean', 'user friendly', 'comfortable', 'intuitive']
+    }
+  ];
+
+  return criteria.map((criterion) => {
+    const boost = criterion.signals.some((signal) => driverText.includes(normalize(signal))) ? 0.03 : 0;
+    return { ...criterion, weight: criterion.weight + boost };
+  }).map((criterion, _, arr) => {
+    const total = arr.reduce((sum, item) => sum + item.weight, 0);
+    return { ...criterion, weight: criterion.weight / total };
+  });
+}
+
+function scoreCriterion(criterion, analysis, categoryIntelligence, product) {
+  const text = normalize([
+    ...(analysis.pros || []),
+    ...(analysis.cons || []),
+    ...(analysis.matches_praises || []),
+    ...(analysis.matches_complaints || []),
+    analysis.unique_strength || '',
+    analysis.hidden_issues || '',
+    analysis.best_for || '',
+    analysis.avoid_if || ''
+  ].join(' '));
+
+  let score = 5.5;
+  const positiveHits = criterion.signals.filter((signal) => text.includes(normalize(signal))).length;
+  score += positiveHits * 0.8;
+  score += Math.min(1.5, (analysis.matches_praises || []).length * 0.4);
+  score -= Math.min(2.0, (analysis.matches_complaints || []).length * 0.35);
+
+  if (criterion.key === 'reliability') {
+    score -= /stopped working|failure|break|refund|replacement|wear out/.test(text) ? 1.8 : 0;
+  }
+  if (criterion.key === 'build_quality') {
+    score -= /flimsy|cheap|crack|poor build/.test(text) ? 1.4 : 0;
+  }
+  if (criterion.key === 'value_for_price') {
+    score -= /overpriced|too expensive/.test(text) ? 1.2 : 0;
+    score += /worth it|good value|budget/.test(text) ? 1.0 : 0;
+  }
+  if (criterion.key === 'speed_responsiveness') {
+    score -= /slow|lag|delay/.test(text) ? 1.0 : 0;
+    score += /fast|quick|responsive/.test(text) ? 1.0 : 0;
+  }
+  if (criterion.key === 'ease_of_use') {
+    score -= /hard to use|confusing|hard to clean/.test(text) ? 1.0 : 0;
+    score += /easy to use|easy to clean|simple setup|intuitive/.test(text) ? 1.0 : 0;
+  }
+
+  if (product.rating) score += Math.max(0, product.rating - 4.0) * 1.2;
+  if (product.review_count) score += Math.min(1.2, Math.log10(Math.max(product.review_count, 1)) - 2.5);
+
+  return Math.max(1, Math.min(10, Number(score.toFixed(1))));
+}
+
+function buildProductScore(product, categoryIntelligence) {
+  const criteria = buildWeightedCriteria(categoryIntelligence);
+  const categoryScores = {};
+  for (const criterion of criteria) {
+    categoryScores[criterion.key] = scoreCriterion(criterion, product.product_analysis || {}, categoryIntelligence, product);
+  }
+  const finalScore = criteria.reduce((sum, criterion) => sum + (categoryScores[criterion.key] * criterion.weight), 0);
+  return {
+    category_scores: categoryScores,
+    final_score: Number(finalScore.toFixed(1)),
+    weights: Object.fromEntries(criteria.map((criterion) => [criterion.key, Number(criterion.weight.toFixed(3))]))
+  };
+}
+
 async function buildCategoryIntelligence(request) {
   const query = String(request.normalized_query || request.raw_query || '').trim();
   const queryTokens = normalize(query).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
@@ -527,9 +640,14 @@ async function buildOutput(request, published) {
     return { ok: false, error: 'product_analysis_requires_five_products', debug: { analyzed: analyzedProducts.length } };
   }
 
+  const scoredProducts = analyzedProducts.map((product) => ({
+    ...product,
+    product_score: buildProductScore(product, intelligenceResult.category_intelligence)
+  })).sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
+
   return {
     ...productResult,
-    products: analyzedProducts,
+    products: scoredProducts,
     category_intelligence: intelligenceResult.category_intelligence,
     category_intelligence_sources: intelligenceResult.evidence_sources
   };
@@ -553,7 +671,7 @@ function ensurePublish(registry, request, output) {
     canonical_product_url: p.affiliate_url,
     price_tier: idx === 0 ? 'Best Overall Value' : idx === 1 ? 'Premium Pick' : idx === 2 ? 'Balanced Pick' : idx === 3 ? 'Budget-Friendly' : 'Alternate Option',
     best_for: p.product_analysis?.best_for || p.best_for || request.normalized_query,
-    total_score: Math.max(88, 98 - idx * 2),
+    total_score: p.product_score?.final_score || Math.max(88, 98 - idx * 2),
     notable_features: [
       ...(p.product_analysis?.pros || []).slice(0, 2),
       ...(p.product_analysis?.matches_praises || []).slice(0, 1)
@@ -577,7 +695,8 @@ function ensurePublish(registry, request, output) {
     matches_praises: [...(p.product_analysis?.matches_praises || []).slice(0, 3)],
     matches_complaints: [...(p.product_analysis?.matches_complaints || []).slice(0, 3)],
     hidden_issues: p.product_analysis?.hidden_issues || '',
-    avoid_if: p.product_analysis?.avoid_if || ''
+    avoid_if: p.product_analysis?.avoid_if || '',
+    product_score: p.product_score || null
   }));
   const content = {
     article_slug: slug,
@@ -628,6 +747,7 @@ function ensurePublish(registry, request, output) {
       asin: p.asin || null,
       review_count: p.review_count || 0,
       rating: p.rating || 0,
+      score: p.product_score || null,
       analysis: p.product_analysis,
       sources: p.product_analysis_sources || []
     })),
