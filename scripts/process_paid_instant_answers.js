@@ -270,6 +270,39 @@ function buildWinnerJustification(product, categoryIntelligence, label) {
   return `${product.product_name} wins Best Overall because it has the highest weighted score, aligns with praised features like ${positiveText}, and shows minimal alignment with common complaints${complaintCount ? ` such as ${complaintText}` : ''}.`;
 }
 
+function buildDidNotWinReason(product, winner, categoryIntelligence) {
+  const loserScore = product.product_score?.final_score || 0;
+  const winnerScore = winner.product_score?.final_score || 0;
+  const loserCats = product.product_score?.category_scores || {};
+  const winnerCats = winner.product_score?.category_scores || {};
+
+  const reasons = [];
+  if ((loserCats.core_performance || 0) < (winnerCats.core_performance || 0) - 0.4) {
+    reasons.push('Less accurate or effective than the winner based on user feedback.');
+  }
+  if ((loserCats.reliability || 0) < (winnerCats.reliability || 0) - 0.4) {
+    reasons.push('More complaints about durability or long-term reliability.');
+  }
+  if ((loserCats.speed_responsiveness || 0) < (winnerCats.speed_responsiveness || 0) - 0.4) {
+    reasons.push('Slower performance or responsiveness based on user feedback.');
+  }
+  if ((product.product_analysis?.matches_complaints || []).length > (winner.product_analysis?.matches_complaints || []).length) {
+    reasons.push('Poorer alignment with key decision drivers because it overlaps more with common complaints.');
+  }
+  if (!reasons.length && loserScore < winnerScore) {
+    reasons.push('It scored lower overall once buyer priorities and complaint patterns were weighted together.');
+  }
+
+  const summary = `${product.product_name} is a credible option, but it finished behind ${winner.product_name} because ${reasons[0]?.toLowerCase() || 'it scored lower on weighted buyer priorities.'}`;
+  return {
+    product_name: product.product_name,
+    affiliate_url: product.affiliate_url,
+    summary,
+    did_not_win_reason: reasons[0] || 'It scored lower on the weighted criteria that mattered most to buyers.',
+    additional_reasons: reasons.slice(1, 3)
+  };
+}
+
 function selectWinners(products, categoryIntelligence) {
   const sorted = [...products].sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
   const bestOverall = sorted[0] || null;
@@ -764,6 +797,9 @@ function ensurePublish(registry, request, output) {
     ...((bestOverallProduct.product_analysis?.matches_praises || []).slice(0, 2).map((item) => `Excels in ${item}`)),
     ...((output.category_intelligence?.top_complaints || []).slice(0, 2).map((item) => `Avoids ${item}`))
   ].slice(0, 4);
+  const whyTheyDidNotWin = output.products
+    .filter((p) => p.product_name !== bestOverallProduct.product_name)
+    .map((p) => buildDidNotWinReason(p, bestOverallProduct, output.category_intelligence));
   const categoryProsCons = {
     typically_loved: (output.category_intelligence?.top_praises || []).slice(0, 5),
     common_complaints: (output.category_intelligence?.top_complaints || []).slice(0, 5),
@@ -782,6 +818,7 @@ function ensurePublish(registry, request, output) {
     winner_selection: output.winner_selection,
     winner_summary: winnerSummary,
     winner_why_it_won: winnerWhyItWon,
+    why_they_did_not_win: whyTheyDidNotWin,
     category_pros_cons: categoryProsCons,
     category_intelligence: output.category_intelligence,
     top_picks_at_a_glance: output.products.slice(0, 5).map((p, idx) => ({

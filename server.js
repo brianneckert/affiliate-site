@@ -995,6 +995,18 @@ function renderArticle(req, content, compliance, entry = null) {
     `)
     .join('');
 
+  const didNotWinCards = (content.why_they_did_not_win || [])
+    .map((item) => `
+      <div class="product-card">
+        <h4>${escapeHtml(item.product_name)}</h4>
+        <p>${escapeHtml(item.summary || '')}</p>
+        <p><strong>Why it did not win:</strong> ${escapeHtml(item.did_not_win_reason || '')}</p>
+        ${(item.additional_reasons || []).length ? `<p><strong>Also:</strong> ${escapeHtml(item.additional_reasons.join(' '))}</p>` : ''}
+        <p><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(productEntityMap.get(item.product_name)?.asin || '')}" data-affiliate-url="${escapeHtml(item.affiliate_url || '')}" data-position-in-article="${comparisonRankMap.get(item.product_name) || ''}" data-was-top-pick="false" href="${escapeHtml(item.affiliate_url || '')}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></p>
+      </div>
+    `)
+    .join('');
+
   const faq = (content.sections?.faq || [])
     .map((item) => `
       <div class="faq-item">
@@ -1089,6 +1101,12 @@ function renderArticle(req, content, compliance, entry = null) {
         display: grid;
         gap: 16px;
         grid-template-columns: 1fr 1fr;
+        margin-bottom: 28px;
+      }
+      .did-not-win-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         margin-bottom: 28px;
       }
       .glance-grid,
@@ -1306,6 +1324,8 @@ function renderArticle(req, content, compliance, entry = null) {
         ${relatedGuides ? `<h3>Related Guides</h3><p>${relatedGuides}</p>` : ''}
 
         ${glance ? `<h3>Top Picks at a Glance</h3><div class="glance-grid">${glance}</div>` : ''}
+
+        ${didNotWinCards ? `<h3>Why They Did Not Win</h3><div class="did-not-win-grid">${didNotWinCards}</div>` : ''}
 
         <h3>Comparison</h3>
         <div class="comparison-table-shell">
