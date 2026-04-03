@@ -16,11 +16,201 @@ const AMAZON_HEADERS = {
   'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36',
   'accept-language': 'en-US,en;q=0.9'
 };
+const SEARCH_HEADERS = {
+  'user-agent': AMAZON_HEADERS['user-agent'],
+  'accept-language': AMAZON_HEADERS['accept-language']
+};
+const STOPWORDS = new Set([
+  'the','and','for','that','with','this','from','your','into','under','over','best','top','guide','comparison','reviews','review','user','users','buyer','buyers','amazon','product','products','item','items','youtube','reddit','google','forum','forums','good','great','nice','very','more','most','less','than','when','what','which','while','about','they','them','their','have','has','had','are','was','were','you','our','not','too','can','all','but','out','why','how','use','using'
+]);
 
 function readJson(file) { return JSON.parse(fs.readFileSync(file, 'utf8')); }
 function writeJson(file, payload) { fs.writeFileSync(file, JSON.stringify(payload, null, 2)); }
 function normalize(q) { return paidRequests.normalizeSearchQuery(q); }
 function slugify(q) { return normalize(q).replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, ''); }
+
+function decodeHtml(str = '') {
+  return String(str)
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x2F;/g, '/');
+}
+
+function cleanText(str = '') {
+  return decodeHtml(String(str).replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+}
+
+function extractSourceType(url = '', fallback = '') {
+  const value = `${url} ${fallback}`.toLowerCase();
+  if (value.includes('reddit')) return 'reddit';
+  if (value.includes('youtube') || value.includes('youtu.be')) return 'youtube';
+  if (value.includes('google') || value.includes('g2.com') || value.includes('trustpilot') || value.includes('consumer reports')) return 'google_reviews';
+  return 'forum';
+}
+
+async function fetchSearchResults(query) {
+  const url = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+  const res = await fetch(url, { headers: SEARCH_HEADERS });
+  if (!res.ok) throw new Error(`search_http_${res.status}`);
+  const html = await res.text();
+  const results = [];
+  const blockRegex = /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]{0,1200}?(?:<a[^>]*class="result__snippet"[^>]*>|<div[^>]*class="result__snippet"[^>]*>)([\s\S]*?)(?:<\/a>|<\/div>)/gi;
+  let match;
+  while ((match = blockRegex.exec(html)) !== null) {
+    const href = cleanText(match[1]);
+    const title = cleanText(match[2]);
+    const snippet = cleanText(match[3]);
+    if (!href || !title || !snippet) continue;
+    results.push({ href, title, snippet, source_type: extractSourceType(href, query), query });
+    if (results.length >= 8) break;
+  }
+  return results;
+}
+
+function sentenceFragments(text = '') {
+  return String(text)
+    .split(/[.!?;•\n]+/)
+    .map((part) => cleanText(part))
+    .filter(Boolean);
+}
+
+function extractPhrasesFromFragment(fragment = '', queryTokens = []) {
+  const tokens = normalize(fragment).split(' ').filter((token) => token && token.length >= 3 && !STOPWORDS.has(token));
+  const filtered = tokens.filter((token) => !queryTokens.includes(token));
+  const phrases = [];
+  for (let size = 2; size <= 4; size += 1) {
+    for (let i = 0; i <= filtered.length - size; i += 1) {
+      const phrase = filtered.slice(i, i + size).join(' ');
+      if (phrase.length >= 8) phrases.push(phrase);
+    }
+  }
+  return phrases;
+}
+
+function rankPhrases(fragments, queryTokens) {
+  const counts = new Map();
+  for (const fragment of fragments) {
+    const unique = new Set(extractPhrasesFromFragment(fragment, queryTokens));
+    for (const phrase of unique) {
+      counts.set(phrase, (counts.get(phrase) || 0) + 1);
+    }
+  }
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].length - b[0].length)
+    .map(([phrase]) => phrase)
+    .slice(0, 10);
+}
+
+function dedupeAndFill(items, fallbackFragments, queryTokens) {
+  const seen = new Set();
+  const out = [];
+  for (const item of items) {
+    const normalized = normalize(item);
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    out.push(item);
+    if (out.length >= 10) return out;
+  }
+  const ranked = rankPhrases(fallbackFragments, queryTokens);
+  for (const item of ranked) {
+    const normalized = normalize(item);
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    out.push(item);
+    if (out.length >= 10) return out;
+  }
+  return out;
+}
+
+async function buildCategoryIntelligence(request) {
+  const query = String(request.normalized_query || request.raw_query || '').trim();
+  const queryTokens = normalize(query).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
+  if (!query || !queryTokens.length) {
+    return { ok: false, error: 'category_intelligence_query_invalid' };
+  }
+
+  const searchQueries = [
+    `${query} google reviews`,
+    `${query} reddit reviews`,
+    `${query} youtube review`,
+    `${query} forum discussion`,
+    `${query} buyer complaints`,
+    `${query} what matters most`
+  ];
+
+  const sources = [];
+  for (const q of searchQueries) {
+    try {
+      const results = await fetchSearchResults(q);
+      sources.push(...results);
+    } catch (error) {
+      sources.push({ href: '', title: q, snippet: String(error.message || error), source_type: 'error', query: q });
+    }
+  }
+
+  const validSources = sources.filter((item) => item.source_type !== 'error' && item.snippet);
+  const coverage = new Set(validSources.map((item) => item.source_type));
+  if (!validSources.length || !coverage.has('reddit') || !coverage.has('youtube') || !coverage.has('google_reviews') || !coverage.has('forum')) {
+    return {
+      ok: false,
+      error: 'category_intelligence_source_coverage_missing',
+      debug: { coverage: Array.from(coverage), collected_sources: validSources.length }
+    };
+  }
+
+  const praiseCues = ['love', 'great', 'best', 'excellent', 'reliable', 'fast', 'easy', 'quiet', 'comfortable', 'durable', 'smooth', 'helpful', 'accurate', 'portable', 'powerful'];
+  const complaintCues = ['hate', 'complaint', 'problem', 'issue', 'bad', 'poor', 'fails', 'failure', 'broken', 'returns', 'refund', 'defect', 'flimsy', 'weak', 'noisy', 'inconsistent'];
+  const driverCues = ['important', 'need', 'looking for', 'matters', 'choose', 'decision', 'worth it', 'buy', 'compare', 'consider'];
+  const failureCues = ['break', 'stop working', 'battery dies', 'leak', 'clog', 'overheat', 'tear', 'rust', 'jam', 'disconnect', 'wear out', 'fall apart', 'crack'];
+
+  const praiseFragments = [];
+  const complaintFragments = [];
+  const driverFragments = [];
+  const failureFragments = [];
+
+  for (const source of validSources) {
+    const fragments = sentenceFragments(`${source.title}. ${source.snippet}`);
+    for (const fragment of fragments) {
+      const lower = fragment.toLowerCase();
+      if (praiseCues.some((cue) => lower.includes(cue))) praiseFragments.push(fragment);
+      if (complaintCues.some((cue) => lower.includes(cue))) complaintFragments.push(fragment);
+      if (driverCues.some((cue) => lower.includes(cue))) driverFragments.push(fragment);
+      if (failureCues.some((cue) => lower.includes(cue))) failureFragments.push(fragment);
+    }
+  }
+
+  const categoryIntelligence = {
+    top_praises: dedupeAndFill(rankPhrases(praiseFragments, queryTokens), validSources.map((x) => x.snippet), queryTokens),
+    top_complaints: dedupeAndFill(rankPhrases(complaintFragments, queryTokens), validSources.map((x) => x.snippet), queryTokens),
+    decision_drivers: dedupeAndFill(rankPhrases(driverFragments, queryTokens), validSources.map((x) => x.title + ' ' + x.snippet), queryTokens),
+    failure_points: dedupeAndFill(rankPhrases(failureFragments, queryTokens), validSources.map((x) => x.snippet), queryTokens)
+  };
+
+  const isComplete = ['top_praises', 'top_complaints', 'decision_drivers', 'failure_points'].every((key) => Array.isArray(categoryIntelligence[key]) && categoryIntelligence[key].length >= 3);
+  if (!isComplete) {
+    return {
+      ok: false,
+      error: 'category_intelligence_incomplete',
+      debug: Object.fromEntries(Object.entries(categoryIntelligence).map(([k, v]) => [k, v.length]))
+    };
+  }
+
+  return {
+    ok: true,
+    category_intelligence: categoryIntelligence,
+    evidence_sources: validSources.slice(0, 20).map((item) => ({
+      source_type: item.source_type,
+      query: item.query,
+      title: item.title,
+      href: item.href,
+      snippet: item.snippet
+    }))
+  };
+}
 
 function loadPublishedArticles() {
   const reg = readJson(registryPath);
@@ -61,7 +251,7 @@ async function fetchAmazonProducts(query) {
       asin,
       product_name: title,
       affiliate_url: href.startsWith('http') ? href : `https://www.amazon.com${href}`,
-      why_it_won: `Direct Amazon search result for \"${query}\".`,
+      why_it_won: `Direct Amazon search result for "${query}".`,
       notes: 'Selected from live Amazon search results during paid Instant Answer fulfillment.',
       best_for: query,
       source: 'amazon_search'
@@ -147,15 +337,26 @@ async function buildFromAmazonSearch(request) {
     normalized_query: request.normalized_query,
     generated_at: new Date().toISOString(),
     top_matches: [],
-    answer_summary: `Built directly from live Amazon search results for \"${request.raw_query}\".`,
+    answer_summary: `Built directly from live Amazon search results for "${request.raw_query}".`,
     products
   };
 }
 
 async function buildOutput(request, published) {
+  const intelligenceResult = await buildCategoryIntelligence(request);
+  if (!intelligenceResult.ok || !intelligenceResult.category_intelligence) {
+    return { ok: false, error: intelligenceResult.error || 'category_intelligence_missing', debug: intelligenceResult.debug || null };
+  }
+
   const fromExisting = buildFromExisting(request, published);
-  if (fromExisting.ok) return fromExisting;
-  return await buildFromAmazonSearch(request);
+  const productResult = fromExisting.ok ? fromExisting : await buildFromAmazonSearch(request);
+  if (!productResult.ok) return productResult;
+
+  return {
+    ...productResult,
+    category_intelligence: intelligenceResult.category_intelligence,
+    category_intelligence_sources: intelligenceResult.evidence_sources
+  };
 }
 
 function ensurePublish(registry, request, output) {
@@ -180,10 +381,10 @@ function ensurePublish(registry, request, output) {
     notable_features: [
       p.source === 'amazon_search' ? 'Live Amazon result' : 'Published guide match',
       'Selected for query fit',
-      'Compared against other top options'
+      ...((output.category_intelligence?.top_praises || []).slice(0, 1))
     ],
     why_it_won: p.why_it_won || `Strong Amazon search relevance for ${request.raw_query}.`,
-    keep_in_mind: p.notes || 'Review individual Amazon details before purchase.'
+    keep_in_mind: p.notes || (output.category_intelligence?.top_complaints || [])[0] || 'Review individual Amazon details before purchase.'
   }));
   const productEntities = output.products.map((p, idx) => ({
     product_name: p.product_name,
@@ -196,8 +397,8 @@ function ensurePublish(registry, request, output) {
     prime_eligible: 'Likely',
     category: request.normalized_query,
     short_factual_description: p.why_it_won || `Selected as a strong match for ${request.raw_query}.`,
-    key_strengths: ['Query relevance', 'Amazon availability', 'Competitive comparison fit'],
-    drawbacks: [p.notes || 'Check listing details for current specs and pricing.']
+    key_strengths: [...(output.category_intelligence?.top_praises || []).slice(0, 3)],
+    drawbacks: [...(output.category_intelligence?.top_complaints || []).slice(0, 3)]
   }));
   const content = {
     article_slug: slug,
@@ -205,6 +406,7 @@ function ensurePublish(registry, request, output) {
     title,
     summary: output.answer_summary,
     top_pick: output.products[0].product_name,
+    category_intelligence: output.category_intelligence,
     top_picks_at_a_glance: output.products.slice(0, 5).map((p, idx) => ({
       product_name: p.product_name,
       best_for: p.best_for || request.normalized_query,
@@ -222,24 +424,29 @@ function ensurePublish(registry, request, output) {
       })),
       buying_guide: [
         `Start with the exact use case for ${request.raw_query}.`,
-        'Compare feature set, form factor, and overall value before buying.',
+        ...((output.category_intelligence?.decision_drivers || []).slice(0, 3)),
         'Use the direct Amazon links to verify current price, reviews, and availability.'
       ],
       faq: [
         {
-          question: `How were these ${request.raw_query} options selected?`,
-          answer: 'They were selected from live Amazon search results and compared for relevance to your query.'
+          question: `What matters most when buying ${request.raw_query}?`,
+          answer: (output.category_intelligence?.decision_drivers || []).slice(0, 3).join('; ')
         },
         {
-          question: 'Is the top pick always the cheapest option?',
-          answer: 'No. The winner is chosen for overall fit and value, not just lowest price.'
+          question: `What common problems should I watch for with ${request.raw_query}?`,
+          answer: (output.category_intelligence?.failure_points || []).slice(0, 3).join('; ')
         }
       ],
-      final_verdict: `${output.products[0].product_name} is the clearest overall winner for ${request.raw_query} based on relevance, strength of fit, and comparison against the other leading options.`
+      final_verdict: `${output.products[0].product_name} is the clearest overall winner for ${request.raw_query} based on buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall fit and value'}, while avoiding common issues such as ${(output.category_intelligence?.failure_points || []).slice(0, 2).join(' and ') || 'typical product weaknesses'}.`
     }
   };
-  const intelligence = { products: output.products, comparison_rows: comparisonRows };
-  const compliance = { passed: true, mode: output.strategy };
+  const intelligence = {
+    category_intelligence: output.category_intelligence,
+    category_intelligence_sources: output.category_intelligence_sources,
+    products: output.products,
+    comparison_rows: comparisonRows
+  };
+  const compliance = { passed: true, mode: output.strategy, category_intelligence_required: true };
   writeJson(path.join(articleDir, 'contentproduction.json'), content);
   writeJson(path.join(articleDir, 'productintelligence.json'), intelligence);
   writeJson(path.join(articleDir, 'compliance.json'), compliance);
@@ -254,7 +461,7 @@ function ensurePublish(registry, request, output) {
     source_topic_plan_date: new Date().toISOString().slice(0,10),
     generation_status: 'published',
     publish_status: 'published',
-    validation_result: { passed: true },
+    validation_result: { passed: true, category_intelligence_required: true },
     published_at: new Date().toISOString(),
     source_article_family: 'instant_answer_paid',
     related_articles: output.top_matches.map((x) => x.article_slug),
@@ -275,9 +482,9 @@ async function processOne(request) {
     generation_attempts: Number(request.generation_attempts || 0) + 1
   });
   const result = await buildOutput(request, published);
-  if (!result.ok) {
-    paidRequests.updateRequestStatus(request.request_id, { fulfillment_status: 'failed', request_status: 'failed', error: result.error });
-    return { request_id: request.request_id, status: 'failed', error: result.error };
+  if (!result.ok || !result.category_intelligence) {
+    paidRequests.updateRequestStatus(request.request_id, { fulfillment_status: 'failed', request_status: 'failed', error: result.error || 'category_intelligence_missing' });
+    return { request_id: request.request_id, status: 'failed', error: result.error || 'category_intelligence_missing', debug: result.debug || null };
   }
   if (!fs.existsSync(outputsDir)) fs.mkdirSync(outputsDir, { recursive: true });
   const outPath = path.join(outputsDir, `${request.request_id}.json`);
