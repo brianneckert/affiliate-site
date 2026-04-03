@@ -1007,6 +1007,39 @@ function renderArticle(req, content, compliance, entry = null) {
     `)
     .join('');
 
+  const decisionDriverChips = (content.category_intelligence?.decision_drivers || [])
+    .slice(0, 6)
+    .map((item) => `<span class="decision-driver-chip">${escapeHtml(item)}</span>`)
+    .join('');
+
+  const structuredComparisonRows = (content.product_entities || [])
+    .map((item) => `
+      <tr>
+        <td>${escapeHtml(item.product_name)}</td>
+        <td>${escapeHtml(item.product_score?.category_scores?.core_performance ?? '—')}</td>
+        <td>${escapeHtml(item.product_score?.category_scores?.reliability ?? '—')}</td>
+        <td>${escapeHtml(item.product_score?.category_scores?.speed_responsiveness ?? '—')}</td>
+        <td>${escapeHtml(item.product_score?.category_scores?.build_quality ?? '—')}</td>
+        <td>${escapeHtml(item.price_position || '—')}</td>
+        <td>${escapeHtml(item.best_for || '—')}</td>
+      </tr>
+    `)
+    .join('');
+
+  const structuredComparisonCards = (content.product_entities || [])
+    .map((item) => `
+      <div class="comparison-card">
+        <div class="comparison-card-title">${escapeHtml(item.product_name)}</div>
+        <div class="comparison-row"><div class="comparison-label">Core performance</div><div>${escapeHtml(item.product_score?.category_scores?.core_performance ?? '—')}</div></div>
+        <div class="comparison-row"><div class="comparison-label">Reliability</div><div>${escapeHtml(item.product_score?.category_scores?.reliability ?? '—')}</div></div>
+        <div class="comparison-row"><div class="comparison-label">Speed</div><div>${escapeHtml(item.product_score?.category_scores?.speed_responsiveness ?? '—')}</div></div>
+        <div class="comparison-row"><div class="comparison-label">Build quality</div><div>${escapeHtml(item.product_score?.category_scores?.build_quality ?? '—')}</div></div>
+        <div class="comparison-row"><div class="comparison-label">Price</div><div>${escapeHtml(item.price_position || '—')}</div></div>
+        <div class="comparison-row"><div class="comparison-label">Best use case</div><div>${escapeHtml(item.best_for || '—')}</div></div>
+      </div>
+    `)
+    .join('');
+
   const faq = (content.sections?.faq || [])
     .map((item) => `
       <div class="faq-item">
@@ -1163,6 +1196,21 @@ function renderArticle(req, content, compliance, entry = null) {
         border-radius: 18px;
         border: 1px solid #e5e7eb;
         background: #fff;
+      }
+      .decision-driver-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 0 0 18px;
+      }
+      .decision-driver-chip {
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+        font-size: 14px;
+        font-weight: 700;
       }
       table {
         width: 100%;
@@ -1326,6 +1374,26 @@ function renderArticle(req, content, compliance, entry = null) {
         ${glance ? `<h3>Top Picks at a Glance</h3><div class="glance-grid">${glance}</div>` : ''}
 
         ${didNotWinCards ? `<h3>Why They Did Not Win</h3><div class="did-not-win-grid">${didNotWinCards}</div>` : ''}
+
+        <h3>Key Decision Drivers</h3>
+        <div class="decision-driver-list">${decisionDriverChips}</div>
+
+        <h3>Structured Comparison Table</h3>
+        <div class="comparison-table-shell">
+          <table>
+            <tr>
+              <th>Product</th>
+              <th>Core performance</th>
+              <th>Reliability</th>
+              <th>Speed</th>
+              <th>Build quality</th>
+              <th>Price</th>
+              <th>Best use case</th>
+            </tr>
+            ${structuredComparisonRows}
+          </table>
+        </div>
+        <div class="comparison-cards">${structuredComparisonCards}</div>
 
         <h3>Comparison</h3>
         <div class="comparison-table-shell">
