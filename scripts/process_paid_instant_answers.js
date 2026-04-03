@@ -303,6 +303,20 @@ function buildDidNotWinReason(product, winner, categoryIntelligence) {
   };
 }
 
+function validateDecisionEngineOutput(output) {
+  if (!output?.category_intelligence) return { ok: false, error: 'missing_category_intelligence' };
+  if (!Array.isArray(output.products) || output.products.length !== 5) return { ok: false, error: 'requires_five_products' };
+  if (!output.winner_selection?.best_overall) return { ok: false, error: 'missing_best_overall' };
+
+  for (const product of output.products) {
+    if (!product.product_analysis) return { ok: false, error: 'missing_product_analysis', product: product.product_name };
+    if (!product.product_score) return { ok: false, error: 'missing_product_score', product: product.product_name };
+    if (!(product.product_analysis_sources || []).length) return { ok: false, error: 'missing_product_analysis_sources', product: product.product_name };
+  }
+
+  return { ok: true };
+}
+
 function selectWinners(products, categoryIntelligence) {
   const sorted = [...products].sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
   const bestOverall = sorted[0] || null;
@@ -737,6 +751,15 @@ async function buildOutput(request, published) {
     return { ok: false, error: 'winner_selection_incomplete' };
   }
 
+  const enforcementCheck = validateDecisionEngineOutput({
+    products: scoredProducts,
+    winner_selection: winnerSelection,
+    category_intelligence: intelligenceResult.category_intelligence
+  });
+  if (!enforcementCheck.ok) {
+    return { ok: false, error: enforcementCheck.error, debug: enforcementCheck };
+  }
+
   return {
     ...productResult,
     products: scoredProducts,
@@ -815,6 +838,15 @@ function ensurePublish(registry, request, output) {
     title,
     summary: output.answer_summary,
     top_pick: output.winner_selection?.best_overall?.product_name || output.products[0].product_name,
+    decision_engine_rules: {
+      no_amazon_ranking_only: true,
+      category_intelligence_required: true,
+      sentiment_extraction_required: true,
+      why_non_winners_required: true,
+      category_pros_cons_required: true,
+      search_refinement_required: true,
+      real_user_feedback_required: true
+    },
     winner_selection: output.winner_selection,
     winner_summary: winnerSummary,
     winner_why_it_won: winnerWhyItWon,
@@ -870,7 +902,15 @@ function ensurePublish(registry, request, output) {
     })),
     comparison_rows: comparisonRows
   };
-  const compliance = { passed: true, mode: output.strategy, category_intelligence_required: true };
+  const compliance = {
+    passed: true,
+    mode: output.strategy,
+    category_intelligence_required: true,
+    sentiment_extraction_required: true,
+    non_winner_explanations_required: true,
+    category_pros_cons_required: true,
+    decision_engine_mode: true
+  };
   writeJson(path.join(articleDir, 'contentproduction.json'), content);
   writeJson(path.join(articleDir, 'productintelligence.json'), intelligence);
   writeJson(path.join(articleDir, 'compliance.json'), compliance);
