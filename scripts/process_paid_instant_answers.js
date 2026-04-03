@@ -254,6 +254,60 @@ function buildProductScore(product, categoryIntelligence) {
   };
 }
 
+function buildWinnerJustification(product, categoryIntelligence, label) {
+  const praised = (product.product_analysis?.matches_praises || []).slice(0, 2);
+  const complaints = (product.product_analysis?.matches_complaints || []).slice(0, 2);
+  const positiveText = praised.length ? praised.join(' and ') : ((categoryIntelligence?.top_praises || []).slice(0, 2).join(' and ') || 'top buyer priorities');
+  const complaintText = complaints.length ? complaints.join(' and ') : 'common complaint patterns';
+  const complaintCount = complaints.length;
+
+  if (label === 'best_budget') {
+    return `${product.product_name} stands out on value for price while still aligning with praised traits like ${positiveText}. It shows limited overlap with common complaints${complaintCount ? `, with only light concern around ${complaintText}` : ''}.`;
+  }
+  if (label === 'best_premium') {
+    return `${product.product_name} earns the premium slot by leading on pure performance while matching praised attributes like ${positiveText}. It avoids most common complaint patterns${complaintCount ? `, with only some caution around ${complaintText}` : ''}.`;
+  }
+  return `${product.product_name} wins Best Overall because it has the highest weighted score, aligns with praised features like ${positiveText}, and shows minimal alignment with common complaints${complaintCount ? ` such as ${complaintText}` : ''}.`;
+}
+
+function selectWinners(products, categoryIntelligence) {
+  const sorted = [...products].sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
+  const bestOverall = sorted[0] || null;
+  const bestBudget = [...products]
+    .sort((a, b) => {
+      const aBudgetScore = ((a.product_score?.category_scores?.value_for_price || 0) * 2) + (a.product_score?.final_score || 0);
+      const bBudgetScore = ((b.product_score?.category_scores?.value_for_price || 0) * 2) + (b.product_score?.final_score || 0);
+      return bBudgetScore - aBudgetScore;
+    })[0] || null;
+  const bestPremium = [...products]
+    .sort((a, b) => {
+      const aPremiumScore = ((a.product_score?.category_scores?.core_performance || 0) * 2) + (a.product_score?.final_score || 0);
+      const bPremiumScore = ((b.product_score?.category_scores?.core_performance || 0) * 2) + (b.product_score?.final_score || 0);
+      return bPremiumScore - aPremiumScore;
+    })[0] || null;
+
+  return {
+    best_overall: bestOverall ? {
+      product_name: bestOverall.product_name,
+      asin: bestOverall.asin || null,
+      final_score: bestOverall.product_score.final_score,
+      justification: buildWinnerJustification(bestOverall, categoryIntelligence, 'best_overall')
+    } : null,
+    best_budget: bestBudget ? {
+      product_name: bestBudget.product_name,
+      asin: bestBudget.asin || null,
+      final_score: bestBudget.product_score.final_score,
+      justification: buildWinnerJustification(bestBudget, categoryIntelligence, 'best_budget')
+    } : null,
+    best_premium: bestPremium ? {
+      product_name: bestPremium.product_name,
+      asin: bestPremium.asin || null,
+      final_score: bestPremium.product_score.final_score,
+      justification: buildWinnerJustification(bestPremium, categoryIntelligence, 'best_premium')
+    } : null
+  };
+}
+
 async function buildCategoryIntelligence(request) {
   const query = String(request.normalized_query || request.raw_query || '').trim();
   const queryTokens = normalize(query).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
@@ -645,9 +699,15 @@ async function buildOutput(request, published) {
     product_score: buildProductScore(product, intelligenceResult.category_intelligence)
   })).sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
 
+  const winnerSelection = selectWinners(scoredProducts, intelligenceResult.category_intelligence);
+  if (!winnerSelection.best_overall || !winnerSelection.best_budget || !winnerSelection.best_premium) {
+    return { ok: false, error: 'winner_selection_incomplete' };
+  }
+
   return {
     ...productResult,
     products: scoredProducts,
+    winner_selection: winnerSelection,
     category_intelligence: intelligenceResult.category_intelligence,
     category_intelligence_sources: intelligenceResult.evidence_sources
   };
@@ -703,7 +763,8 @@ function ensurePublish(registry, request, output) {
     category: request.normalized_query,
     title,
     summary: output.answer_summary,
-    top_pick: output.products[0].product_name,
+    top_pick: output.winner_selection?.best_overall?.product_name || output.products[0].product_name,
+    winner_selection: output.winner_selection,
     category_intelligence: output.category_intelligence,
     top_picks_at_a_glance: output.products.slice(0, 5).map((p, idx) => ({
       product_name: p.product_name,
@@ -735,12 +796,13 @@ function ensurePublish(registry, request, output) {
           answer: (output.category_intelligence?.failure_points || []).slice(0, 3).join('; ')
         }
       ],
-      final_verdict: `${output.products[0].product_name} is the clearest overall winner for ${request.raw_query} based on buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall fit and value'}, while avoiding common issues such as ${(output.category_intelligence?.failure_points || []).slice(0, 2).join(' and ') || 'typical product weaknesses'}.`
+      final_verdict: output.winner_selection?.best_overall?.justification || `${output.products[0].product_name} is the clearest overall winner for ${request.raw_query} based on buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall fit and value'}, while avoiding common issues such as ${(output.category_intelligence?.failure_points || []).slice(0, 2).join(' and ') || 'typical product weaknesses'}.`
     }
   };
   const intelligence = {
     category_intelligence: output.category_intelligence,
     category_intelligence_sources: output.category_intelligence_sources,
+    winner_selection: output.winner_selection,
     products: output.products,
     product_analysis: output.products.map((p) => ({
       product_name: p.product_name,
