@@ -604,6 +604,37 @@ function renderRobotsTxt(baseUrl) {
   return `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
 }
 
+function buildRefinementSuggestions(content = {}) {
+  const category = String(content.category || '').toLowerCase();
+  const title = String(content.title || '').toLowerCase();
+  const base = content.category || content.title || 'this product';
+
+  const generic = [
+    'compact',
+    'for small spaces',
+    'best value',
+    'premium',
+    'easy to clean'
+  ].map((suffix) => `${base} ${suffix}`);
+
+  if (/rangefinder|distance|golf/.test(category + ' ' + title)) {
+    return ['with angle compensation', 'long range', 'compact', 'slope mode', 'for hunting'].map((suffix) => `${base} ${suffix}`);
+  }
+  if (/air fryer|cooker|kitchen|pot|pan|food/.test(category + ' ' + title)) {
+    return ['with lid', 'for small kitchens', 'compact', 'easy to clean', 'large capacity'].map((suffix) => `${base} ${suffix}`);
+  }
+  if (/air purifier|filter|humidifier|fan/.test(category + ' ' + title)) {
+    return ['for small spaces', 'for bedrooms', 'quiet', 'compact', 'for allergies'].map((suffix) => `${base} ${suffix}`);
+  }
+  if (/vacuum|cleaner|mop/.test(category + ' ' + title)) {
+    return ['for pet hair', 'cordless', 'for small spaces', 'lightweight', 'for hardwood floors'].map((suffix) => `${base} ${suffix}`);
+  }
+  if (/coffee|espresso|grinder/.test(category + ' ' + title)) {
+    return ['compact', 'for beginners', 'with grinder', 'for small kitchens', 'fast heat-up'].map((suffix) => `${base} ${suffix}`);
+  }
+  return generic;
+}
+
 function renderHome(req) {
   logEvent(analytics.buildPageViewEvent(req, 'home'));
   const articleIndex = buildSearchIndex();
@@ -995,6 +1026,11 @@ function renderArticle(req, content, compliance, entry = null) {
     `)
     .join('');
 
+  const refinementSuggestions = buildRefinementSuggestions(content);
+  const refinementChips = refinementSuggestions
+    .map((item) => `<button class="decision-driver-chip refinement-chip" type="button" data-refinement="${escapeHtml(item)}">${escapeHtml(item)}</button>`)
+    .join('');
+
   const didNotWinCards = (content.why_they_did_not_win || [])
     .map((item) => `
       <div class="product-card">
@@ -1212,6 +1248,40 @@ function renderArticle(req, content, compliance, entry = null) {
         font-size: 14px;
         font-weight: 700;
       }
+      .refinement-module {
+        background: #f8fafc;
+        border: 1px solid #dbe2ea;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 28px;
+      }
+      .refinement-chip {
+        cursor: pointer;
+      }
+      .refinement-search-shell {
+        margin-top: 16px;
+        background: #ffffff;
+        border: 1px solid #dbe2ea;
+        border-radius: 18px;
+        padding: 12px;
+      }
+      .refinement-search-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid #dbe2ea;
+        border-radius: 14px;
+        padding: 12px 14px;
+        background: #fff;
+      }
+      .refinement-search-input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        font-size: 18px;
+        background: transparent;
+        color: #0f172a;
+      }
       table {
         width: 100%;
         border-collapse: collapse;
@@ -1375,6 +1445,18 @@ function renderArticle(req, content, compliance, entry = null) {
 
         ${didNotWinCards ? `<h3>Why They Did Not Win</h3><div class="did-not-win-grid">${didNotWinCards}</div>` : ''}
 
+        <h3>Refine Your Search</h3>
+        <div class="refinement-module">
+          <p>If you're looking for something more specific, refine your search below.</p>
+          <div class="decision-driver-list">${refinementChips}</div>
+          <div class="refinement-search-shell">
+            <div class="refinement-search-row">
+              <div>⌕</div>
+              <input id="refinementSearchInput" class="refinement-search-input" type="text" placeholder="Search a more specific variation…" value="">
+            </div>
+          </div>
+        </div>
+
         <h3>Key Decision Drivers</h3>
         <div class="decision-driver-list">${decisionDriverChips}</div>
 
@@ -1484,6 +1566,23 @@ function renderArticle(req, content, compliance, entry = null) {
         } else {
           fetch('/analytics/article-view', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true }).catch(function() {});
         }
+      }
+      const refinementInput = document.getElementById('refinementSearchInput');
+      document.querySelectorAll('.refinement-chip').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (!refinementInput) return;
+          refinementInput.value = btn.dataset.refinement || '';
+          window.location.href = '/?q=' + encodeURIComponent(refinementInput.value);
+        });
+      });
+      if (refinementInput) {
+        refinementInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const q = String(refinementInput.value || '').trim();
+            if (q) window.location.href = '/?q=' + encodeURIComponent(q);
+          }
+        });
       }
       window.addEventListener('pagehide', function(){ sendArticleView(); sendPresence(true); }, { once: true });
     </script>
