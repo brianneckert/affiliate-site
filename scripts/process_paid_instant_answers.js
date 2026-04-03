@@ -232,6 +232,16 @@ function loadPublishedArticles() {
   });
 }
 
+function parseReviewCount(raw = '') {
+  const digits = String(raw).replace(/[^\d]/g, '');
+  return digits ? Number(digits) : 0;
+}
+
+function parseRating(raw = '') {
+  const match = String(raw).match(/(\d+(?:\.\d+)?)/);
+  return match ? Number(match[1]) : 0;
+}
+
 async function fetchAmazonProducts(query) {
   const url = `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
   const res = await fetch(url, { headers: AMAZON_HEADERS });
@@ -239,26 +249,53 @@ async function fetchAmazonProducts(query) {
   if (!res.ok) throw new Error(`amazon_search_http_${res.status}`);
   const products = [];
   const seen = new Set();
-  const regex = /data-asin="([A-Z0-9]{10})"[\s\S]{0,4000}?class="a-link-normal s-no-outline"[^>]+href="([^"]+)"[\s\S]{0,2000}?<img[^>]+alt="([^"]+)"/gi;
-  let match;
-  while ((match = regex.exec(html)) !== null) {
-    const asin = match[1];
-    const href = match[2];
-    const title = match[3].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!asin || !title || seen.has(asin)) continue;
+  const blockRegex = /<div[^>]+data-asin="([A-Z0-9]{10})"[\s\S]{0,12000}?<\/div>\s*<\/div>/gi;
+  let blockMatch;
+  while ((blockMatch = blockRegex.exec(html)) !== null) {
+    const asin = blockMatch[1];
+    const block = blockMatch[0];
+    if (!asin || seen.has(asin)) continue;
+    if (/s-sponsored-label-info-icon|puis-sponsored-label-text|AdHolder|Sponsored/i.test(block)) continue;
+
+    const linkMatch = block.match(/class="a-link-normal s-no-outline"[^>]+href="([^"]+)"/i);
+    const titleMatch = block.match(/<img[^>]+alt="([^"]+)"/i);
+    const ratingMatch = block.match(/a-icon-alt">\s*([^<]*?out of 5 stars)\s*</i);
+    const reviewMatch = block.match(/<span[^>]+class="a-size-base s-underline-text"[^>]*>\s*([^<]+)\s*<\/span>/i)
+      || block.match(/aria-label="([^\"]+\s+ratings?)"/i);
+
+    const href = linkMatch ? cleanText(linkMatch[1]) : '';
+    const title = titleMatch ? cleanText(titleMatch[1]) : '';
+    const rating = parseRating(ratingMatch ? ratingMatch[1] : '');
+    const reviewCount = parseReviewCount(reviewMatch ? reviewMatch[1] : '');
+
+    if (!href || !title) continue;
     seen.add(asin);
     products.push({
       asin,
       product_name: title,
       affiliate_url: href.startsWith('http') ? href : `https://www.amazon.com${href}`,
-      why_it_won: `Direct Amazon search result for "${query}".`,
-      notes: 'Selected from live Amazon search results during paid Instant Answer fulfillment.',
+      why_it_won: `Selected using review-volume and rating thresholds for "${query}".`,
+      notes: 'Chosen by descending review count with rating minimums, not by Amazon result position.',
       best_for: query,
-      source: 'amazon_search'
+      source: 'amazon_search',
+      rating,
+      review_count: reviewCount
     });
-    if (products.length >= 5) break;
   }
-  return products;
+
+  const qualifying = products
+    .filter((item) => item.rating >= 4.2 && item.review_count >= 1000)
+    .sort((a, b) => b.review_count - a.review_count || b.rating - a.rating)
+    .slice(0, 5);
+
+  if (qualifying.length >= 5) return qualifying;
+
+  const nicheFallback = products
+    .filter((item) => item.rating >= 4.2 && item.review_count >= 250)
+    .sort((a, b) => b.review_count - a.review_count || b.rating - a.rating)
+    .slice(0, 5);
+
+  return nicheFallback;
 }
 
 function buildFromExisting(request, published) {
