@@ -126,6 +126,21 @@ function dedupeAndFill(items, fallbackFragments, queryTokens) {
   return out;
 }
 
+function matchCategorySignals(text = '', signals = []) {
+  const normalizedText = normalize(text);
+  return (signals || []).filter((signal) => {
+    const tokenSet = normalize(signal).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
+    if (!tokenSet.length) return false;
+    const hits = tokenSet.filter((token) => normalizedText.includes(token)).length;
+    return hits >= Math.max(1, Math.ceil(tokenSet.length / 2));
+  }).slice(0, 5);
+}
+
+function pickBestPhrase(fragments = [], queryTokens = [], fallback = '') {
+  const ranked = rankPhrases(fragments, queryTokens);
+  return ranked[0] || fallback;
+}
+
 async function buildCategoryIntelligence(request) {
   const query = String(request.normalized_query || request.raw_query || '').trim();
   const queryTokens = normalize(query).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
@@ -359,6 +374,112 @@ function buildFromExisting(request, published) {
   };
 }
 
+async function buildProductAnalysis(product, request, categoryIntelligence) {
+  const productName = String(product.product_name || '').trim();
+  const query = String(request.normalized_query || request.raw_query || '').trim();
+  const queryTokens = normalize(`${query} ${productName}`).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
+  const searchQueries = [
+    `${productName} amazon reviews`,
+    `${productName} google reviews`,
+    `${productName} reddit review`,
+    `${productName} forum discussion`,
+    `${productName} youtube review`
+  ];
+
+  const sources = [];
+  for (const q of searchQueries) {
+    try {
+      const results = await fetchSearchResults(q);
+      sources.push(...results);
+    } catch (error) {
+      sources.push({ href: '', title: q, snippet: String(error.message || error), source_type: 'error', query: q });
+    }
+  }
+
+  const validSources = sources.filter((item) => item.source_type !== 'error' && item.snippet);
+  const coverage = new Set(validSources.map((item) => item.source_type));
+  if (!validSources.length || !coverage.has('reddit') || !coverage.has('youtube') || !coverage.has('google_reviews') || !coverage.has('forum')) {
+    return {
+      ok: false,
+      error: 'product_analysis_source_coverage_missing',
+      debug: { product: productName, coverage: Array.from(coverage), collected_sources: validSources.length }
+    };
+  }
+
+  const prosCues = ['love', 'great', 'best', 'excellent', 'durable', 'quiet', 'comfortable', 'easy', 'reliable', 'fast', 'strong', 'worth it'];
+  const consCues = ['bad', 'issue', 'problem', 'weak', 'cheap', 'fails', 'broken', 'noisy', 'inconsistent', 'hard to clean', 'overpriced', 'returns'];
+  const hiddenIssueCues = ['after a few months', 'long term', 'wear out', 'stopped working', 'customer service', 'replacement', 'refund', 'battery dies', 'leaks', 'cracks'];
+  const bestForCues = ['best for', 'ideal for', 'good for', 'works well for'];
+  const avoidIfCues = ['avoid if', 'not for', 'skip if', 'bad choice for'];
+
+  const prosFragments = [];
+  const consFragments = [];
+  const hiddenIssueFragments = [];
+  const bestForFragments = [];
+  const avoidIfFragments = [];
+  const allFragments = [];
+
+  for (const source of validSources) {
+    const fragments = sentenceFragments(`${source.title}. ${source.snippet}`);
+    for (const fragment of fragments) {
+      const lower = fragment.toLowerCase();
+      allFragments.push(fragment);
+      if (prosCues.some((cue) => lower.includes(cue))) prosFragments.push(fragment);
+      if (consCues.some((cue) => lower.includes(cue))) consFragments.push(fragment);
+      if (hiddenIssueCues.some((cue) => lower.includes(cue))) hiddenIssueFragments.push(fragment);
+      if (bestForCues.some((cue) => lower.includes(cue))) bestForFragments.push(fragment);
+      if (avoidIfCues.some((cue) => lower.includes(cue))) avoidIfFragments.push(fragment);
+    }
+  }
+
+  const pros = dedupeAndFill(rankPhrases(prosFragments, queryTokens), allFragments, queryTokens).slice(0, 6);
+  const cons = dedupeAndFill(rankPhrases(consFragments, queryTokens), allFragments, queryTokens).slice(0, 6);
+  const matchesPraises = matchCategorySignals(`${productName} ${allFragments.join(' ')}`, categoryIntelligence?.top_praises || []);
+  const matchesComplaints = matchCategorySignals(`${productName} ${allFragments.join(' ')}`, categoryIntelligence?.top_complaints || []);
+  const uniqueStrength = pickBestPhrase(prosFragments, queryTokens, pros[0] || `Strong fit for ${query}`);
+  const hiddenIssues = pickBestPhrase(hiddenIssueFragments.length ? hiddenIssueFragments : consFragments, queryTokens, cons[0] || 'No strong hidden issue pattern found');
+  const bestFor = pickBestPhrase(bestForFragments, queryTokens, product.best_for || query);
+  const avoidIf = pickBestPhrase(avoidIfFragments.length ? avoidIfFragments : consFragments, queryTokens, categoryIntelligence?.top_complaints?.[0] || `You dislike the tradeoffs common in ${query}`);
+
+  const analysis = {
+    pros,
+    cons,
+    matches_praises: matchesPraises,
+    matches_complaints: matchesComplaints,
+    unique_strength: uniqueStrength,
+    hidden_issues: hiddenIssues,
+    best_for: bestFor,
+    avoid_if: avoidIf
+  };
+
+  const isComplete = Array.isArray(analysis.pros) && analysis.pros.length >= 2
+    && Array.isArray(analysis.cons) && analysis.cons.length >= 2
+    && typeof analysis.unique_strength === 'string' && analysis.unique_strength
+    && typeof analysis.hidden_issues === 'string' && analysis.hidden_issues
+    && typeof analysis.best_for === 'string' && analysis.best_for
+    && typeof analysis.avoid_if === 'string' && analysis.avoid_if;
+
+  if (!isComplete) {
+    return {
+      ok: false,
+      error: 'product_analysis_incomplete',
+      debug: { product: productName, analysis }
+    };
+  }
+
+  return {
+    ok: true,
+    product_analysis: analysis,
+    evidence_sources: validSources.slice(0, 20).map((item) => ({
+      source_type: item.source_type,
+      query: item.query,
+      title: item.title,
+      href: item.href,
+      snippet: item.snippet
+    }))
+  };
+}
+
 async function buildFromAmazonSearch(request) {
   const products = await fetchAmazonProducts(request.normalized_query || request.raw_query);
   const qTokens = normalize(request.raw_query).split(' ').filter(Boolean);
@@ -389,8 +510,26 @@ async function buildOutput(request, published) {
   const productResult = fromExisting.ok ? fromExisting : await buildFromAmazonSearch(request);
   if (!productResult.ok) return productResult;
 
+  const analyzedProducts = [];
+  for (const product of productResult.products) {
+    const analysisResult = await buildProductAnalysis(product, request, intelligenceResult.category_intelligence);
+    if (!analysisResult.ok || !analysisResult.product_analysis) {
+      return { ok: false, error: analysisResult.error || 'product_analysis_missing', debug: analysisResult.debug || null };
+    }
+    analyzedProducts.push({
+      ...product,
+      product_analysis: analysisResult.product_analysis,
+      product_analysis_sources: analysisResult.evidence_sources
+    });
+  }
+
+  if (analyzedProducts.length !== 5) {
+    return { ok: false, error: 'product_analysis_requires_five_products', debug: { analyzed: analyzedProducts.length } };
+  }
+
   return {
     ...productResult,
+    products: analyzedProducts,
     category_intelligence: intelligenceResult.category_intelligence,
     category_intelligence_sources: intelligenceResult.evidence_sources
   };
@@ -413,29 +552,32 @@ function ensurePublish(registry, request, output) {
     affiliate_url: p.affiliate_url,
     canonical_product_url: p.affiliate_url,
     price_tier: idx === 0 ? 'Best Overall Value' : idx === 1 ? 'Premium Pick' : idx === 2 ? 'Balanced Pick' : idx === 3 ? 'Budget-Friendly' : 'Alternate Option',
-    best_for: p.best_for || request.normalized_query,
+    best_for: p.product_analysis?.best_for || p.best_for || request.normalized_query,
     total_score: Math.max(88, 98 - idx * 2),
     notable_features: [
-      p.source === 'amazon_search' ? 'Live Amazon result' : 'Published guide match',
-      'Selected for query fit',
-      ...((output.category_intelligence?.top_praises || []).slice(0, 1))
+      ...(p.product_analysis?.pros || []).slice(0, 2),
+      ...(p.product_analysis?.matches_praises || []).slice(0, 1)
     ],
-    why_it_won: p.why_it_won || `Strong Amazon search relevance for ${request.raw_query}.`,
-    keep_in_mind: p.notes || (output.category_intelligence?.top_complaints || [])[0] || 'Review individual Amazon details before purchase.'
+    why_it_won: p.product_analysis?.unique_strength || p.why_it_won || `Strong Amazon search relevance for ${request.raw_query}.`,
+    keep_in_mind: p.product_analysis?.hidden_issues || p.notes || (output.category_intelligence?.top_complaints || [])[0] || 'Review individual Amazon details before purchase.'
   }));
   const productEntities = output.products.map((p, idx) => ({
     product_name: p.product_name,
     asin: p.asin || null,
     canonical_product_url: p.affiliate_url,
-    best_for: p.best_for || request.normalized_query,
+    best_for: p.product_analysis?.best_for || p.best_for || request.normalized_query,
     price_position: idx === 0 ? 'Best overall' : idx === 1 ? 'Premium option' : idx === 2 ? 'Balanced option' : idx === 3 ? 'Value option' : 'Alternative option',
-    rating: 4.5,
-    review_count: 1000 + (5 - idx) * 250,
+    rating: p.rating || 4.5,
+    review_count: p.review_count || (1000 + (5 - idx) * 250),
     prime_eligible: 'Likely',
     category: request.normalized_query,
-    short_factual_description: p.why_it_won || `Selected as a strong match for ${request.raw_query}.`,
-    key_strengths: [...(output.category_intelligence?.top_praises || []).slice(0, 3)],
-    drawbacks: [...(output.category_intelligence?.top_complaints || []).slice(0, 3)]
+    short_factual_description: p.product_analysis?.unique_strength || p.why_it_won || `Selected as a strong match for ${request.raw_query}.`,
+    key_strengths: [...(p.product_analysis?.pros || []).slice(0, 3)],
+    drawbacks: [...(p.product_analysis?.cons || []).slice(0, 3)],
+    matches_praises: [...(p.product_analysis?.matches_praises || []).slice(0, 3)],
+    matches_complaints: [...(p.product_analysis?.matches_complaints || []).slice(0, 3)],
+    hidden_issues: p.product_analysis?.hidden_issues || '',
+    avoid_if: p.product_analysis?.avoid_if || ''
   }));
   const content = {
     article_slug: slug,
@@ -481,6 +623,14 @@ function ensurePublish(registry, request, output) {
     category_intelligence: output.category_intelligence,
     category_intelligence_sources: output.category_intelligence_sources,
     products: output.products,
+    product_analysis: output.products.map((p) => ({
+      product_name: p.product_name,
+      asin: p.asin || null,
+      review_count: p.review_count || 0,
+      rating: p.rating || 0,
+      analysis: p.product_analysis,
+      sources: p.product_analysis_sources || []
+    })),
     comparison_rows: comparisonRows
   };
   const compliance = { passed: true, mode: output.strategy, category_intelligence_required: true };
