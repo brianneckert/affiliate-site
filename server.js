@@ -30,6 +30,7 @@ const { execFile, execFileSync } = require('child_process');
 const requestCreationLogPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_request_creation.jsonl');
 const processorScriptPath = path.join(__dirname, 'scripts', 'process_paid_instant_answers.js');
 const activeJobsPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_active_jobs.json');
+const queue = require('./lib/jobQueue');
 const STRONG_COVERAGE_BUCKETS = ['reddit', 'google_reviews', 'forum', 'web_review'];
 
 function readJson(name) {
@@ -470,52 +471,37 @@ function getGenerationRuntimeState(requestId) {
 
 function assertPersistedRequest(requestId) {
   if (!requestId) throw new Error('request_id_missing_after_create');
+  logRequestCreation('canonical_request_readback_started', {
+    request_id: requestId,
+    module: 'assertPersistedRequest',
+    store_path: paidRequests.paths?.paidRequestsPath || null
+  });
   const persisted = paidRequests.getRequestById(requestId);
-  if (!persisted) throw new Error('request_persistence_failed');
+  if (!persisted) {
+    logRequestCreation('canonical_request_readback_failed', {
+      request_id: requestId,
+      module: 'assertPersistedRequest',
+      store_path: paidRequests.paths?.paidRequestsPath || null,
+      outcome: 'not_found'
+    });
+    throw new Error('request_persistence_failed');
+  }
+  logRequestCreation('canonical_request_readback_succeeded', {
+    request_id: requestId,
+    module: 'assertPersistedRequest',
+    store_path: paidRequests.paths?.paidRequestsPath || null,
+    outcome: 'found'
+  });
   return persisted;
 }
 
 function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
   const startupTs = new Date().toISOString();
-  upsertActiveJob(requestId, { status: 'starting', startup_timestamp: startupTs, processor_path: processorScriptPath, owner_pid: process.pid, worker_pid: null, last_heartbeat: startupTs });
-  logRequestCreation('queue_insertion_attempted', { request_id: requestId });
-  const child = execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, (error, stdout, stderr) => {
-    const exitPayload = {
-      request_id: requestId,
-      worker_pid: child && child.pid,
-      error: error ? (error.message || String(error)) : null,
-      code: error ? (error.code || null) : 0,
-      signal: error ? (error.signal || null) : null,
-      stdout_tail: String(stdout || '').slice(-1200),
-      stderr_tail: String(stderr || '').slice(-1200)
-    };
-    logRequestCreation('worker_exit', exitPayload);
-    const req = paidRequests.getRequestById(requestId);
-    if (req && req.request_status === 'generating' && req.fulfillment_status === 'processing') {
-      paidRequests.updateRequestStatus(requestId, {
-        request_status: 'failed',
-        fulfillment_status: 'failed',
-        error: error ? (error.signal ? `worker_exit_${error.signal}` : `worker_exit_${error.code || 'error'}`) : 'worker_exit_before_terminal_write'
-      });
-      logRequestCreation('terminal_status_write_on_worker_exit', { request_id: requestId, error: req.error || null, exit_code: exitPayload.code, exit_signal: exitPayload.signal });
-    }
-    removeActiveJob(requestId);
-  });
-  upsertActiveJob(requestId, { status: 'spawned', worker_pid: child.pid, last_heartbeat: new Date().toISOString() });
-  logRequestCreation('worker_start', { request_id: requestId, worker_pid: child.pid, processor_path: processorScriptPath, cwd: __dirname });
-  child.on('spawn', () => {
-    upsertActiveJob(requestId, { status: 'running', worker_pid: child.pid, last_heartbeat: new Date().toISOString() });
-    logRequestCreation('worker_spawned', { request_id: requestId, worker_pid: child.pid });
-  });
-  child.on('error', (error) => {
-    logRequestCreation('worker_spawn_error', { request_id: requestId, worker_pid: child.pid, error: error.message || String(error) });
-    const req = paidRequests.getRequestById(requestId);
-    if (req && req.request_status === 'generating' && req.fulfillment_status === 'processing') {
-      paidRequests.updateRequestStatus(requestId, { request_status: 'failed', fulfillment_status: 'failed', error: 'worker_spawn_error' });
-    }
-    removeActiveJob(requestId);
-  });
+  upsertActiveJob(requestId, { status: 'queued', startup_timestamp: startupTs, processor_path: processorScriptPath, owner_pid: process.pid, worker_pid: null, last_heartbeat: startupTs, queue_mode: 'durable_worker' });
+  queue.enqueueJob(requestId);
+  logRequestCreation('queue_insertion_attempted', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker' });
+  logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker' });
 }
 
 function renderInstantAnswerSuccessPage(requestId) {
@@ -2011,7 +1997,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
 
   try {
     if (access.hasFreeAccess) {
-      logRequestCreation('request_row_write_attempted', { mode: 'free', raw_query: String(raw_query).trim() });
+      logRequestCreation('canonical_request_write_started', { mode: 'free', raw_query: String(raw_query).trim(), module: 'checkout_free', store_path: paidRequests.paths?.paidRequestsPath || null });
       paidRequests.upsertUserRecord(access.userKey, { ip_hash: access.ipHash, country: access.country });
       const request = paidRequests.createPaidRequest({
         raw_query: String(raw_query).trim(),
@@ -2027,7 +2013,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
         stripe_payment_status: 'free_access'
       });
       const persisted = assertPersistedRequest(updated.request_id);
-      logRequestCreation('request_row_write_succeeded', { request_id: persisted.request_id, mode: 'free', request_status: persisted.request_status, payment_status: persisted.payment_status });
+      logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'free', module: 'checkout_free', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
       logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'free', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}` });
       return res.json({
@@ -2041,7 +2027,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
     }
 
     if (access.hasPaidBalance) {
-      logRequestCreation('request_row_write_attempted', { mode: 'bundle', raw_query: String(raw_query).trim() });
+      logRequestCreation('canonical_request_write_started', { mode: 'bundle', raw_query: String(raw_query).trim(), module: 'checkout_bundle', store_path: paidRequests.paths?.paidRequestsPath || null });
       const request = paidRequests.createPaidRequest({
         raw_query: String(raw_query).trim(),
         requested_by: requested_by || null,
@@ -2056,7 +2042,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
         stripe_payment_status: 'credit_balance'
       });
       const persisted = assertPersistedRequest(updated.request_id);
-      logRequestCreation('request_row_write_succeeded', { request_id: persisted.request_id, mode: 'bundle', request_status: persisted.request_status, payment_status: persisted.payment_status });
+      logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'bundle', module: 'checkout_bundle', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
       logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'bundle', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}` });
       return res.json({
@@ -2070,7 +2056,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
     }
 
     const selectedBundleCode = ARTICLE_BUNDLES[bundle_code] ? bundle_code : 'article_bundle_20';
-    logRequestCreation('request_row_write_attempted', { mode: 'paid', raw_query: String(raw_query).trim(), bundle_code: selectedBundleCode });
+    logRequestCreation('canonical_request_write_started', { mode: 'paid', raw_query: String(raw_query).trim(), bundle_code: selectedBundleCode, module: 'checkout_paid', store_path: paidRequests.paths?.paidRequestsPath || null });
     const { request, session, bundle } = await createInstantAnswerCheckoutSession({
       raw_query: String(raw_query).trim(),
       requested_by: requested_by || null,
@@ -2080,7 +2066,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
     });
     logRequestCreation('request_id_generated', { request_id: request?.request_id || null, mode: 'paid' });
     const persisted = assertPersistedRequest(request.request_id);
-    logRequestCreation('request_row_write_succeeded', { request_id: persisted.request_id, mode: 'paid', request_status: persisted.request_status, payment_status: persisted.payment_status, stripe_checkout_session_id: persisted.stripe_checkout_session_id || null });
+    logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'paid', module: 'checkout_paid', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status, stripe_checkout_session_id: persisted.stripe_checkout_session_id || null });
     logRequestCreation('response_sent_to_client', { request_id: request.request_id, mode: 'paid', checkout_url_present: Boolean(session.url) });
     res.json({
       ok: true,
@@ -2179,6 +2165,21 @@ app.get('/api/debug/request-runtime/:id', (req, res) => {
   res.json({ ok: true, request_id: req.params.id, runtime: getGenerationRuntimeState(req.params.id) });
 });
 
+function runStartupSelfCheck() {
+  const info = {
+    canonical_request_store_path: paidRequests.paths?.paidRequestsPath || null,
+    canonical_request_store_exists: paidRequests.paths?.paidRequestsPath ? fs.existsSync(paidRequests.paths.paidRequestsPath) : false,
+    queue_store_path: queue.JOBS_PATH,
+    queue_store_exists: fs.existsSync(queue.JOBS_PATH),
+    status_route_store_path: paidRequests.paths?.paidRequestsPath || null,
+    creation_route_store_path: paidRequests.paths?.paidRequestsPath || null,
+    request_store_matches_status_route: (paidRequests.paths?.paidRequestsPath || null) === (paidRequests.paths?.paidRequestsPath || null),
+    request_store_separate_from_queue: (paidRequests.paths?.paidRequestsPath || null) !== queue.JOBS_PATH
+  };
+  logRequestCreation('startup_self_check', info);
+  return info;
+}
+
 function reconcileActiveJobsOnStartup() {
   const jobs = readActiveJobs();
   for (const [requestId, job] of Object.entries(jobs)) {
@@ -2201,7 +2202,9 @@ function reconcileActiveJobsOnStartup() {
 
 app.listen(PORT, () => {
   const runtime = buildRuntimeInfo();
+  const selfCheck = runStartupSelfCheck();
   reconcileActiveJobsOnStartup();
   console.log(`Server running at http://localhost:${PORT}`);
   console.log('[runtime-info]', JSON.stringify(runtime));
+  console.log('[startup-self-check]', JSON.stringify(selfCheck));
 });
