@@ -623,40 +623,58 @@ async function fetchAndQualifyPage(source, queryTokens = []) {
 
 function buildProductSearchSeeds(productName = '', query = '') {
   const normalizedProduct = normalize(productName);
+  const normalizedQuery = normalize(query);
   const words = normalizedProduct.split(' ').filter(Boolean);
   const filtered = words.filter((token) => token.length >= 3 && !STOPWORDS.has(token));
-  const productTypeHints = ['target','archery','deer','broadhead','3d','field','point','layered','foam','bag'];
+  const archeryTerms = ['target','archery','deer','broadhead','3d','field','point','layered','foam','bag','compound','bow'];
+  const queryTokens = normalizedQuery.split(' ').filter(Boolean);
+  const isArcheryContext = [...filtered, ...queryTokens].some((token) => archeryTerms.includes(token));
+  const genericTypeHints = isArcheryContext
+    ? archeryTerms
+    : queryTokens.filter((token) => token.length >= 3 && !STOPWORDS.has(token));
   const brand = filtered[0] || words[0] || productName;
   const brandPlus = filtered.slice(0, 2).join(' ') || brand;
-  const withoutGeneric = filtered.filter((token) => !productTypeHints.includes(token));
+  const withoutGeneric = filtered.filter((token) => !genericTypeHints.includes(token));
   const model = withoutGeneric.slice(1, 3).join(' ') || withoutGeneric.slice(0, 2).join(' ');
   const shortCore = withoutGeneric.slice(0, 3).join(' ') || filtered.slice(0, 3).join(' ');
-  const typeTerms = filtered.filter((token) => productTypeHints.includes(token)).join(' ');
-  const reordered = [brand, model, 'target'].filter(Boolean).join(' ');
-  const variants = [
+  const typeTerms = filtered.filter((token) => genericTypeHints.includes(token)).join(' ');
+  const reordered = [brand, model, ...(typeTerms ? [typeTerms.split(' ')[0]] : [])].filter(Boolean).join(' ');
+  const common = [
     productName,
+    `${brandPlus} review`,
+    `${brandPlus} reddit`,
+    `${brandPlus} forum`,
+    `${brandPlus} durability`,
+    `${shortCore} review`,
+    `${shortCore} forum`,
+    `${brand} ${model}`.trim(),
+    reordered.trim(),
+    `${query} ${brandPlus}`.trim()
+  ];
+  const archeryOnly = [
     `${brandPlus} archery target`,
     `${brandPlus} target`,
     `${brandPlus} deer target`,
     `${brandPlus} broadhead target`,
     `${brandPlus} field point broadhead review`,
     `${brandPlus} target review`,
-    `${brandPlus} target forum`,
-    `${brandPlus} target youtube`,
     `${brandPlus} target reddit`,
     `${brandPlus} target archerytalk`,
     `${brandPlus} target hunting forum`,
-    `${brandPlus} durability`,
     `${brandPlus} 3d deer target durability`,
-    `${shortCore} review`,
-    `${shortCore} forum`,
-    `${shortCore} youtube`,
     `${typeTerms} ${brandPlus}`.trim(),
-    `${typeTerms} ${model}`.trim(),
-    `${brand} ${model}`.trim(),
-    reordered.trim(),
-    `${query} ${brandPlus}`.trim()
-  ].map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    `${typeTerms} ${model}`.trim()
+  ];
+  const nonArchery = [
+    `${brandPlus} ${typeTerms}`.trim(),
+    `${brandPlus} ${queryTokens[0] || ''}`.trim(),
+    `${brandPlus} ${queryTokens.slice(0,2).join(' ')}`.trim(),
+    `${shortCore} ${queryTokens[0] || ''} review`.trim(),
+    `${brandPlus} buying guide`.trim()
+  ];
+  const variants = (isArcheryContext ? [...common, ...archeryOnly] : [...common, ...nonArchery])
+    .map((x) => x.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
   return Array.from(new Set(variants));
 }
 
@@ -1037,6 +1055,17 @@ function productMentionConfidence(text = '', productName = '') {
     if (score > best) best = score;
   }
   return best;
+}
+
+function topicRelevanceConfidence(text = '', query = '', productName = '') {
+  const haystack = normalize(text);
+  const topicTokens = Array.from(new Set([
+    ...normalize(query).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token)),
+    ...normalize(productName).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token))
+  ]));
+  if (!topicTokens.length) return 0;
+  const hits = topicTokens.filter((token) => haystack.includes(token)).length;
+  return hits / topicTokens.length;
 }
 
 function matchCategorySignals(text = '', signals = []) {
@@ -1687,10 +1716,13 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   const categoryFallbackSources = dedupeSources((categoryEvidenceSources || []).filter((item) => {
     const haystack = `${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`;
     const tokenHits = productNameTokens.filter((token) => normalize(haystack).includes(token)).length;
-    return tokenHits >= Math.max(2, Math.min(3, productNameTokens.length)) && productMentionConfidence(haystack, productName) >= 0.66;
+    return tokenHits >= Math.max(2, Math.min(3, productNameTokens.length)) && productMentionConfidence(haystack, productName) >= 0.66 && topicRelevanceConfidence(haystack, query, productName) >= 0.4;
   }));
 
-  let validSources = dedupeSources(objectiveRuns.flatMap((run) => run.qualifyingSources || []).filter((item) => productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66));
+  let validSources = dedupeSources(objectiveRuns.flatMap((run) => run.qualifyingSources || []).filter((item) => {
+    const text = `${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`;
+    return productMentionConfidence(text, productName) >= 0.66 && topicRelevanceConfidence(text, query, productName) >= 0.4;
+  }));
   const hasSecondary = validSources.some((item) => ['forum', 'reddit'].includes(item.source_type));
   if (!hasSecondary && categoryFallbackSources.length) {
     writeProgress({ request_id: request.request_id, stage: 'product_fallback_mode', product: productName, last_successful_transition: 'product_fallback_mode' });
@@ -1733,7 +1765,7 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
         qualifying_sources: validSources.length,
         qualifying_by_type: validSources.reduce((acc, item) => { acc[item.source_type] = (acc[item.source_type] || 0) + 1; return acc; }, {}),
         qualifying_urls: validSources.map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })),
-        objectives: objectiveRuns.map((run) => ({ objective: run.objective, queries: run.queries, discovered_by_type: run.stats?.discovered_by_type || {}, qualifying_by_type: run.stats?.qualifying_by_type || {}, qualifying_urls: run.stats?.qualifying_urls || [] })),
+        objectives: objectiveRuns.map((run) => ({ objective: run.objective, queries: run.queries, discovered_by_type: run.stats?.discovered_by_type || {}, qualifying_by_type: run.stats?.qualifying_by_type || {}, qualifying_urls: run.stats?.qualifying_urls || [], accepted_urls: (run.qualifyingSources || []).map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })), rejected_urls: (run.rejected_sources || []).map((item) => ({ href: item.href || null, query: item.query || null, reason: item.reason || item.rejection_reason || null, source_type: item.source_type || null })) })),
         search_seeds_used: { reviews: reviewQueries, discussion: discussionQueries },
         category_fallback_sources: categoryFallbackSources.length,
         fail_reason: 'public_source_diversity_insufficient_for_product',
