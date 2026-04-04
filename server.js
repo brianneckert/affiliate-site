@@ -404,6 +404,37 @@ function buildRuntimeInfo() {
   };
 }
 
+function isPidAlive(pid) {
+  if (!pid) return false;
+  try { process.kill(pid, 0); return true; } catch { return false; }
+}
+
+function getGenerationRuntimeState(requestId) {
+  const lockPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_fulfillment.lock');
+  const progressPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_progress.json');
+  let lock = null;
+  let progress = null;
+  try {
+    if (fs.existsSync(lockPath)) lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+  } catch {}
+  try {
+    if (fs.existsSync(progressPath)) progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+  } catch {}
+  const now = Date.now();
+  const lockAlive = lock ? isPidAlive(lock.pid) : false;
+  const progressMatchesRequest = progress && progress.request_id === requestId;
+  const lastHeartbeatMs = progress && progress.updated_at ? (now - new Date(progress.updated_at).getTime()) : null;
+  return {
+    lock,
+    lockAlive,
+    progress,
+    progressMatchesRequest,
+    lastHeartbeatMs,
+    workerActiveForRequest: Boolean(lock && lock.request_id === requestId && lockAlive),
+    orphaned: !lockAlive && (!progress || progressMatchesRequest) && (lastHeartbeatMs === null || lastHeartbeatMs > 5 * 60 * 1000)
+  };
+}
+
 function assertPersistedRequest(requestId) {
   if (!requestId) throw new Error('request_id_missing_after_create');
   const persisted = paidRequests.getRequestById(requestId);
@@ -2027,6 +2058,21 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     }
   }
   if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
+  const runtimeState = getGenerationRuntimeState(request.request_id);
+  if (request.request_status === 'generating' && request.fulfillment_status === 'processing' && runtimeState.orphaned) {
+    request = paidRequests.updateRequestStatus(request.request_id, {
+      request_status: 'failed',
+      fulfillment_status: 'failed',
+      error: 'orphaned_generation_job'
+    }) || request;
+    logRequestCreation('orphaned_job_detected', {
+      request_id: request.request_id,
+      worker_active: runtimeState.workerActiveForRequest,
+      lock: runtimeState.lock,
+      last_heartbeat_ms: runtimeState.lastHeartbeatMs,
+      terminal_status_write: 'failed:orphaned_generation_job'
+    });
+  }
   if (!request.generated_article_slug && !request.published_slug && ['validated', 'generating', 'paid_pending'].includes(request.request_status)) {
     const inferredSlug = slugifyQuery(request.normalized_query || request.raw_query);
     const registry = readRegistry();
@@ -2060,6 +2106,10 @@ app.get('/analytics/summary', (req, res) => {
 
 app.get('/api/debug/runtime-info', (req, res) => {
   res.json({ ok: true, runtime: buildRuntimeInfo() });
+});
+
+app.get('/api/debug/request-runtime/:id', (req, res) => {
+  res.json({ ok: true, request_id: req.params.id, runtime: getGenerationRuntimeState(req.params.id) });
 });
 
 app.listen(PORT, () => {
