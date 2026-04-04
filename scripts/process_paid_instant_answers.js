@@ -7,6 +7,8 @@ const createPaidRequests = require('../paid_requests');
 
 const ROOT = path.resolve(__dirname, '..');
 const paidRequests = createPaidRequests({ rootDir: ROOT });
+const workerLogPath = path.join(analyticsDir, 'instant_answer_worker_events.jsonl');
+let activeRequestId = null;
 const registryPath = path.join(ROOT, 'data', 'articles', 'registry.json');
 const outputsDir = path.join(ROOT, 'data', 'instant_answers');
 const analyticsDir = path.join(ROOT, 'data', 'analytics');
@@ -50,6 +52,13 @@ function writeJson(file, payload) { fs.writeFileSync(file, JSON.stringify(payloa
 function normalize(q) { return paidRequests.normalizeSearchQuery(q); }
 function slugify(q) { return normalize(q).replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, ''); }
 function nowIso() { return new Date().toISOString(); }
+
+function logWorkerEvent(event, payload = {}) {
+  try {
+    fs.mkdirSync(path.dirname(workerLogPath), { recursive: true });
+    fs.appendFileSync(workerLogPath, JSON.stringify({ timestamp: nowIso(), event, pid: process.pid, request_id: activeRequestId, ...payload }) + '\n');
+  } catch {}
+}
 
 function isPidAlive(pid) {
   if (!pid) return false;
@@ -2212,12 +2221,15 @@ async function processOne(request) {
 
 async function main() {
   const requestIdArg = process.argv.includes('--request-id') ? process.argv[process.argv.indexOf('--request-id') + 1] : null;
+  activeRequestId = requestIdArg || null;
+  logWorkerEvent('worker_main_start', { argv: process.argv.slice(2) });
   const existingLock = ensureActiveLock(requestIdArg);
   if (existingLock) {
     console.log(JSON.stringify({ ok: false, error: 'lock_exists', lock: existingLock }));
     process.exit(1);
   }
   fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, request_id: requestIdArg || null, started_at: nowIso(), started_at_ms: Date.now() }));
+  logWorkerEvent('worker_lock_acquired', { lock_path: lockPath, request_id: requestIdArg || null });
   try {
     const all = paidRequests.readPaidRequests();
     const queue = all.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated', 'generating'].includes(r.request_status));
@@ -2233,18 +2245,56 @@ async function main() {
     const results = [];
     for (const item of runnableQueue) {
       try {
+        logWorkerEvent('worker_request_start', { request_id: item.request_id });
         results.push(await withTimeout(processOne(item), STAGE_TIMEOUTS_MS.total_request, { stage: 'total_request', request_id: item.request_id }));
+        logWorkerEvent('worker_request_complete', { request_id: item.request_id });
       } catch (error) {
         const stageError = error?.meta?.stage || error?.code || error?.message || 'unknown_error';
+        logWorkerEvent('worker_request_error', { request_id: item.request_id, error: stageError, error_meta: error?.meta || null });
         writeProgress({ request_id: item.request_id, stage: 'failed_timeout_or_stall', error: stageError, error_meta: error?.meta || null, last_successful_transition: 'failed_timeout_or_stall' });
         paidRequests.updateRequestStatus(item.request_id, { fulfillment_status: 'failed', request_status: 'failed', error: stageError });
+        logWorkerEvent('worker_terminal_status_write', { request_id: item.request_id, request_status: 'failed', fulfillment_status: 'failed', error: stageError });
         results.push({ request_id: item.request_id, status: 'failed', error: stageError, debug: error?.meta || null });
       }
     }
     console.log(JSON.stringify({ ok: true, processed: results.length, results }, null, 2));
   } finally {
+    logWorkerEvent('worker_main_finally', { lock_present: fs.existsSync(lockPath) });
     if (fs.existsSync(lockPath)) fs.unlinkSync(lockPath);
   }
 }
+
+process.on('uncaughtException', (error) => {
+  logWorkerEvent('uncaught_exception', { error: error.message || String(error), stack: error.stack || null });
+  if (activeRequestId) {
+    try {
+      paidRequests.updateRequestStatus(activeRequestId, { fulfillment_status: 'failed', request_status: 'failed', error: 'worker_uncaught_exception' });
+      logWorkerEvent('worker_terminal_status_write', { request_id: activeRequestId, request_status: 'failed', fulfillment_status: 'failed', error: 'worker_uncaught_exception' });
+    } catch {}
+  }
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (error) => {
+  logWorkerEvent('unhandled_rejection', { error: String(error && error.message ? error.message : error), stack: error && error.stack ? error.stack : null });
+  if (activeRequestId) {
+    try {
+      paidRequests.updateRequestStatus(activeRequestId, { fulfillment_status: 'failed', request_status: 'failed', error: 'worker_unhandled_rejection' });
+      logWorkerEvent('worker_terminal_status_write', { request_id: activeRequestId, request_status: 'failed', fulfillment_status: 'failed', error: 'worker_unhandled_rejection' });
+    } catch {}
+  }
+  process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+  logWorkerEvent('worker_signal', { signal: 'SIGTERM' });
+  if (activeRequestId) {
+    try {
+      paidRequests.updateRequestStatus(activeRequestId, { fulfillment_status: 'failed', request_status: 'failed', error: 'worker_sigterm' });
+      logWorkerEvent('worker_terminal_status_write', { request_id: activeRequestId, request_status: 'failed', fulfillment_status: 'failed', error: 'worker_sigterm' });
+    } catch {}
+  }
+  process.exit(143);
+});
 
 main();

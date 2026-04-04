@@ -445,10 +445,31 @@ function assertPersistedRequest(requestId) {
 function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
   logRequestCreation('queue_insertion_attempted', { request_id: requestId });
-  execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, (error) => {
-    if (error) logRequestCreation('queue_insertion_failed', { request_id: requestId, error: error.message || String(error) });
-    else logRequestCreation('queue_insertion_started', { request_id: requestId });
+  const child = execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, (error, stdout, stderr) => {
+    if (error) {
+      logRequestCreation('worker_exit', {
+        request_id: requestId,
+        worker_pid: child && child.pid,
+        error: error.message || String(error),
+        code: error.code || null,
+        signal: error.signal || null,
+        stdout_tail: String(stdout || '').slice(-1200),
+        stderr_tail: String(stderr || '').slice(-1200)
+      });
+    } else {
+      logRequestCreation('worker_exit', {
+        request_id: requestId,
+        worker_pid: child && child.pid,
+        code: 0,
+        signal: null,
+        stdout_tail: String(stdout || '').slice(-1200),
+        stderr_tail: String(stderr || '').slice(-1200)
+      });
+    }
   });
+  logRequestCreation('worker_start', { request_id: requestId, worker_pid: child.pid, processor_path: processorScriptPath, cwd: __dirname });
+  child.on('spawn', () => logRequestCreation('worker_spawned', { request_id: requestId, worker_pid: child.pid }));
+  child.on('error', (error) => logRequestCreation('worker_spawn_error', { request_id: requestId, worker_pid: child.pid, error: error.message || String(error) }));
 }
 
 function renderInstantAnswerSuccessPage(requestId) {
