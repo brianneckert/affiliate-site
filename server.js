@@ -26,7 +26,10 @@ const ARTICLES_PATH = path.join(__dirname, 'data/articles');
 const REGISTRY_PATH = path.join(ARTICLES_PATH, 'registry.json');
 const analytics = createAnalytics({ rootDir: __dirname, registryPath: REGISTRY_PATH });
 const paidRequests = createPaidRequests({ rootDir: __dirname });
-const { execFile } = require('child_process');
+const { execFile, execFileSync } = require('child_process');
+const requestCreationLogPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_request_creation.jsonl');
+const processorScriptPath = path.join(__dirname, 'scripts', 'process_paid_instant_answers.js');
+const STRONG_COVERAGE_BUCKETS = ['reddit', 'google_reviews', 'forum', 'web_review'];
 
 function readJson(name) {
   const file = path.join(ARTICLES_PATH, name);
@@ -369,9 +372,52 @@ function buildInstantAnswerAccess(req) {
   };
 }
 
+function logRequestCreation(event, payload = {}) {
+  try {
+    fs.mkdirSync(path.dirname(requestCreationLogPath), { recursive: true });
+    fs.appendFileSync(requestCreationLogPath, JSON.stringify({ timestamp: new Date().toISOString(), event, ...payload }) + '\n');
+  } catch {}
+}
+
+function buildRuntimeInfo() {
+  const processorResolvedPath = require.resolve(processorScriptPath);
+  const processorExists = fs.existsSync(processorResolvedPath);
+  const stat = processorExists ? fs.statSync(processorResolvedPath) : null;
+  const fileText = processorExists ? fs.readFileSync(processorResolvedPath, 'utf8') : '';
+  let release = process.env.BUILD_ID || process.env.RELEASE || null;
+  if (!release) {
+    try { release = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: __dirname, encoding: 'utf8' }).trim(); } catch {}
+  }
+  return {
+    process_pid: process.pid,
+    cwd: process.cwd(),
+    node_version: process.version,
+    script_entry: require.main && require.main.filename,
+    processor_resolved_path: processorResolvedPath,
+    processor_file_exists: processorExists,
+    processor_file_mtime: stat ? stat.mtimeMs : null,
+    processor_file_hash: processorExists ? crypto.createHash('sha256').update(fileText).digest('hex') : null,
+    processor_file_head: fileText.slice(0, 200),
+    strong_coverage_buckets: STRONG_COVERAGE_BUCKETS,
+    env: process.env.NODE_ENV || null,
+    build_id: release
+  };
+}
+
+function assertPersistedRequest(requestId) {
+  if (!requestId) throw new Error('request_id_missing_after_create');
+  const persisted = paidRequests.getRequestById(requestId);
+  if (!persisted) throw new Error('request_persistence_failed');
+  return persisted;
+}
+
 function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
-  execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, () => {});
+  logRequestCreation('queue_insertion_attempted', { request_id: requestId });
+  execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, (error) => {
+    if (error) logRequestCreation('queue_insertion_failed', { request_id: requestId, error: error.message || String(error) });
+    else logRequestCreation('queue_insertion_started', { request_id: requestId });
+  });
 }
 
 function renderInstantAnswerSuccessPage(requestId) {
@@ -916,6 +962,10 @@ function renderHome(req) {
             body: JSON.stringify({ raw_query: q, notes: 'search miss instant answer', bundle_code: bundleCode })
           });
           const data = await res.json();
+          if (res.ok && !data.request_persisted) {
+            alert('Request creation failed before backend registration. Please try again.');
+            return;
+          }
           if (res.ok && data.checkout_url) {
             window.location.href = data.checkout_url;
             return;
@@ -1836,9 +1886,21 @@ app.post('/api/stripe/webhook', (req, res) => {
 
 app.post('/api/instant-answer/checkout', async (req, res) => {
   const { raw_query, requested_by, notes, bundle_code } = req.body || {};
-  if (!String(raw_query || '').trim()) return res.status(400).json({ ok: false, error: 'missing_raw_query' });
+  logRequestCreation('frontend_submit_fired', { raw_query: String(raw_query || '').trim(), bundle_code: bundle_code || null, route: '/api/instant-answer/checkout' });
+  if (!String(raw_query || '').trim()) {
+    logRequestCreation('validation_failed', { reason: 'missing_raw_query' });
+    return res.status(400).json({ ok: false, error: 'missing_raw_query' });
+  }
 
   const access = buildInstantAnswerAccess(req);
+  logRequestCreation('backend_handler_entered', {
+    raw_query: String(raw_query || '').trim(),
+    access_mode: access.accessMode,
+    has_free_access: access.hasFreeAccess,
+    has_paid_balance: access.hasPaidBalance,
+    paid_requests_path: paidRequests.paths?.paidRequestsPath || null,
+    root_dir: __dirname
+  });
   const requestMeta = {
     user_key: access.userKey,
     ip_hash: access.ipHash,
@@ -1851,6 +1913,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
 
   try {
     if (access.hasFreeAccess) {
+      logRequestCreation('request_row_write_attempted', { mode: 'free', raw_query: String(raw_query).trim() });
       paidRequests.upsertUserRecord(access.userKey, { ip_hash: access.ipHash, country: access.country });
       const request = paidRequests.createPaidRequest({
         raw_query: String(raw_query).trim(),
@@ -1858,46 +1921,58 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
         notes: notes || null,
         request_meta: { ...requestMeta, access_mode: 'free' }
       });
+      logRequestCreation('request_id_generated', { request_id: request?.request_id || null, mode: 'free' });
       const updated = paidRequests.updateRequestStatus(request.request_id, {
         payment_status: 'paid',
         request_status: 'paid_pending',
         paid_at: new Date().toISOString(),
         stripe_payment_status: 'free_access'
       });
+      const persisted = assertPersistedRequest(updated.request_id);
+      logRequestCreation('request_row_write_succeeded', { request_id: persisted.request_id, mode: 'free', request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
+      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'free', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}` });
       return res.json({
         ok: true,
         request_id: updated.request_id,
         access_mode: 'free',
+        request_persisted: true,
         free_articles_remaining_after_this: Math.max(0, 3 - (access.freeArticlesUsed + 1)),
         success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}`
       });
     }
 
     if (access.hasPaidBalance) {
+      logRequestCreation('request_row_write_attempted', { mode: 'bundle', raw_query: String(raw_query).trim() });
       const request = paidRequests.createPaidRequest({
         raw_query: String(raw_query).trim(),
         requested_by: requested_by || null,
         notes: notes || null,
         request_meta: { ...requestMeta, access_mode: 'bundle' }
       });
+      logRequestCreation('request_id_generated', { request_id: request?.request_id || null, mode: 'bundle' });
       const updated = paidRequests.updateRequestStatus(request.request_id, {
         payment_status: 'paid',
         request_status: 'paid_pending',
         paid_at: new Date().toISOString(),
         stripe_payment_status: 'credit_balance'
       });
+      const persisted = assertPersistedRequest(updated.request_id);
+      logRequestCreation('request_row_write_succeeded', { request_id: persisted.request_id, mode: 'bundle', request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
+      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'bundle', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}` });
       return res.json({
         ok: true,
         request_id: updated.request_id,
         access_mode: 'bundle',
+        request_persisted: true,
         articles_remaining_balance: access.paidBalance,
         success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}`
       });
     }
 
     const selectedBundleCode = ARTICLE_BUNDLES[bundle_code] ? bundle_code : 'article_bundle_20';
+    logRequestCreation('request_row_write_attempted', { mode: 'paid', raw_query: String(raw_query).trim(), bundle_code: selectedBundleCode });
     const { request, session, bundle } = await createInstantAnswerCheckoutSession({
       raw_query: String(raw_query).trim(),
       requested_by: requested_by || null,
@@ -1905,10 +1980,15 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
       requestMeta: { ...requestMeta, access_mode: 'paid', selected_bundle_code: selectedBundleCode },
       bundleCode: selectedBundleCode
     });
+    logRequestCreation('request_id_generated', { request_id: request?.request_id || null, mode: 'paid' });
+    const persisted = assertPersistedRequest(request.request_id);
+    logRequestCreation('request_row_write_succeeded', { request_id: persisted.request_id, mode: 'paid', request_status: persisted.request_status, payment_status: persisted.payment_status, stripe_checkout_session_id: persisted.stripe_checkout_session_id || null });
+    logRequestCreation('response_sent_to_client', { request_id: request.request_id, mode: 'paid', checkout_url_present: Boolean(session.url) });
     res.json({
       ok: true,
       request_id: request.request_id,
       access_mode: 'paid',
+      request_persisted: true,
       checkout_url: session.url,
       selected_bundle_code: bundle.code,
       selected_bundle_credits: bundle.credits,
@@ -1916,6 +1996,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
       articles_remaining_balance: access.paidBalance
     });
   } catch (error) {
+    logRequestCreation('request_creation_failed', { raw_query: String(raw_query || '').trim(), error: error.message || String(error) });
     res.status(500).json({ ok: false, error: error.message || 'checkout_session_failed' });
   }
 });
@@ -1977,6 +2058,12 @@ app.get('/analytics/summary', (req, res) => {
   res.json(readSummary());
 });
 
+app.get('/api/debug/runtime-info', (req, res) => {
+  res.json({ ok: true, runtime: buildRuntimeInfo() });
+});
+
 app.listen(PORT, () => {
+  const runtime = buildRuntimeInfo();
   console.log(`Server running at http://localhost:${PORT}`);
+  console.log('[runtime-info]', JSON.stringify(runtime));
 });

@@ -9,13 +9,34 @@ const ROOT = path.resolve(__dirname, '..');
 const paidRequests = createPaidRequests({ rootDir: ROOT });
 const registryPath = path.join(ROOT, 'data', 'articles', 'registry.json');
 const outputsDir = path.join(ROOT, 'data', 'instant_answers');
-const lockPath = path.join(ROOT, 'data', 'analytics', 'instant_answer_fulfillment.lock');
+const analyticsDir = path.join(ROOT, 'data', 'analytics');
+const lockPath = path.join(analyticsDir, 'instant_answer_fulfillment.lock');
+const progressPath = path.join(analyticsDir, 'instant_answer_progress.json');
+const checkpointsDir = path.join(analyticsDir, 'instant_answer_checkpoints');
 const syncScript = path.join(ROOT, 'scripts', 'sync_live_repo.py');
 const sitemapScript = path.join(ROOT, 'scripts', 'generate_sitemap.py');
+const STRONG_COVERAGE_BUCKETS = ['reddit', 'google_reviews', 'forum', 'web_review'];
+
+const STAGE_TIMEOUTS_MS = {
+  build_output: 8 * 60 * 1000,
+  category_intelligence: 6 * 60 * 1000,
+  category_substage: 45 * 1000,
+  product_analysis: 2 * 60 * 1000,
+  publish: 2 * 60 * 1000,
+  total_request: 12 * 60 * 1000
+};
+const CATEGORY_LIMITS = {
+  maxIterations: 4,
+  maxQueriesPerIteration: 12,
+  maxFetchPerIteration: 14,
+  maxTotalEvaluated: 40,
+  noProgressMs: 45 * 1000
+};
 const AMAZON_HEADERS = {
   'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36',
   'accept-language': 'en-US,en;q=0.9'
 };
+const AMAZON_REVIEW_MIN_COUNT = 100;
 const SEARCH_HEADERS = {
   'user-agent': AMAZON_HEADERS['user-agent'],
   'accept-language': AMAZON_HEADERS['accept-language']
@@ -28,6 +49,233 @@ function readJson(file) { return JSON.parse(fs.readFileSync(file, 'utf8')); }
 function writeJson(file, payload) { fs.writeFileSync(file, JSON.stringify(payload, null, 2)); }
 function normalize(q) { return paidRequests.normalizeSearchQuery(q); }
 function slugify(q) { return normalize(q).replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, ''); }
+function nowIso() { return new Date().toISOString(); }
+
+function isPidAlive(pid) {
+  if (!pid) return false;
+  try { process.kill(pid, 0); return true; } catch { return false; }
+}
+
+const runtimeState = {
+  requestId: null,
+  activeStage: null,
+  activeSubstage: null,
+  lastProgressAt: null,
+  stallStartedAt: null,
+  stageScopedWatchdogs: new Set(),
+  restoredStages: [],
+  counters: {}
+};
+
+function resetRuntimeState(requestId, activeStage, options = {}) {
+  runtimeState.requestId = requestId;
+  runtimeState.activeStage = activeStage;
+  runtimeState.activeSubstage = null;
+  runtimeState.lastProgressAt = nowIso();
+  runtimeState.stallStartedAt = null;
+  runtimeState.stageScopedWatchdogs = new Set([activeStage]);
+  runtimeState.restoredStages = options.restoredStages || [];
+  runtimeState.counters = options.counters || {};
+}
+
+function setActiveRuntimeStage(stage, substage = null) {
+  runtimeState.activeStage = stage;
+  runtimeState.activeSubstage = substage;
+  runtimeState.lastProgressAt = nowIso();
+  runtimeState.stallStartedAt = null;
+  runtimeState.stageScopedWatchdogs = new Set([stage]);
+}
+
+function isWatchdogActiveFor(substage = '') {
+  const key = String(substage || '');
+  if (!runtimeState.activeStage) return true;
+  if (runtimeState.activeStage === 'product_analysis' && key.startsWith('category_')) return false;
+  if (runtimeState.activeStage === 'product_selection_complete' && key.startsWith('category_')) return false;
+  if (runtimeState.restoredStages.includes('category_intelligence') && key.startsWith('category_') && runtimeState.activeStage !== 'category_intelligence') return false;
+  return true;
+}
+
+function writeProgress(update = {}) {
+  const current = fs.existsSync(progressPath) ? readJson(progressPath) : {};
+  const next = { ...current, ...update, runtime_active_stage: runtimeState.activeStage, runtime_active_substage: runtimeState.activeSubstage, runtime_restored_stages: runtimeState.restoredStages, updated_at: nowIso(), pid: process.pid };
+  writeJson(progressPath, next);
+  return next;
+}
+
+function updateCategoryDebug(requestId, patch = {}) {
+  const file = path.join(analyticsDir, `category_debug_${requestId}.json`);
+  const current = fs.existsSync(file) ? readJson(file) : { request_id: requestId, started_at: nowIso() };
+  const next = { ...current, ...patch, updated_at: nowIso(), pid: process.pid };
+  writeJson(file, next);
+  return next;
+}
+
+function fingerprintUrls(urls = []) {
+  return urls.map((url) => {
+    try {
+      const u = new URL(url);
+      return `${u.hostname}${u.pathname}`.toLowerCase();
+    } catch {
+      return String(url).toLowerCase();
+    }
+  }).sort();
+}
+
+function overlapRatio(a = [], b = []) {
+  const A = new Set(a);
+  const B = new Set(b);
+  if (!A.size || !B.size) return 0;
+  let overlap = 0;
+  for (const item of A) if (B.has(item)) overlap += 1;
+  return overlap / Math.max(A.size, B.size);
+}
+
+function categoryProgressTracker(requestId) {
+  const state = {
+    lastProgressMs: Date.now(),
+    discovered: 0,
+    fetched: 0,
+    extracted: 0,
+    qualified: 0,
+    iteration: 0,
+    totalEvaluated: 0,
+    seenCandidateFingerprints: [],
+    seenDomains: new Map()
+  };
+  return {
+    mark(substage, patch = {}) {
+      const counts = patch.counts || {};
+      const changed = ['discovered','fetched','extracted','qualified'].some((k) => Number(counts[k] || 0) > Number(state[k] || 0));
+      if (changed) state.lastProgressMs = Date.now();
+      state.discovered = Math.max(state.discovered, Number(counts.discovered || state.discovered));
+      state.fetched = Math.max(state.fetched, Number(counts.fetched || state.fetched));
+      state.extracted = Math.max(state.extracted, Number(counts.extracted || state.extracted));
+      state.qualified = Math.max(state.qualified, Number(counts.qualified || state.qualified));
+      state.iteration = patch.iteration ?? state.iteration;
+      state.totalEvaluated = patch.totalEvaluated ?? state.totalEvaluated;
+      setActiveRuntimeStage('category_intelligence', substage);
+      writeProgress({ request_id: requestId, stage: substage, category_iteration: state.iteration, category_counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, last_progress_at: new Date(state.lastProgressMs).toISOString(), last_successful_transition: substage });
+      updateCategoryDebug(requestId, { current_substage: substage, iteration: state.iteration, counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, total_evaluated: state.totalEvaluated, last_progress_at: new Date(state.lastProgressMs).toISOString(), ...patch.debug });
+    },
+    assertProgress(substage) {
+      if (!isWatchdogActiveFor(substage)) return;
+      const stalledMs = Date.now() - state.lastProgressMs;
+      if (stalledMs > CATEGORY_LIMITS.noProgressMs) {
+        const err = new Error(`no_progress_${substage}`);
+        err.code = 'category_no_progress';
+        err.meta = { substage, stalled_ms: stalledMs, counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, iteration: state.iteration, total_evaluated: state.totalEvaluated };
+        throw err;
+      }
+    },
+    noteCandidateSet(urls = []) {
+      const fp = fingerprintUrls(urls);
+      const repeated = state.seenCandidateFingerprints.some((prev) => overlapRatio(prev, fp) >= 0.7);
+      state.seenCandidateFingerprints.push(fp);
+      return repeated;
+    },
+    noteDomains(urls = []) {
+      const domains = [];
+      for (const url of urls) {
+        try {
+          const host = new URL(url).hostname.toLowerCase();
+          domains.push(host);
+          state.seenDomains.set(host, (state.seenDomains.get(host) || 0) + 1);
+        } catch {}
+      }
+      return domains;
+    },
+    domainPenalty(url = '') {
+      try {
+        const host = new URL(url).hostname.toLowerCase();
+        return Math.max(0, (state.seenDomains.get(host) || 0) - 1);
+      } catch {
+        return 0;
+      }
+    },
+    snapshot() {
+      return {
+        seen_domains: Array.from(state.seenDomains.entries()),
+        fingerprint_count: state.seenCandidateFingerprints.length
+      };
+    }
+  };
+}
+
+async function withTimeout(promise, ms, meta = {}) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => {
+          const err = new Error(`timeout_${meta.stage || 'unknown'}`);
+          err.code = 'stage_timeout';
+          err.meta = { ...meta, timeout_ms: ms };
+          reject(err);
+        }, ms);
+      })
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function checkpointPath(requestId) {
+  fs.mkdirSync(checkpointsDir, { recursive: true });
+  return path.join(checkpointsDir, `${requestId}.json`);
+}
+
+function loadCheckpoint(requestId) {
+  const file = checkpointPath(requestId);
+  return fs.existsSync(file) ? readJson(file) : null;
+}
+
+function saveCheckpoint(requestId, patch = {}) {
+  const file = checkpointPath(requestId);
+  const existed = fs.existsSync(file);
+  const current = existed ? readJson(file) : { request_id: requestId, created_at: nowIso(), completed_products: [] };
+  const next = { ...current, ...patch, updated_at: nowIso() };
+  writeJson(file, next);
+  writeProgress({
+    request_id: requestId,
+    stage: 'checkpoint_saved',
+    checkpoint_stage: next.stage || patch.stage || current.stage || null,
+    checkpoint_file: file,
+    completed_products: Array.isArray(next.completed_products) ? next.completed_products.length : 0,
+    checkpoint_write_mode: existed ? 'update' : 'fresh',
+    checkpoint_saved_at: next.updated_at,
+    last_successful_transition: 'checkpoint_saved'
+  });
+  return next;
+}
+
+function clearCheckpoint(requestId) {
+  const file = checkpointPath(requestId);
+  if (fs.existsSync(file)) fs.unlinkSync(file);
+}
+
+function productKey(product = {}) {
+  return normalize(product.product_name || product.name || product.asin || '');
+}
+
+function ensureActiveLock(requestId = null) {
+  if (!fs.existsSync(lockPath)) return null;
+  try {
+    const raw = fs.readFileSync(lockPath, 'utf8').trim();
+    const parsed = raw.startsWith('{') ? JSON.parse(raw) : { started_at_ms: Number(raw) || Date.now() };
+    const ageMs = Date.now() - Number(parsed.started_at_ms || Date.now());
+    const alive = isPidAlive(parsed.pid);
+    if (!alive || ageMs > STAGE_TIMEOUTS_MS.total_request) {
+      fs.unlinkSync(lockPath);
+      writeProgress({ stage: 'lock_cleared', request_id: requestId, stall_reason: !alive ? 'stale_lock_dead_pid' : 'stale_lock_timeout', lock_age_ms: ageMs });
+      return null;
+    }
+    return parsed;
+  } catch {
+    try { fs.unlinkSync(lockPath); } catch {}
+    return null;
+  }
+}
 
 function decodeHtml(str = '') {
   return String(str)
@@ -44,7 +292,7 @@ function cleanText(str = '') {
   return decodeHtml(String(str).replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 }
 
-function extractSourceType(url = '', fallback = '') {
+function extractSourceType(url = '', title = '', snippet = '', query = '') {
   const rawUrl = String(url || '');
   let decodedUrl = rawUrl;
   try {
@@ -52,31 +300,624 @@ function extractSourceType(url = '', fallback = '') {
     const uddg = parsed.searchParams.get('uddg');
     if (uddg) decodedUrl = decodeURIComponent(uddg);
   } catch {}
-  const value = `${decodedUrl} ${fallback}`.toLowerCase();
-  if (value.includes('reddit')) return 'reddit';
-  if (value.includes('youtube') || value.includes('youtu.be')) return 'youtube';
-  if (value.includes('google') || value.includes('g2.com') || value.includes('trustpilot') || value.includes('consumer reports')) return 'google_reviews';
-  if (value.includes('forum') || value.includes('archerytalk') || value.includes('bbs') || value.includes('board')) return 'forum';
-  return 'forum';
+
+  const haystack = `${decodedUrl} ${title} ${snippet}`.toLowerCase();
+  const queryText = String(query || '').toLowerCase();
+  const isRedditQuery = /(^|\s|:)reddit(\.com)?(\s|$)/.test(queryText);
+  const isForumQuery = /forum|archerytalk|bbs|board/.test(queryText);
+  const isReviewQuery = /reviews?|consumer reports|trustpilot|g2|comparison|buying guide|guide/.test(queryText);
+
+  if (decodedUrl.includes('reddit.com/r/') && decodedUrl.includes('/comments/')) return 'reddit';
+  if (/proboards\.com\/(thread|board)\//.test(decodedUrl) || decodedUrl.includes('archerytalk.com/threads/') || /forum|showthread|topic|post|\/thread\//.test(decodedUrl)) return 'forum';
+  if (haystack.includes('trustpilot') || haystack.includes('g2.com') || haystack.includes('consumer reports') || haystack.includes('customer review') || haystack.includes('customer reviews') || haystack.includes('tested and reviewed') || haystack.includes('buying guide') || haystack.includes('comparison') || haystack.includes('review')) return 'google_reviews';
+
+  if (isRedditQuery && decodedUrl.includes('reddit.com')) return 'reddit';
+  if (isForumQuery && /forum|thread|discussion/.test(haystack)) return 'forum';
+  if (isReviewQuery) return 'google_reviews';
+  return 'web_review';
 }
 
 async function fetchSearchResults(query) {
-  const url = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
-  const res = await fetch(url, { headers: SEARCH_HEADERS });
-  if (!res.ok) throw new Error(`search_http_${res.status}`);
-  const html = await res.text();
-  const results = [];
-  const blockRegex = /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]{0,1200}?(?:<a[^>]*class="result__snippet"[^>]*>|<div[^>]*class="result__snippet"[^>]*>)([\s\S]*?)(?:<\/a>|<\/div>)/gi;
-  let match;
-  while ((match = blockRegex.exec(html)) !== null) {
-    const href = cleanText(match[1]);
-    const title = cleanText(match[2]);
-    const snippet = cleanText(match[3]);
-    if (!href || !title || !snippet) continue;
-    results.push({ href, title, snippet, source_type: extractSourceType(href, query), query });
-    if (results.length >= 8) break;
+  const collectHtmlResults = (html, mode = 'html') => {
+    const results = [];
+    const regex = mode === 'lite'
+      ? /<a rel="nofollow" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]{0,800}?<td class='result-snippet'>([\s\S]*?)<\/td>/gi
+      : /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]{0,1200}?(?:<a[^>]*class="result__snippet"[^>]*>|<div[^>]*class="result__snippet"[^>]*>)([\s\S]*?)(?:<\/a>|<\/div>)/gi;
+    let match;
+    while ((match = regex.exec(html)) !== null) {
+      const href = cleanText(match[1]);
+      const title = cleanText(match[2]);
+      const snippet = cleanText(match[3]);
+      if (!href || !title || !snippet) continue;
+      if (/privacy protected by duckduckgo|\bad viewing ads\b/i.test(title) || /duckduckgo\.com\/y\.js\?ad_domain=/i.test(href)) continue;
+      results.push({ href, title, snippet, source_type: extractSourceType(href, title, snippet, query), query, discovery_engine: mode === 'lite' ? 'duckduckgo_lite' : 'duckduckgo_html' });
+      if (results.length >= 8) break;
+    }
+    return results;
+  };
+
+  const collectRssResults = (xml) => {
+    const results = [];
+    const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
+    let match;
+    while ((match = itemRegex.exec(xml)) !== null) {
+      const block = match[1];
+      const href = cleanText((block.match(/<link>([\s\S]*?)<\/link>/i) || [])[1] || '');
+      const title = cleanText((block.match(/<title>([\s\S]*?)<\/title>/i) || [])[1] || '');
+      const snippet = cleanText((block.match(/<description>([\s\S]*?)<\/description>/i) || [])[1] || '');
+      if (!href || !title || !snippet) continue;
+      results.push({ href, title, snippet, source_type: extractSourceType(href, title, snippet, query), query, discovery_engine: 'bing_rss' });
+      if (results.length >= 8) break;
+    }
+    return results;
+  };
+
+  const primaryUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+  let primaryStatus = null;
+  let primaryResults = [];
+  try {
+    const primaryRes = await fetch(primaryUrl, { headers: SEARCH_HEADERS, signal: AbortSignal.timeout(12000) });
+    primaryStatus = primaryRes.status;
+    if (primaryRes.ok) {
+      const primaryHtml = await primaryRes.text();
+      primaryResults = collectHtmlResults(primaryHtml, 'html');
+      if (primaryRes.status !== 202 && primaryResults.length >= 3) return primaryResults;
+    }
+  } catch {}
+
+  const liteUrl = `https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query)}`;
+  let liteResults = [];
+  try {
+    const liteRes = await fetch(liteUrl, { headers: SEARCH_HEADERS, signal: AbortSignal.timeout(12000) });
+    liteResults = liteRes.ok ? collectHtmlResults(await liteRes.text(), 'lite') : [];
+    if (liteResults.length >= 3) return liteResults;
+  } catch {}
+
+  const rssUrl = `https://www.bing.com/search?format=rss&q=${encodeURIComponent(query)}`;
+  try {
+    const rssRes = await fetch(rssUrl, { headers: SEARCH_HEADERS, signal: AbortSignal.timeout(12000) });
+    if (rssRes.ok) {
+      const rssResults = collectRssResults(await rssRes.text());
+      if (rssResults.length) return rssResults;
+    }
+  } catch {}
+
+  if (primaryStatus && !primaryResults.length && !liteResults.length) return [];
+  return liteResults.length ? liteResults : primaryResults;
+}
+
+function normalizeDiscoveredUrl(url = '') {
+  const raw = cleanText(url);
+  if (!raw) return '';
+  let value = raw;
+  try {
+    const parsed = new URL(raw, 'https://duckduckgo.com');
+    const uddg = parsed.searchParams.get('uddg');
+    if (uddg) value = decodeURIComponent(uddg);
+    else if (raw.startsWith('//')) value = `https:${raw}`;
+    else value = parsed.href;
+  } catch {
+    if (raw.startsWith('//')) value = `https:${raw}`;
   }
-  return results;
+  try {
+    const parsed = new URL(value);
+    ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','ved','ei','oq','aqs','source','ref','ref_','tag','ascsubtag','psc'].forEach((key) => parsed.searchParams.delete(key));
+    parsed.hash = '';
+    return parsed.href;
+  } catch {
+    return value;
+  }
+}
+
+function getUrlSignals(url = '') {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    const pathname = parsed.pathname.toLowerCase();
+    const segments = pathname.split('/').filter(Boolean);
+    return { host, pathname, segments, search: parsed.search.toLowerCase() };
+  } catch {
+    return { host: '', pathname: '', segments: [], search: '' };
+  }
+}
+
+function classifyUrlIntent(url = '', sourceType = '') {
+  const { host, pathname, segments, search } = getUrlSignals(url);
+  const joined = `${host}${pathname}${search}`;
+  if (!host) return { kind: 'unknown', score: -10, reject: 'invalid_url' };
+
+  if (/ell\.stackexchange\.com$|english\.stackexchange\.com$|ell\.stackexchange\.com$|hinative\.com$|quora\.com$|answers\.microsoft\.com$/.test(host)) {
+    return { kind: 'junk_qa', score: -12, reject: 'junk_qa_domain' };
+  }
+  if (/bestproducts\.guide$|top5bestproducts\.com$|productrankers?\.|buyers?guide\.|oneclearwinner\.com$|buyereviews\.com$/.test(host)) {
+    return { kind: 'thin_aggregator', score: -9, reject: 'thin_aggregator_domain' };
+  }
+
+  if (/reddit\.com$/.test(host)) {
+    if (/\/r\/[^/]+\/comments\//.test(pathname)) return { kind: 'reddit_thread', score: 10 };
+    if (pathname === '/' || /^\/r\/[^/]+\/?$/.test(pathname) || /^\/search/.test(pathname) || /\/top\/?$/.test(pathname) || /\/new\/?$/.test(pathname)) return { kind: 'reddit_index', score: -10, reject: 'reddit_index_page' };
+    return { kind: 'reddit_other', score: -3, reject: 'reddit_non_thread' };
+  }
+
+  if (/archerytalk\.com$|proboards\.com$/.test(host) || /forum/.test(host) || sourceType === 'forum') {
+    if (/\/threads\//.test(pathname) || /\/thread\//.test(pathname) || /showthread/.test(joined) || /topic/.test(joined) || /post/.test(joined)) return { kind: 'forum_thread', score: 9 };
+    if (pathname === '/' || /\/forums?\/?$/.test(pathname) || /\/forums\//.test(pathname) || /\/marketplace/.test(pathname) || /\/tags\//.test(pathname)) return { kind: 'forum_index', score: -8, reject: 'forum_index_page' };
+    return { kind: 'forum_other', score: -2, reject: 'forum_non_thread' };
+  }
+
+  if (segments.length === 0) return { kind: 'homepage', score: -9, reject: 'homepage' };
+  if (/\/category\/|\/tag\/|\/topics?\/|\/collections?\/|\/b\?node=|\/s\?k=/.test(pathname + search)) return { kind: 'category_index', score: -7, reject: 'category_index_page' };
+  if (/review|reviews|best-|comparison|compare|vs-|broadhead|archery-target|targets|bag-target|foam-target|3d-target/.test(pathname)) return { kind: 'article', score: 7 };
+  if (segments.length >= 2) return { kind: 'deep_page', score: 3 };
+  return { kind: 'generic_page', score: 0 };
+}
+
+function scoreDiscoveredSource(item, discoveryTokens = []) {
+  const href = normalizeDiscoveredUrl(item.href || item.url || '');
+  const sourceType = item.source_type || extractSourceType(href, item.title || '', item.snippet || '', item.query || '');
+  const urlIntent = classifyUrlIntent(href, sourceType);
+  const title = normalize(item.title || '');
+  const snippet = normalize(item.snippet || '');
+  const haystack = normalize(`${title} ${snippet} ${href}`);
+  const expandedTerms = Array.from(new Set([
+    ...discoveryTokens,
+    ...discoveryTokens.flatMap((token) => token.endsWith('s') ? [token, token.slice(0, -1)] : [token, `${token}s`])
+  ].filter((token) => token && token.length >= 3 && !STOPWORDS.has(token))));
+  const overlap = discoveryTokens.filter((token) => haystack.includes(token)).length;
+  const relevantHits = expandedTerms.filter((token) => haystack.includes(token)).length;
+  const titleRelevantHits = expandedTerms.filter((token) => title.includes(token)).length;
+  const slugRelevantHits = expandedTerms.filter((token) => href.toLowerCase().includes(token)).length;
+  const meaningfulSlug = /[a-z]{4,}-[a-z]{4,}/.test(href);
+  const genericBestOnly = /\bbest\b/.test(title) && titleRelevantHits === 0 && slugRelevantHits === 0;
+  let reject = urlIntent.reject || null;
+  if (!reject && ['google_reviews','web_review'].includes(sourceType) && relevantHits < Math.max(1, Math.min(2, discoveryTokens.length))) reject = 'low_topic_relevance';
+  if (!reject && genericBestOnly) reject = 'generic_best_without_context';
+  if (!reject && sourceType === 'web_review' && titleRelevantHits === 0 && slugRelevantHits === 0) reject = 'review_without_topic_slug_or_title';
+  let score = urlIntent.score + (overlap * 2) + (meaningfulSlug ? 1 : 0) + relevantHits + titleRelevantHits + slugRelevantHits;
+  if (/review|comparison|tested|guide|pros and cons|buying guide/.test(haystack)) score += 2;
+  return { score, overlap, sourceType, urlIntent: { ...urlIntent, reject }, relevantHits, titleRelevantHits, slugRelevantHits };
+}
+
+function dedupeSources(items = []) {
+  const seen = new Set();
+  const out = [];
+  for (const item of items) {
+    const normalizedHref = normalizeDiscoveredUrl(item.href || item.url || '');
+    if (!normalizedHref) continue;
+    const key = normalizedHref.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ ...item, href: normalizedHref, normalized_href: normalizedHref, source_type: item.source_type || extractSourceType(normalizedHref, item.title || '', item.snippet || '', item.query || '') });
+  }
+  return out;
+}
+
+function stripBoilerplateText(text = '') {
+  return String(text)
+    .replace(/\b(accept|reject|manage) cookies?\b/gi, ' ')
+    .replace(/\b(privacy policy|terms of use|all rights reserved|sign in|log in|subscribe|newsletter|advertisement)\b/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractPageReadableText(html = '') {
+  const title = cleanText((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '');
+  const metaDescription = cleanText((html.match(/<meta[^>]+(?:name|property)=["'](?:description|og:description|twitter:description)["'][^>]+content=["']([\s\S]*?)["'][^>]*>/i) || [])[1] || '');
+  const metaTitle = cleanText((html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([\s\S]*?)["'][^>]*>/i) || [])[1] || '');
+  const mainHtml = String(html)
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
+    .replace(/<svg[\s\S]*?<\/svg>/gi, ' ')
+    .replace(/<nav[\s\S]*?<\/nav>/gi, ' ')
+    .replace(/<header[\s\S]*?<\/header>/gi, ' ')
+    .replace(/<footer[\s\S]*?<\/footer>/gi, ' ')
+    .replace(/<form[\s\S]*?<\/form>/gi, ' ')
+    .replace(/<aside[\s\S]*?<\/aside>/gi, ' ')
+    .replace(/<!--([\s\S]*?)-->/g, ' ');
+  const text = stripBoilerplateText(cleanText(mainHtml));
+  const combined = stripBoilerplateText([title, metaTitle, metaDescription, text].filter(Boolean).join('. '));
+  return { title: metaTitle || title, meta_description: metaDescription, text: combined.slice(0, 12000) };
+}
+
+function classifyQualifiedSource(source = {}) {
+  const type = source.source_type || extractSourceType(source.href, source.title, source.snippet, source.query);
+  if (type === 'reddit' || type === 'forum') return 'community';
+  if (type === 'youtube') return 'youtube';
+  if (type === 'google_reviews' || type === 'web_review') return 'review';
+  return 'niche';
+}
+
+function computeQueryOverlap(text = '', queryTokens = []) {
+  const normalizedText = normalize(text);
+  return queryTokens.filter((token) => normalizedText.includes(token)).length;
+}
+
+async function fetchAndQualifyPage(source, queryTokens = []) {
+  const url = normalizeDiscoveredUrl(source.href || '');
+  if (!url) return { ok: false, rejection_reason: 'missing_url', source };
+  try {
+    let res = await fetch(url, { headers: SEARCH_HEADERS, redirect: 'follow', signal: AbortSignal.timeout(15000) });
+    let extracted;
+    let fetchedVia = 'direct';
+    if (res.ok) {
+      const html = await res.text();
+      extracted = extractPageReadableText(html);
+    } else if ([401, 403, 406].includes(res.status)) {
+      const mirrorUrl = `https://r.jina.ai/http://${url.replace(/^https?:\/\//, '')}`;
+      const mirrorRes = await fetch(mirrorUrl, { headers: { 'user-agent': SEARCH_HEADERS['user-agent'] }, signal: AbortSignal.timeout(20000) });
+      if (!mirrorRes.ok) return { ok: false, rejection_reason: `fetch_http_${res.status}`, source: { ...source, href: url } };
+      const mirroredText = await mirrorRes.text();
+      extracted = {
+        title: source.title || '',
+        meta_description: source.snippet || '',
+        text: stripBoilerplateText(mirroredText)
+      };
+      fetchedVia = 'jina_mirror';
+      res = { status: mirrorRes.status };
+    } else {
+      return { ok: false, rejection_reason: `fetch_http_${res.status}`, source: { ...source, href: url } };
+    }
+
+    const combinedText = stripBoilerplateText([source.title || '', source.snippet || '', extracted.title || '', extracted.meta_description || '', extracted.text || ''].join('. '));
+    const overlap = computeQueryOverlap(combinedText, queryTokens);
+    if ((combinedText || '').length < 350) {
+      return { ok: false, rejection_reason: 'extracted_text_too_short', source: { ...source, href: url }, extracted_chars: combinedText.length, overlap };
+    }
+    if (overlap < Math.max(1, Math.min(2, queryTokens.length))) {
+      return { ok: false, rejection_reason: 'query_overlap_too_low', source: { ...source, href: url }, extracted_chars: combinedText.length, overlap };
+    }
+    return {
+      ok: true,
+      source: {
+        ...source,
+        href: url,
+        source_type: source.source_type || extractSourceType(url, source.title || extracted.title || '', source.snippet || extracted.meta_description || '', source.query || ''),
+        source_class: classifyQualifiedSource(source),
+        fetched_url: url,
+        fetched_status: res.status,
+        fetched_via: fetchedVia,
+        extracted_chars: combinedText.length,
+        query_overlap: overlap,
+        page_title: extracted.title || source.title || '',
+        page_excerpt: combinedText.slice(0, 1200),
+        snippet: source.snippet || extracted.meta_description || combinedText.slice(0, 320)
+      }
+    };
+  } catch (error) {
+    return { ok: false, rejection_reason: String(error.name === 'TimeoutError' ? 'fetch_timeout' : (error.message || error)), source: { ...source, href: url } };
+  }
+}
+
+function buildProductSearchSeeds(productName = '', query = '') {
+  const normalizedProduct = normalize(productName);
+  const words = normalizedProduct.split(' ').filter(Boolean);
+  const filtered = words.filter((token) => token.length >= 3 && !STOPWORDS.has(token));
+  const productTypeHints = ['target','archery','deer','broadhead','3d','field','point','layered','foam','bag'];
+  const brand = filtered[0] || words[0] || productName;
+  const brandPlus = filtered.slice(0, 2).join(' ') || brand;
+  const withoutGeneric = filtered.filter((token) => !productTypeHints.includes(token));
+  const model = withoutGeneric.slice(1, 3).join(' ') || withoutGeneric.slice(0, 2).join(' ');
+  const shortCore = withoutGeneric.slice(0, 3).join(' ') || filtered.slice(0, 3).join(' ');
+  const typeTerms = filtered.filter((token) => productTypeHints.includes(token)).join(' ');
+  const reordered = [brand, model, 'target'].filter(Boolean).join(' ');
+  const variants = [
+    productName,
+    `${brandPlus} archery target`,
+    `${brandPlus} target`,
+    `${brandPlus} deer target`,
+    `${brandPlus} broadhead target`,
+    `${brandPlus} field point broadhead review`,
+    `${brandPlus} target review`,
+    `${brandPlus} target forum`,
+    `${brandPlus} target youtube`,
+    `${brandPlus} target reddit`,
+    `${brandPlus} target archerytalk`,
+    `${brandPlus} target hunting forum`,
+    `${brandPlus} durability`,
+    `${brandPlus} 3d deer target durability`,
+    `${shortCore} review`,
+    `${shortCore} forum`,
+    `${shortCore} youtube`,
+    `${typeTerms} ${brandPlus}`.trim(),
+    `${typeTerms} ${model}`.trim(),
+    `${brand} ${model}`.trim(),
+    reordered.trim(),
+    `${query} ${brandPlus}`.trim()
+  ].map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  return Array.from(new Set(variants));
+}
+
+function classifyQueryShape(query = '') {
+  const q = normalize(query);
+  const tokens = q.split(' ').filter(Boolean);
+  const comparisonCues = ['best','vs','comparison','compare','under','top'];
+  const narrowUseCaseCues = ['for kids','for beginners','for apartments','for travel','for seniors','for small spaces'];
+  const brandedCues = ['ninja','vitamix','sonicare','oral b','levoit','dyson','instant pot'];
+  if (brandedCues.some((cue) => q.includes(cue))) return 'branded_product_specific';
+  if (comparisonCues.some((cue) => q.includes(cue))) return 'comparison_query';
+  if (narrowUseCaseCues.some((cue) => q.includes(cue))) return 'narrow_use_case_query';
+  if (tokens.length <= 3) return 'broad_category_query';
+  return 'comparison_query';
+}
+
+function buildBroadCategoryQueries(baseQuery = '') {
+  const q = normalize(baseQuery);
+  const singular = q.endsWith('s') ? q.slice(0, -1) : q;
+  const noun = singular.replace(/^best\s+/, '').trim();
+  return Array.from(new Set([
+    `best ${noun}s`,
+    `${noun} reviews`,
+    `${noun} comparison`,
+    `${noun} buying guide`,
+    `best ${noun} reddit`,
+    `${noun} forum`,
+    `what to look for in a ${noun}`,
+    `glass vs plastic ${noun}`,
+    `saucer vs bottle ${noun}`,
+    `${noun} pros and cons`,
+    `${noun} test results`
+  ].map((x) => x.replace(/\s+/g, ' ').trim())));
+}
+
+function buildDiversifiedCategoryQueries(baseQuery = '', iteration = 1) {
+  const q = normalize(baseQuery);
+  const synonyms = {
+    'archery target': ['bow target', 'arrow target', 'shooting target'],
+    'broadheads': ['hunting arrows', 'fixed blade broadheads', 'mechanical broadheads'],
+    'broadhead': ['hunting arrow', 'fixed blade', 'mechanical broadhead']
+  };
+  const replacements = [q];
+  for (const [from, tos] of Object.entries(synonyms)) {
+    if (q.includes(from)) tos.forEach((to) => replacements.push(q.replace(from, to)));
+  }
+  const bases = Array.from(new Set(replacements));
+  const out = [];
+  for (const base of bases) {
+    if (iteration === 1) {
+      out.push(`${base} review`, `${base} comparison`, `${base} pros and cons`, `${base} test results`, `${base} buying guide`);
+    } else if (iteration === 2) {
+      out.push(`how to choose ${base}`, `what to look for in ${base}`, `${base} vs bag target`, `${base} vs foam target`, `${base} guide`);
+    } else {
+      out.push(`targets that broadheads won't destroy`, `what targets stop broadheads best`, `best material for ${base}`, `foam vs bag ${base}`, `best target for fixed blade broadheads comparison`);
+    }
+  }
+  return Array.from(new Set(out.map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean)));
+}
+
+function buildReviewFocusedQueries(baseQuery = '', iteration = 1) {
+  const base = normalize(baseQuery);
+  const compact = base.split(' ').filter((token) => token && !['best','top','for','the','and','with'].includes(token)).join(' ');
+  const variants = [
+    `${baseQuery} review`,
+    `${baseQuery} comparison`,
+    `${baseQuery} test results`,
+    `${baseQuery} guide`,
+    `${baseQuery} pros and cons`,
+    `${compact} review`,
+    `${compact} comparison`,
+    `${compact} test`,
+    `${compact} results`,
+    `what is the best ${compact}`,
+    `${compact} vs field point`,
+    `${compact} durability review`,
+    `best foam target for broadheads review`,
+    `archery broadhead target test results`,
+    `archery target comparison broadhead vs field point`,
+    `3d archery target broadhead durability review`,
+    `foam vs bag archery target broadheads`,
+    `best broadhead target test results`
+  ];
+  if (iteration >= 2) {
+    variants.push(
+      `${compact} buyer's guide`,
+      `${compact} long term review`,
+      `${compact} tested and reviewed`,
+      `${compact} broadhead target review`,
+      `${compact} layered target review`
+    );
+  }
+  if (iteration >= 3) {
+    variants.push(
+      `${compact} top picks`,
+      `${compact} review guide`,
+      `${compact} comparison guide`,
+      `${compact} best options broadheads`
+    );
+  }
+  return Array.from(new Set(variants.filter(Boolean)));
+}
+
+function buildFallbackDiscoveryQueries(baseQuery = '', mode = 'category') {
+  const normalizedBase = normalize(baseQuery);
+  const compact = normalizedBase.split(' ').filter((token) => token && !['best','top','for','the','and','with','guide','comparison'].includes(token)).join(' ');
+  const seed = compact || normalizedBase;
+  if (mode === 'product') {
+    return [
+      `${baseQuery} reviews`,
+      `${baseQuery} archery target review`,
+      `${baseQuery} broadhead target`,
+      `${baseQuery} complaints`,
+      `${baseQuery} durability`,
+      `${baseQuery} easy arrow removal`,
+      `reddit ${seed}`,
+      `site:archerytalk.com ${seed}`
+    ];
+  }
+  return [
+    `${baseQuery} reviews`,
+    `${seed} broadhead target review`,
+    `reddit ${seed}`,
+    `site:reddit.com ${seed}`,
+    `${seed} forum`,
+    `site:archerytalk.com ${seed}`,
+    `${seed} buyer complaints`,
+    `${seed} durability`,
+    `${seed} easy arrow removal`,
+    `${seed} fixed blade broadhead target`
+  ];
+}
+
+async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens, mode = 'category', minQualifyingSources = 6, requestId = null, queryShape = null }) {
+  const attempts = [searchQueries, buildFallbackDiscoveryQueries(baseQuery, mode)];
+  if (mode === 'category') {
+    if (queryShape === 'broad_category_query') {
+      attempts.push(buildBroadCategoryQueries(baseQuery));
+      attempts.push(buildDiversifiedCategoryQueries(baseQuery, 1));
+      attempts.push(buildDiversifiedCategoryQueries(baseQuery, 2));
+      attempts.push(buildReviewFocusedQueries(baseQuery, 1));
+      attempts.push(buildReviewFocusedQueries(baseQuery, 2));
+      attempts.push(buildBroadCategoryQueries(`${baseQuery} buying guide`));
+    } else {
+      attempts.push(buildReviewFocusedQueries(baseQuery, 1));
+      attempts.push(buildReviewFocusedQueries(baseQuery, 2));
+      attempts.push(buildReviewFocusedQueries(baseQuery, 3));
+      attempts.push(buildDiversifiedCategoryQueries(baseQuery, 1));
+      attempts.push(buildDiversifiedCategoryQueries(baseQuery, 2));
+      attempts.push(buildDiversifiedCategoryQueries(baseQuery, 3));
+    }
+  }
+  const rejected_sources = [];
+  const seedStats = [];
+  const discoveryTokens = normalize(baseQuery).split(' ').filter((token) => token.length >= 4 && !STOPWORDS.has(token));
+  let finalStats = null;
+  let reviewIterations = 0;
+  const tracker = mode === 'category' && requestId ? categoryProgressTracker(requestId) : null;
+  let totalEvaluated = 0;
+
+  for (let attemptIndex = 0; attemptIndex < Math.min(attempts.length, mode === 'category' ? 6 : CATEGORY_LIMITS.maxIterations); attemptIndex += 1) {
+    const queries = Array.from(new Set((attempts[attemptIndex] || []).filter(Boolean))).slice(0, CATEGORY_LIMITS.maxQueriesPerIteration);
+    tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, debug: { queries_used: queries } });
+    const discovered = [];
+    for (const q of queries) {
+      try {
+        const results = await withTimeout(fetchSearchResults(q), STAGE_TIMEOUTS_MS.category_substage, { stage: `category_discovery_pass${attemptIndex + 1}`, query: q, request_id: requestId });
+        seedStats.push({ seed: q, stage: 'discovered', discovered_urls: results.length, iteration: attemptIndex + 1 });
+        discovered.push(...results.map((item) => ({ ...item, query: q })));
+        tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: dedupeSources(discovered).length }, debug: { last_query: q } });
+      } catch (error) {
+        seedStats.push({ seed: q, stage: 'discovered', discovered_urls: 0, error: String(error.message || error), iteration: attemptIndex + 1 });
+        rejected_sources.push({ stage: 'discovery', query: q, reason: String(error.message || error) });
+      }
+      tracker?.assertProgress(`category_source_discovery_pass${attemptIndex + 1}`);
+    }
+
+    tracker?.mark(`category_source_scoring_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: dedupeSources(discovered).length } });
+    const scoredDiscovered = dedupeSources(discovered).map((item) => {
+      const scored = scoreDiscoveredSource(item, discoveryTokens);
+      const domainPenalty = tracker?.domainPenalty(item.href) || 0;
+      return { ...item, discovery_score: scored.score - domainPenalty, discovery_overlap: scored.overlap, source_type: scored.sourceType, url_kind: scored.urlIntent.kind, url_reject_reason: scored.urlIntent.reject || null };
+    }).filter((item) => {
+      const keep = item.discovery_score >= 2 && !item.url_reject_reason;
+      if (!keep) rejected_sources.push({ stage: 'discovery_filter', href: item.href, query: item.query, reason: item.url_reject_reason || 'discovery_score_too_low', score: item.discovery_score, overlap: item.discovery_overlap, source_type: item.source_type });
+      return keep;
+    }).sort((a, b) => b.discovery_score - a.discovery_score);
+
+    const coverageBuckets = new Set();
+    const prioritized = [];
+    for (const item of scoredDiscovered) {
+      const bucket = item.source_type || 'unknown';
+      if (!coverageBuckets.has(bucket)) {
+        prioritized.push(item);
+        coverageBuckets.add(bucket);
+      }
+    }
+    for (const item of scoredDiscovered) {
+      if (!prioritized.find((x) => x.href === item.href)) prioritized.push(item);
+    }
+    const candidateUrls = prioritized.map((x) => x.href);
+    const domainsThisIteration = tracker?.noteDomains(candidateUrls) || [];
+    const uniqueDomainsThisIteration = Array.from(new Set(domainsThisIteration));
+    tracker?.mark(`category_diversity_check_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, debug: { discovered_urls: scoredDiscovered.map((x) => ({ href: x.href, source_type: x.source_type, score: x.discovery_score, query: x.query })), domains_this_iteration: uniqueDomainsThisIteration } });
+    if (tracker?.noteCandidateSet(candidateUrls)) {
+      rejected_sources.push({ stage: 'loop_guard', reason: 'repeated_candidate_set', iteration: attemptIndex + 1, domains_this_iteration: uniqueDomainsThisIteration });
+      if (mode === 'category' && attemptIndex + 1 < attempts.length) continue;
+      break;
+    }
+    if (mode === 'category' && uniqueDomainsThisIteration.length < 5 && attemptIndex + 1 < attempts.length) {
+      rejected_sources.push({ stage: 'loop_guard', reason: 'new_domain_quota_not_met', iteration: attemptIndex + 1, unique_domains: uniqueDomainsThisIteration.length });
+      continue;
+    }
+
+    const fetched = [];
+    const qualified = [];
+    const fetchedByType = {};
+    const seedRollup = new Map();
+    const prioritizedSources = mode === 'category'
+      ? prioritized.sort((a, b) => {
+          const articleSignal = (item) => {
+            const href = (item.href || '').toLowerCase();
+            let bonus = 0;
+            if (['google_reviews', 'web_review'].includes(item.source_type)) bonus += 6;
+            if (/\/review|\/best-|\/comparison|\/guide/.test(href)) bonus += 4;
+            if (/[a-z]{4,}-[a-z]{4,}-[a-z]{4,}/.test(href)) bonus += 2;
+            if (item.source_type === 'forum') bonus -= 2;
+            return bonus;
+          };
+          return (b.discovery_score + articleSignal(b)) - (a.discovery_score + articleSignal(a));
+        })
+      : prioritized;
+
+    const candidateQueue = prioritizedSources.slice(0, CATEGORY_LIMITS.maxTotalEvaluated - totalEvaluated);
+    let reviewQualifiedCount = 0;
+    const minReviewQualified = mode === 'category' ? 1 : 0;
+    tracker?.mark(`category_fetch_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, debug: { candidate_queue_size: candidateQueue.length } });
+    for (const source of candidateQueue) {
+      if ((fetched.length >= CATEGORY_LIMITS.maxFetchPerIteration && reviewQualifiedCount >= minReviewQualified) || totalEvaluated >= CATEGORY_LIMITS.maxTotalEvaluated) break;
+      fetched.push(source.href);
+      totalEvaluated += 1;
+      fetchedByType[source.source_type] = (fetchedByType[source.source_type] || 0) + 1;
+      const currentSeed = seedRollup.get(source.query) || { seed: source.query, fetched_urls: 0, qualified_urls: 0, qualifying_types: {} };
+      currentSeed.fetched_urls += 1;
+      seedRollup.set(source.query, currentSeed);
+      const result = await withTimeout(fetchAndQualifyPage(source, queryTokens), STAGE_TIMEOUTS_MS.category_substage, { stage: `category_fetch_qualify_pass${attemptIndex + 1}`, href: source.href, request_id: requestId });
+      tracker?.mark(`category_extraction_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length, fetched: fetched.length, extracted: result.ok ? qualified.length + 1 : qualified.length } });
+      if (result.ok) {
+        qualified.push(result.source);
+        if (['google_reviews', 'web_review'].includes(result.source.source_type)) reviewQualifiedCount += 1;
+        currentSeed.qualified_urls += 1;
+        currentSeed.qualifying_types[result.source.source_type] = (currentSeed.qualifying_types[result.source.source_type] || 0) + 1;
+        seedRollup.set(source.query, currentSeed);
+        tracker?.mark(`category_qualification_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length, fetched: fetched.length, extracted: qualified.length, qualified: qualified.length } });
+      } else {
+        rejected_sources.push({ stage: 'qualification', href: source.href, query: source.query, reason: result.rejection_reason, overlap: result.overlap || null, extracted_chars: result.extracted_chars || null, source_type: source.source_type });
+      }
+      tracker?.assertProgress(`category_fetch_pass${attemptIndex + 1}`);
+    }
+
+    finalStats = {
+      attempt: attemptIndex + 1,
+      discovered_urls: scoredDiscovered.length,
+      discovered_by_type: scoredDiscovered.reduce((acc, item) => { acc[item.source_type] = (acc[item.source_type] || 0) + 1; return acc; }, {}),
+      fetched_pages: fetched.length,
+      fetched_by_type: fetchedByType,
+      successfully_extracted_sources: qualified.length,
+      qualifying_sources: qualified.length,
+      qualifying_by_type: qualified.reduce((acc, item) => { acc[item.source_type] = (acc[item.source_type] || 0) + 1; return acc; }, {}),
+      qualifying_urls: qualified.map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })),
+      seed_stats: Array.from(seedRollup.values()),
+      coverage: Array.from(new Set(qualified.map((item) => item.source_type)))
+    };
+
+    tracker?.mark(`category_diversity_check_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length, fetched: fetched.length, extracted: qualified.length, qualified: qualified.length }, debug: { fetched_urls: fetched, accepted_sources: qualified.map((x) => ({ href: x.href, source_type: x.source_type, query: x.query })), rejected_sources: rejected_sources.slice(-20) } });
+    const hasForum = qualified.some((item) => item.source_type === 'forum' || item.source_type === 'reddit');
+    const reviewQualified = qualified.filter((item) => item.source_type === 'google_reviews' || item.source_type === 'web_review');
+    const hasReview = reviewQualified.length >= 1;
+    const diversityMet = mode !== 'category' || (hasForum && hasReview);
+    if (mode === 'category' && attemptIndex >= 2) reviewIterations = attemptIndex - 1;
+
+    if ((qualified.length >= minQualifyingSources && diversityMet) || (qualified.length > 0 && diversityMet && attemptIndex === attempts.length - 1)) {
+      tracker?.mark('category_intelligence_finalize', { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length, fetched: fetched.length, extracted: qualified.length, qualified: qualified.length }, debug: { final_coverage: finalStats.coverage, qualifying_review_sources: reviewQualified.map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })) } });
+      return {
+        qualifyingSources: dedupeSources(qualified),
+        stats: { ...finalStats, seed_stats: seedStats.concat(finalStats.seed_stats || []), second_pass_iterations: reviewIterations, qualifying_review_sources: reviewQualified.map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })), domains_by_iteration: tracker?.snapshot()?.seen_domains || [] },
+        rejected_sources: rejected_sources.slice(-80)
+      };
+    }
+  }
+
+  tracker?.mark('category_intelligence_failed', { iteration: reviewIterations, totalEvaluated, debug: { rejection_summary: rejected_sources.slice(-20) } });
+  return { qualifyingSources: [], stats: finalStats ? { ...finalStats, seed_stats: seedStats.concat(finalStats.seed_stats || []), second_pass_iterations: reviewIterations, qualifying_review_sources: [], domains_by_iteration: tracker?.snapshot()?.seen_domains || [] } : { attempt: 0, discovered_urls: 0, discovered_by_type: {}, fetched_pages: 0, fetched_by_type: {}, successfully_extracted_sources: 0, qualifying_sources: 0, qualifying_by_type: {}, qualifying_urls: [], seed_stats: seedStats, second_pass_iterations: reviewIterations, qualifying_review_sources: [], domains_by_iteration: tracker?.snapshot()?.seen_domains || [], coverage: [] }, rejected_sources: rejected_sources.slice(-80) };
 }
 
 function sentenceFragments(text = '') {
@@ -132,6 +973,37 @@ function dedupeAndFill(items, fallbackFragments, queryTokens) {
     if (out.length >= 10) return out;
   }
   return out;
+}
+
+function buildProductMentionVariants(productName = '') {
+  const normalized = normalize(productName);
+  const words = normalized.split(' ').filter(Boolean);
+  const filtered = words.filter((token) => token.length >= 3 && !STOPWORDS.has(token));
+  const core = filtered.filter((token) => !['archery','target','deer','3d','broadhead','field','point'].includes(token));
+  const variants = [
+    normalized,
+    filtered.slice(0, 2).join(' '),
+    filtered.slice(0, 3).join(' '),
+    core.slice(0, 2).join(' '),
+    [filtered[0], core[1], 'target'].filter(Boolean).join(' '),
+    [filtered[0], 'target'].filter(Boolean).join(' '),
+    [filtered[0], core[1], 'deer', 'target'].filter(Boolean).join(' ')
+  ].filter(Boolean);
+  return Array.from(new Set(variants.map((x) => normalize(x)).filter(Boolean)));
+}
+
+function productMentionConfidence(text = '', productName = '') {
+  const haystack = normalize(text);
+  const variants = buildProductMentionVariants(productName);
+  let best = 0;
+  for (const variant of variants) {
+    const tokens = variant.split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
+    if (!tokens.length) continue;
+    const hits = tokens.filter((token) => haystack.includes(token)).length;
+    const score = hits / tokens.length;
+    if (score > best) best = score;
+  }
+  return best;
 }
 
 function matchCategorySignals(text = '', signals = []) {
@@ -364,39 +1236,77 @@ function selectWinners(products, categoryIntelligence) {
 }
 
 async function buildCategoryIntelligence(request) {
+  writeProgress({ request_id: request.request_id, stage: 'category_intelligence_start', query: request.raw_query, last_successful_transition: 'request_generating' });
   const query = String(request.normalized_query || request.raw_query || '').trim();
   const queryTokens = normalize(query).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
   if (!query || !queryTokens.length) {
     return { ok: false, error: 'category_intelligence_query_invalid' };
   }
 
-  const searchQueries = [
-    `${query} google reviews`,
-    `${query} site:reddit.com review`,
-    `${query} site:youtube.com review`,
-    `${query} forum discussion`,
-    `${query} site:archerytalk.com discussion`,
-    `${query} buyer complaints`,
-    `${query} what matters most`
-  ];
+  const queryShape = classifyQueryShape(query);
+  const broadCategoryQueries = buildBroadCategoryQueries(query);
+  const searchQueries = queryShape === 'broad_category_query'
+    ? broadCategoryQueries
+    : [
+        `${query} broadhead target review`,
+        `${query} comparison`,
+        `broadhead target forum discussion`,
+        `best target for broadheads reddit`,
+        `archerytalk best broadhead target`,
+        `layered foam vs bag target broadheads`,
+        `best target for field points and broadheads review`,
+        `${query} buyer complaints`
+      ];
 
-  const sources = [];
-  for (const q of searchQueries) {
-    try {
-      const results = await fetchSearchResults(q);
-      sources.push(...results);
-    } catch (error) {
-      sources.push({ href: '', title: q, snippet: String(error.message || error), source_type: 'error', query: q });
-    }
-  }
+  writeProgress({ request_id: request.request_id, stage: 'category_seed_generation', category_queries: searchQueries, query_shape: queryShape, last_successful_transition: 'category_seed_generation' });
+  updateCategoryDebug(request.request_id, { current_substage: 'category_seed_generation', query_shape: queryShape, query_families: { primary: searchQueries, broad_category: broadCategoryQueries }, queries_used: searchQueries, iteration: 0, counts: { discovered: 0, fetched: 0, extracted: 0, qualified: 0 }, last_progress_timestamp: nowIso() });
+  const discovery = await withTimeout(discoverAndQualifySources({
+    baseQuery: query,
+    searchQueries,
+    queryTokens,
+    mode: 'category',
+    minQualifyingSources: 6,
+    requestId: request.request_id,
+    queryShape
+  }), STAGE_TIMEOUTS_MS.category_intelligence, { stage: 'category_intelligence', request_id: request.request_id, query_shape: queryShape });
 
-  const validSources = sources.filter((item) => item.source_type !== 'error' && item.snippet);
+  const validSources = discovery.qualifyingSources;
   const coverage = new Set(validSources.map((item) => item.source_type));
-  if (!validSources.length || !coverage.has('reddit') || !coverage.has('youtube') || !coverage.has('google_reviews') || !coverage.has('forum')) {
+  const strongCoverageCount = STRONG_COVERAGE_BUCKETS.filter((type) => coverage.has(type)).length;
+  const hasValidMix = (coverage.has('web_review') || coverage.has('google_reviews')) && (coverage.has('forum') || coverage.has('reddit'));
+  if (hasValidMix && strongCoverageCount < 2) {
+    throw new Error(`diversity_gate_miscount_detected:${JSON.stringify({ buckets_present: Array.from(coverage), buckets_counted: STRONG_COVERAGE_BUCKETS.filter((type) => coverage.has(type)), strongCoverageCount })}`);
+  }
+  if (validSources.length < 6 || strongCoverageCount < 2) {
     return {
       ok: false,
       error: 'category_intelligence_source_coverage_missing',
-      debug: { coverage: Array.from(coverage), collected_sources: validSources.length }
+      debug: {
+        failing_substage: 'source_diversity_enforcement',
+        query_shape: queryShape,
+        query_families: { primary: searchQueries, broad_category: broadCategoryQueries },
+        coverage: Array.from(coverage),
+        missing_source_buckets: {
+          editorial_review_or_buying_guide: !Array.from(coverage).some((x) => ['web_review','google_reviews'].includes(x)),
+          discussion: !Array.from(coverage).some((x) => ['forum','reddit'].includes(x)),
+          video: false
+        },
+        failure_mode: (discovery.stats?.discovered_urls || 0) === 0 ? 'zero_discovery' : ((discovery.stats?.fetched_pages || 0) === 0 ? 'low_fetch_success' : ((discovery.stats?.successfully_extracted_sources || 0) === 0 ? 'low_extraction_success' : 'qualification_rejection_or_diversity_gap')),
+        collected_sources: validSources.length,
+        strong_coverage_count: strongCoverageCount,
+        discovered_urls: discovery.stats?.discovered_urls || 0,
+        discovered_by_type: discovery.stats?.discovered_by_type || {},
+        fetched_pages: discovery.stats?.fetched_pages || 0,
+        fetched_by_type: discovery.stats?.fetched_by_type || {},
+        successfully_extracted_sources: discovery.stats?.successfully_extracted_sources || 0,
+        qualifying_sources: discovery.stats?.qualifying_sources || 0,
+        qualifying_by_type: discovery.stats?.qualifying_by_type || {},
+        qualifying_urls: discovery.stats?.qualifying_urls || [],
+        second_pass_iterations: discovery.stats?.second_pass_iterations || 0,
+        qualifying_review_sources: discovery.stats?.qualifying_review_sources || [],
+        domains_by_iteration: discovery.stats?.domains_by_iteration || [],
+        rejected_sources: discovery.rejected_sources || []
+      }
     };
   }
 
@@ -411,7 +1321,7 @@ async function buildCategoryIntelligence(request) {
   const failureFragments = [];
 
   for (const source of validSources) {
-    const fragments = sentenceFragments(`${source.title}. ${source.snippet}`);
+    const fragments = sentenceFragments(`${source.title}. ${source.snippet}. ${source.page_excerpt || ''}`);
     for (const fragment of fragments) {
       const lower = fragment.toLowerCase();
       if (praiseCues.some((cue) => lower.includes(cue))) praiseFragments.push(fragment);
@@ -437,16 +1347,35 @@ async function buildCategoryIntelligence(request) {
     };
   }
 
+  writeProgress({ request_id: request.request_id, stage: 'category_intelligence_done', qualifying_sources: validSources.length, coverage: Array.from(coverage), last_successful_transition: 'category_intelligence_done' });
   return {
     ok: true,
     category_intelligence: categoryIntelligence,
     evidence_sources: validSources.slice(0, 20).map((item) => ({
       source_type: item.source_type,
+      source_class: item.source_class || classifyQualifiedSource(item),
       query: item.query,
       title: item.title,
+      page_title: item.page_title || item.title,
       href: item.href,
-      snippet: item.snippet
-    }))
+      snippet: item.snippet,
+      page_excerpt: item.page_excerpt || '',
+      extracted_chars: item.extracted_chars || 0,
+      query_overlap: item.query_overlap || 0
+    })),
+    debug: {
+      discovered_urls: discovery.stats?.discovered_urls || 0,
+      discovered_by_type: discovery.stats?.discovered_by_type || {},
+      fetched_pages: discovery.stats?.fetched_pages || 0,
+      fetched_by_type: discovery.stats?.fetched_by_type || {},
+      successfully_extracted_sources: discovery.stats?.successfully_extracted_sources || 0,
+      qualifying_sources: discovery.stats?.qualifying_sources || validSources.length,
+      qualifying_by_type: discovery.stats?.qualifying_by_type || {},
+      qualifying_urls: discovery.stats?.qualifying_urls || [],
+      coverage: Array.from(coverage),
+      strong_coverage_count: strongCoverageCount,
+      rejected_sources: discovery.rejected_sources || []
+    }
   };
 }
 
@@ -478,6 +1407,93 @@ function parseReviewCount(raw = '') {
 function parseRating(raw = '') {
   const match = String(raw).match(/(\d+(?:\.\d+)?)/);
   return match ? Number(match[1]) : 0;
+}
+
+async function fetchAmazonReviewSentiment(product) {
+  const affiliateUrl = String(product?.affiliate_url || '');
+  const asin = product?.asin || (affiliateUrl.match(/\/dp\/([A-Z0-9]{10})/i) || affiliateUrl.match(/\/product\/([A-Z0-9]{10})/i) || [])[1] || null;
+  if (!affiliateUrl || !asin) return { ok: false, error: 'amazon_missing_asin_or_url' };
+
+  const productRes = await fetch(affiliateUrl, { headers: AMAZON_HEADERS, redirect: 'follow', signal: AbortSignal.timeout(20000) });
+  if (!productRes.ok) return { ok: false, error: `amazon_product_http_${productRes.status}` };
+  const productHtml = await productRes.text();
+  const productTitle = cleanText((productHtml.match(/<span[^>]+id="productTitle"[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || product.product_name || '');
+  const averageRating = parseRating((productHtml.match(/<span[^>]+data-hook="rating-out-of-text"[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || '');
+  const reviewCount = parseReviewCount((productHtml.match(/<span[^>]+id="acrCustomerReviewText"[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || '');
+
+  const reviewUrls = [
+    `https://www.amazon.com/product-reviews/${asin}?sortBy=helpful`,
+    `https://www.amazon.com/product-reviews/${asin}?sortBy=recent`
+  ];
+  const reviews = [];
+  for (const url of reviewUrls) {
+    const res = await fetch(url, { headers: AMAZON_HEADERS, redirect: 'follow', signal: AbortSignal.timeout(20000) });
+    if (!res.ok) continue;
+    const html = await res.text();
+    const blocks = [...html.matchAll(/<div[^>]+data-hook="review"[\s\S]*?<\/div>\s*<\/div>/gi)].slice(0, 12);
+    for (const blockMatch of blocks) {
+      const block = blockMatch[0];
+      const title = cleanText((block.match(/<a[^>]+data-hook="review-title"[^>]*>([\s\S]*?)<\/a>/i) || [])[1] || '');
+      const text = cleanText((block.match(/<span[^>]+data-hook="review-body"[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || '');
+      const rating = parseRating((block.match(/<i[^>]+data-hook="review-star-rating"[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i) || block.match(/<i[^>]+data-hook="cmps-review-star-rating"[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || '');
+      const date = cleanText((block.match(/<span[^>]+data-hook="review-date"[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || '');
+      if (!text || text.length < 40) continue;
+      reviews.push({ title, text, rating, date, source_url: url });
+      if (reviews.length >= 16) break;
+    }
+    if (reviews.length >= 16) break;
+  }
+
+  const combined = reviews.map((r) => `${r.title}. ${r.text}`).join(' ');
+  const fragments = sentenceFragments(combined);
+  const praiseCues = ['easy', 'great', 'durable', 'stops', 'solid', 'love', 'works well', 'excellent', 'holds up', 'recommended'];
+  const complaintCues = ['hard to pull', 'wear', 'wore out', 'tear', 'issue', 'problem', 'weak', 'falls apart', 'not suitable', 'difficult'];
+  const durabilityCues = ['durable', 'holds up', 'wear', 'wore out', 'lasted', 'fell apart', 'foam'];
+  const performanceCues = ['broadhead', 'field point', 'stops', 'penetration', 'pull arrows', 'poundage', 'crossbow'];
+  const failureCues = ['wear out', 'foam wears', 'pass through', 'tears', 'hard to pull arrows', 'not suitable', 'breaks down'];
+
+  const topPraises = [];
+  const topComplaints = [];
+  const durability = [];
+  const performance = [];
+  const failures = [];
+  for (const fragment of fragments) {
+    const lower = fragment.toLowerCase();
+    if (praiseCues.some((cue) => lower.includes(cue))) topPraises.push(fragment);
+    if (complaintCues.some((cue) => lower.includes(cue))) topComplaints.push(fragment);
+    if (durabilityCues.some((cue) => lower.includes(cue))) durability.push(fragment);
+    if (performanceCues.some((cue) => lower.includes(cue))) performance.push(fragment);
+    if (failureCues.some((cue) => lower.includes(cue))) failures.push(fragment);
+  }
+
+  const sentiment = {
+    top_praises: dedupeAndFill(rankPhrases(topPraises, normalize(productTitle).split(' ')), fragments, normalize(productTitle).split(' ')).slice(0, 5),
+    top_complaints: dedupeAndFill(rankPhrases(topComplaints, normalize(productTitle).split(' ')), fragments, normalize(productTitle).split(' ')).slice(0, 5),
+    durability_feedback: pickBestPhrase(durability, normalize(productTitle).split(' '), ''),
+    performance_feedback: pickBestPhrase(performance, normalize(productTitle).split(' '), ''),
+    common_failures: dedupeAndFill(rankPhrases(failures, normalize(productTitle).split(' ')), fragments, normalize(productTitle).split(' ')).slice(0, 4),
+    consistency_of_feedback: (topPraises.length >= 3 && topComplaints.length >= 2) ? 'high' : (topPraises.length + topComplaints.length >= 3 ? 'mixed' : 'low')
+  };
+
+  const substantive = sentiment.top_praises.length + sentiment.top_complaints.length + sentiment.common_failures.length >= 4
+    && (sentiment.durability_feedback || sentiment.performance_feedback);
+  if (reviewCount < AMAZON_REVIEW_MIN_COUNT || reviews.length < 4 || !substantive) {
+    return {
+      ok: false,
+      error: 'amazon_sentiment_insufficient',
+      debug: { review_count: reviewCount, extracted_reviews: reviews.length, sentiment }
+    };
+  }
+
+  return {
+    ok: true,
+    amazon_review_sentiment: sentiment,
+    review_count: reviewCount,
+    average_rating: averageRating,
+    product_title: productTitle,
+    extracted_reviews: reviews.length,
+    used_as_fallback: true
+  };
 }
 
 async function fetchAmazonProducts(query) {
@@ -597,35 +1613,99 @@ function buildFromExisting(request, published) {
   };
 }
 
-async function buildProductAnalysis(product, request, categoryIntelligence) {
+async function buildProductAnalysis(product, request, categoryIntelligence, categoryEvidenceSources = []) {
+  writeProgress({ request_id: request.request_id, stage: 'product_analysis_start', product: product.product_name, last_successful_transition: 'category_intelligence_done' });
   const productName = String(product.product_name || '').trim();
   const query = String(request.normalized_query || request.raw_query || '').trim();
   const queryTokens = normalize(`${query} ${productName}`).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
-  const searchQueries = [
-    `${productName} amazon reviews`,
-    `${productName} google reviews`,
-    `${productName} site:reddit.com review`,
-    `${productName} forum discussion`,
-    `${productName} site:youtube.com review`
+  const refinedSeeds = buildProductSearchSeeds(productName, query);
+  const reviewQueries = Array.from(new Set([
+    `${productName} reviews`,
+    `${productName} archery target review`,
+    `${productName} broadhead target`,
+    `${productName} complaints`,
+    ...refinedSeeds.flatMap((seed) => ([`${seed} review`, `${seed} field point broadhead review`, `${seed} durability review`]))
+  ]));
+  const discussionQueries = Array.from(new Set([
+    `reddit ${productName}`,
+    `${productName} archerytalk`,
+    ...refinedSeeds.flatMap((seed) => ([`${seed} forum`, `${seed} reddit`, `${seed} archerytalk`, `${seed} hunting forum`]))
+  ]));
+
+  const objectives = [
+    { name: 'reviews', queries: reviewQueries },
+    { name: 'discussion', queries: discussionQueries }
   ];
 
-  const sources = [];
-  for (const q of searchQueries) {
-    try {
-      const results = await fetchSearchResults(q);
-      sources.push(...results);
-    } catch (error) {
-      sources.push({ href: '', title: q, snippet: String(error.message || error), source_type: 'error', query: q });
-    }
+  const objectiveRuns = [];
+  for (const objective of objectives) {
+    writeProgress({ request_id: request.request_id, stage: `product_discovery_${objective.name}`, product: productName, objective: objective.name, last_successful_transition: `product_discovery_${objective.name}` });
+    const result = await discoverAndQualifySources({
+      baseQuery: productName,
+      searchQueries: objective.queries,
+      queryTokens,
+      mode: 'product',
+      minQualifyingSources: 1
+    });
+    objectiveRuns.push({ objective: objective.name, queries: objective.queries, ...result });
   }
 
-  const validSources = sources.filter((item) => item.source_type !== 'error' && item.snippet);
+  const productNameTokens = normalize(productName).split(' ').filter((token) => token.length >= 4 && !STOPWORDS.has(token));
+  const categoryFallbackSources = dedupeSources((categoryEvidenceSources || []).filter((item) => {
+    const haystack = `${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`;
+    const tokenHits = productNameTokens.filter((token) => normalize(haystack).includes(token)).length;
+    return tokenHits >= Math.max(2, Math.min(3, productNameTokens.length)) && productMentionConfidence(haystack, productName) >= 0.66;
+  }));
+
+  let validSources = dedupeSources(objectiveRuns.flatMap((run) => run.qualifyingSources || []).filter((item) => productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66));
+  const hasSecondary = validSources.some((item) => ['forum', 'reddit'].includes(item.source_type));
+  if (!hasSecondary && categoryFallbackSources.length) {
+    writeProgress({ request_id: request.request_id, stage: 'product_fallback_mode', product: productName, last_successful_transition: 'product_fallback_mode' });
+    validSources = dedupeSources([...validSources, ...categoryFallbackSources]);
+  }
+
   const coverage = new Set(validSources.map((item) => item.source_type));
-  if (!validSources.length || !coverage.has('reddit') || !coverage.has('youtube') || !coverage.has('google_reviews') || !coverage.has('forum')) {
+  const hasStrongReview = validSources.some((item) => ['web_review', 'google_reviews'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
+  let hasStrongSecondary = validSources.some((item) => ['forum', 'reddit'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
+  let amazonFallback = null;
+  if (hasStrongReview && !hasStrongSecondary) {
+    writeProgress({ request_id: request.request_id, stage: 'product_amazon_fallback', product: productName, last_successful_transition: 'product_amazon_fallback' });
+    amazonFallback = await fetchAmazonReviewSentiment(product);
+    if (amazonFallback.ok) hasStrongSecondary = true;
+  }
+  const strongCoverageCount = ['reddit', 'google_reviews', 'forum', 'web_review'].filter((type) => coverage.has(type)).length;
+  writeProgress({ request_id: request.request_id, stage: 'product_coverage_check', product: productName, last_successful_transition: 'product_coverage_check' });
+  if (!(hasStrongReview && hasStrongSecondary)) {
     return {
       ok: false,
       error: 'product_analysis_source_coverage_missing',
-      debug: { product: productName, coverage: Array.from(coverage), collected_sources: validSources.length }
+      debug: {
+        product: productName,
+        coverage: Array.from(coverage),
+        collected_sources: validSources.length,
+        strong_coverage_count: strongCoverageCount,
+        source_type_gaps: {
+          missing_review: !hasStrongReview,
+          missing_secondary: !hasStrongSecondary
+        },
+        amazon_review_count: amazonFallback?.review_count || 0,
+        amazon_used_as_fallback: Boolean(amazonFallback?.ok),
+        amazon_sentiment: amazonFallback?.amazon_review_sentiment || null,
+        final_evidence_tier: amazonFallback?.ok ? 'tier_2_review_plus_amazon' : 'insufficient',
+        discovered_urls: objectiveRuns.reduce((sum, run) => sum + (run.stats?.discovered_urls || 0), 0),
+        discovered_by_type: Object.assign({}, ...objectiveRuns.map((run) => run.stats?.discovered_by_type || {})),
+        fetched_pages: objectiveRuns.reduce((sum, run) => sum + (run.stats?.fetched_pages || 0), 0),
+        fetched_by_type: Object.assign({}, ...objectiveRuns.map((run) => run.stats?.fetched_by_type || {})),
+        successfully_extracted_sources: objectiveRuns.reduce((sum, run) => sum + (run.stats?.successfully_extracted_sources || 0), 0),
+        qualifying_sources: validSources.length,
+        qualifying_by_type: validSources.reduce((acc, item) => { acc[item.source_type] = (acc[item.source_type] || 0) + 1; return acc; }, {}),
+        qualifying_urls: validSources.map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })),
+        objectives: objectiveRuns.map((run) => ({ objective: run.objective, queries: run.queries, discovered_by_type: run.stats?.discovered_by_type || {}, qualifying_by_type: run.stats?.qualifying_by_type || {}, qualifying_urls: run.stats?.qualifying_urls || [] })),
+        search_seeds_used: { reviews: reviewQueries, discussion: discussionQueries },
+        category_fallback_sources: categoryFallbackSources.length,
+        fail_reason: 'public_source_diversity_insufficient_for_product',
+        rejected_sources: objectiveRuns.flatMap((run) => run.rejected_sources || []).slice(-120)
+      }
     };
   }
 
@@ -643,7 +1723,7 @@ async function buildProductAnalysis(product, request, categoryIntelligence) {
   const allFragments = [];
 
   for (const source of validSources) {
-    const fragments = sentenceFragments(`${source.title}. ${source.snippet}`);
+    const fragments = sentenceFragments(`${source.title}. ${source.snippet}. ${source.page_excerpt || ''}`);
     for (const fragment of fragments) {
       const lower = fragment.toLowerCase();
       allFragments.push(fragment);
@@ -672,7 +1752,9 @@ async function buildProductAnalysis(product, request, categoryIntelligence) {
     unique_strength: uniqueStrength,
     hidden_issues: hiddenIssues,
     best_for: bestFor,
-    avoid_if: avoidIf
+    avoid_if: avoidIf,
+    amazon_review_sentiment: amazonFallback?.amazon_review_sentiment || null,
+    evidence_tier: amazonFallback?.ok ? 'tier_2_review_plus_amazon' : 'tier_1_external_diversity'
   };
 
   const isComplete = Array.isArray(analysis.pros) && analysis.pros.length >= 2
@@ -690,16 +1772,42 @@ async function buildProductAnalysis(product, request, categoryIntelligence) {
     };
   }
 
+  writeProgress({ request_id: request.request_id, stage: 'product_analysis_done', product: product.product_name, qualifying_sources: validSources.length, coverage: Array.from(coverage), amazon_review_count: amazonFallback?.review_count || 0, amazon_used_as_fallback: Boolean(amazonFallback?.ok), last_successful_transition: `product_analysis_done:${product.product_name}` });
   return {
     ok: true,
     product_analysis: analysis,
     evidence_sources: validSources.slice(0, 20).map((item) => ({
       source_type: item.source_type,
+      source_class: item.source_class || classifyQualifiedSource(item),
       query: item.query,
       title: item.title,
+      page_title: item.page_title || item.title,
       href: item.href,
-      snippet: item.snippet
-    }))
+      snippet: item.snippet,
+      page_excerpt: item.page_excerpt || '',
+      extracted_chars: item.extracted_chars || 0,
+      query_overlap: item.query_overlap || 0
+    })),
+    debug: {
+      product: productName,
+      discovered_urls: objectiveRuns.reduce((sum, run) => sum + (run.stats?.discovered_urls || 0), 0),
+      discovered_by_type: validSources.reduce((acc, item) => { acc[item.source_type] = (acc[item.source_type] || 0) + 1; return acc; }, {}),
+      fetched_pages: objectiveRuns.reduce((sum, run) => sum + (run.stats?.fetched_pages || 0), 0),
+      fetched_by_type: Object.assign({}, ...objectiveRuns.map((run) => run.stats?.fetched_by_type || {})),
+      successfully_extracted_sources: objectiveRuns.reduce((sum, run) => sum + (run.stats?.successfully_extracted_sources || 0), 0),
+      qualifying_sources: validSources.length,
+      qualifying_by_type: validSources.reduce((acc, item) => { acc[item.source_type] = (acc[item.source_type] || 0) + 1; return acc; }, {}),
+      qualifying_urls: validSources.map((item) => ({ href: item.href, source_type: item.source_type, query: item.query })),
+      search_seeds_used: { reviews: reviewQueries, discussion: discussionQueries },
+      objective_runs: objectiveRuns.map((run) => ({ objective: run.objective, queries: run.queries, qualifying_urls: run.stats?.qualifying_urls || [] })),
+      coverage: Array.from(coverage),
+      strong_coverage_count: strongCoverageCount,
+      rejected_sources: objectiveRuns.flatMap((run) => run.rejected_sources || []).slice(-120),
+      amazon_review_count: amazonFallback?.review_count || 0,
+      amazon_used_as_fallback: Boolean(amazonFallback?.ok),
+      amazon_sentiment: amazonFallback?.amazon_review_sentiment || null,
+      final_evidence_tier: amazonFallback?.ok ? 'tier_2_review_plus_amazon' : 'tier_1_external_diversity'
+    }
   };
 }
 
@@ -724,38 +1832,71 @@ async function buildFromAmazonSearch(request) {
 }
 
 async function buildOutput(request, published) {
-  const intelligenceResult = await buildCategoryIntelligence(request);
-  if (!intelligenceResult.ok || !intelligenceResult.category_intelligence) {
-    return { ok: false, error: intelligenceResult.error || 'category_intelligence_missing', debug: intelligenceResult.debug || null };
+  const startedAt = Date.now();
+  const existingCheckpoint = loadCheckpoint(request.request_id);
+  const resumed = Boolean(existingCheckpoint);
+  const restoredStageNames = existingCheckpoint ? [
+    ...(existingCheckpoint.category_intelligence_result ? ['category_intelligence'] : []),
+    ...(existingCheckpoint.product_result ? ['product_selection'] : [])
+  ] : [];
+  resetRuntimeState(request.request_id, resumed && (existingCheckpoint?.stage === 'product_selection_complete' || existingCheckpoint?.stage === 'product_analysis_partial' || existingCheckpoint?.stage === 'product_analysis_complete' || existingCheckpoint?.stage === 'scoring_complete' || existingCheckpoint?.stage === 'final_output_ready') ? 'product_analysis' : 'build_output', { restoredStages: restoredStageNames, counters: { completed_products: existingCheckpoint?.completed_products?.length || 0 } });
+  writeProgress({ request_id: request.request_id, stage: 'build_output_resume_check', resumed_from_checkpoint: resumed, completed_products: existingCheckpoint?.completed_products?.length || 0, restored_stages: existingCheckpoint ? { checkpoint_stage: existingCheckpoint.stage || null, has_category: Boolean(existingCheckpoint.category_intelligence_result), has_product_selection: Boolean(existingCheckpoint.product_result), restored_products: existingCheckpoint?.completed_products?.map((p) => p.product_name) || [] } : null, active_stage_after_restore: runtimeState.activeStage, watchdogs_reset: true, last_successful_transition: 'build_output_resume_check' });
+
+  let intelligenceResult = existingCheckpoint?.category_intelligence_result || null;
+  if (!intelligenceResult?.ok || !intelligenceResult?.category_intelligence) {
+    intelligenceResult = await buildCategoryIntelligence(request);
+    if (!intelligenceResult.ok || !intelligenceResult.category_intelligence) {
+      return { ok: false, error: intelligenceResult.error || 'category_intelligence_missing', debug: intelligenceResult.debug || null };
+    }
+    saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, stage: 'category_complete' });
   }
 
-  const fromExisting = buildFromExisting(request, published);
-  const productResult = fromExisting.ok ? fromExisting : await buildFromAmazonSearch(request);
-  if (!productResult.ok) return productResult;
+  let productResult = existingCheckpoint?.product_result || null;
+  if (!productResult?.ok || !Array.isArray(productResult.products)) {
+    const fromExisting = buildFromExisting(request, published);
+    productResult = fromExisting.ok ? fromExisting : await buildFromAmazonSearch(request);
+    if (!productResult.ok) return productResult;
+    saveCheckpoint(request.request_id, { product_result: productResult, stage: 'product_selection_complete' });
+  }
 
+  const completedMap = new Map((existingCheckpoint?.completed_products || []).map((p) => [productKey(p), p]));
   const analyzedProducts = [];
   for (const product of productResult.products) {
-    const analysisResult = await buildProductAnalysis(product, request, intelligenceResult.category_intelligence);
+    const key = productKey(product);
+    if (completedMap.has(key)) {
+      analyzedProducts.push(completedMap.get(key));
+      continue;
+    }
+    setActiveRuntimeStage('product_analysis', 'product_analysis_active');
+    writeProgress({ request_id: request.request_id, stage: 'product_analysis_active', product: product.product_name, completed_products: analyzedProducts.length, elapsed_stage_ms: Date.now() - startedAt, last_successful_transition: `product_analysis_active:${product.product_name}` });
+    const analysisResult = await withTimeout(buildProductAnalysis(product, request, intelligenceResult.category_intelligence, intelligenceResult.evidence_sources || []), 75 * 1000, { stage: 'product_analysis', request_id: request.request_id, product: product.product_name });
     if (!analysisResult.ok || !analysisResult.product_analysis) {
+      saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, stage: 'product_analysis_partial', failed_product: product.product_name });
       return { ok: false, error: analysisResult.error || 'product_analysis_missing', debug: analysisResult.debug || null };
     }
-    analyzedProducts.push({
+    const completedProduct = {
       ...product,
       product_analysis: analysisResult.product_analysis,
       product_analysis_sources: analysisResult.evidence_sources
-    });
+    };
+    analyzedProducts.push(completedProduct);
+    saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, stage: 'product_analysis_partial', current_product: product.product_name });
   }
 
   if (analyzedProducts.length !== 5) {
+    saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, stage: 'product_analysis_partial' });
     return { ok: false, error: 'product_analysis_requires_five_products', debug: { analyzed: analyzedProducts.length } };
   }
 
+  saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, stage: 'product_analysis_complete' });
+  writeProgress({ request_id: request.request_id, stage: 'scoring_ranking', completed_products: analyzedProducts.length, elapsed_stage_ms: Date.now() - startedAt, last_successful_transition: 'scoring_ranking' });
   const scoredProducts = analyzedProducts.map((product) => ({
     ...product,
     product_score: buildProductScore(product, intelligenceResult.category_intelligence)
   })).sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
 
   const winnerSelection = selectWinners(scoredProducts, intelligenceResult.category_intelligence);
+  saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, scored_products: scoredProducts, winner_selection: winnerSelection, stage: 'scoring_complete' });
   if (!winnerSelection.best_overall || !winnerSelection.best_budget || !winnerSelection.best_premium) {
     return { ok: false, error: 'winner_selection_incomplete' };
   }
@@ -769,6 +1910,13 @@ async function buildOutput(request, published) {
     return { ok: false, error: enforcementCheck.error, debug: enforcementCheck };
   }
 
+  saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, scored_products: scoredProducts, winner_selection: winnerSelection, final_output: {
+    ...productResult,
+    products: scoredProducts,
+    winner_selection: winnerSelection,
+    category_intelligence: intelligenceResult.category_intelligence,
+    category_intelligence_sources: intelligenceResult.evidence_sources
+  }, stage: 'final_output_ready' });
   return {
     ...productResult,
     products: scoredProducts,
@@ -946,6 +2094,8 @@ function ensurePublish(registry, request, output) {
 
 async function processOne(request) {
   const published = loadPublishedArticles();
+  const checkpoint = loadCheckpoint(request.request_id);
+  writeProgress({ request_id: request.request_id, stage: 'process_one_start', resumed_from_checkpoint: Boolean(checkpoint), completed_products: checkpoint?.completed_products?.length || 0, checkpoint_stage: checkpoint?.stage || null, last_successful_transition: 'queue_pickup' });
   if (request.request_status === 'published' || request.publish_status === 'published' || request.generated_article_slug) {
     return { request_id: request.request_id, status: 'idempotent', published_slug: request.generated_article_slug || request.published_slug || null };
   }
@@ -954,8 +2104,10 @@ async function processOne(request) {
     request_status: 'generating',
     generation_attempts: Number(request.generation_attempts || 0) + 1
   });
-  const result = await buildOutput(request, published);
+  writeProgress({ request_id: request.request_id, stage: 'build_output_start', last_successful_transition: 'request_generating' });
+  const result = await withTimeout(buildOutput(request, published), STAGE_TIMEOUTS_MS.build_output, { stage: 'build_output', request_id: request.request_id });
   if (!result.ok || !result.category_intelligence) {
+    writeProgress({ request_id: request.request_id, stage: 'build_output_failed', error: result.error || 'category_intelligence_missing', debug: result.debug || null, last_successful_transition: 'build_output_failed' });
     paidRequests.updateRequestStatus(request.request_id, { fulfillment_status: 'failed', request_status: 'failed', error: result.error || 'category_intelligence_missing' });
     return { request_id: request.request_id, status: 'failed', error: result.error || 'category_intelligence_missing', debug: result.debug || null };
   }
@@ -964,15 +2116,19 @@ async function processOne(request) {
   writeJson(outPath, result);
   paidRequests.updateRequestStatus(request.request_id, { request_status: 'validated', fulfillment_output_path: path.relative(ROOT, outPath) });
   const registry = readJson(registryPath);
+  writeProgress({ request_id: request.request_id, stage: 'publish_prepare', last_successful_transition: 'build_output_done' });
   const publish = ensurePublish(registry, request, result);
   writeJson(registryPath, registry);
-  execFileSync('python3', [sitemapScript], { cwd: ROOT });
-  execFileSync('python3', [syncScript, '--message', `publish paid instant answer: ${publish.slug}`, '--paths', registryPath, path.join(ROOT, publish.article_dir), path.join(ROOT, 'sitemap.xml')], { cwd: ROOT });
+  writeProgress({ request_id: request.request_id, stage: 'publish_sync', article_slug: publish.slug, last_successful_transition: 'publish_prepare' });
+  await withTimeout(Promise.resolve().then(() => execFileSync('python3', [sitemapScript], { cwd: ROOT })), STAGE_TIMEOUTS_MS.publish, { stage: 'publish_sitemap', request_id: request.request_id });
+  await withTimeout(Promise.resolve().then(() => execFileSync('python3', [syncScript, '--message', `publish paid instant answer: ${publish.slug}`, '--paths', registryPath, path.join(ROOT, publish.article_dir), path.join(ROOT, 'sitemap.xml')], { cwd: ROOT })), STAGE_TIMEOUTS_MS.publish, { stage: 'publish_sync', request_id: request.request_id });
   const accessMode = request?.request_meta?.access_mode || null;
   const userKey = request?.request_meta?.user_key || request?.request_meta?.ip_hash || null;
   if (accessMode === 'free' || accessMode === 'bundle') {
     paidRequests.applySuccessfulGeneration({ userKey, accessMode });
   }
+  writeProgress({ request_id: request.request_id, stage: 'publish_done', article_slug: publish.slug, published_url: publish.published_url, last_successful_transition: 'publish_done' });
+  clearCheckpoint(request.request_id);
   const updated = paidRequests.updateRequestStatus(request.request_id, {
     fulfillment_status: 'completed',
     request_status: 'published',
@@ -991,16 +2147,35 @@ async function processOne(request) {
 
 async function main() {
   const requestIdArg = process.argv.includes('--request-id') ? process.argv[process.argv.indexOf('--request-id') + 1] : null;
-  if (fs.existsSync(lockPath)) {
-    console.log(JSON.stringify({ ok: false, error: 'lock_exists' }));
+  const existingLock = ensureActiveLock(requestIdArg);
+  if (existingLock) {
+    console.log(JSON.stringify({ ok: false, error: 'lock_exists', lock: existingLock }));
     process.exit(1);
   }
-  fs.writeFileSync(lockPath, String(Date.now()));
+  fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, request_id: requestIdArg || null, started_at: nowIso(), started_at_ms: Date.now() }));
   try {
     const all = paidRequests.readPaidRequests();
-    const queue = all.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated'].includes(r.request_status));
+    const queue = all.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated', 'generating'].includes(r.request_status));
+    if (requestIdArg) {
+      const stuck = all.find((r) => r.request_id === requestIdArg && r.request_status === 'generating');
+      if (stuck) {
+        paidRequests.updateRequestStatus(requestIdArg, { request_status: 'paid_pending', fulfillment_status: null, error: null });
+        writeProgress({ request_id: requestIdArg, stage: 'recovered_stuck_request', last_successful_transition: 'stuck_state_reset' });
+      }
+    }
+    const refreshed = paidRequests.readPaidRequests();
+    const runnableQueue = refreshed.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated'].includes(r.request_status));
     const results = [];
-    for (const item of queue) results.push(await processOne(item));
+    for (const item of runnableQueue) {
+      try {
+        results.push(await withTimeout(processOne(item), STAGE_TIMEOUTS_MS.total_request, { stage: 'total_request', request_id: item.request_id }));
+      } catch (error) {
+        const stageError = error?.meta?.stage || error?.code || error?.message || 'unknown_error';
+        writeProgress({ request_id: item.request_id, stage: 'failed_timeout_or_stall', error: stageError, error_meta: error?.meta || null, last_successful_transition: 'failed_timeout_or_stall' });
+        paidRequests.updateRequestStatus(item.request_id, { fulfillment_status: 'failed', request_status: 'failed', error: stageError });
+        results.push({ request_id: item.request_id, status: 'failed', error: stageError, debug: error?.meta || null });
+      }
+    }
     console.log(JSON.stringify({ ok: true, processed: results.length, results }, null, 2));
   } finally {
     if (fs.existsSync(lockPath)) fs.unlinkSync(lockPath);
