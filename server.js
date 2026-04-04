@@ -29,6 +29,7 @@ const paidRequests = createPaidRequests({ rootDir: __dirname });
 const { execFile, execFileSync } = require('child_process');
 const requestCreationLogPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_request_creation.jsonl');
 const processorScriptPath = path.join(__dirname, 'scripts', 'process_paid_instant_answers.js');
+const activeJobsPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_active_jobs.json');
 const STRONG_COVERAGE_BUCKETS = ['reddit', 'google_reviews', 'forum', 'web_review'];
 
 function readJson(name) {
@@ -379,6 +380,35 @@ function logRequestCreation(event, payload = {}) {
   } catch {}
 }
 
+function readActiveJobs() {
+  try {
+    return fs.existsSync(activeJobsPath) ? JSON.parse(fs.readFileSync(activeJobsPath, 'utf8')) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeActiveJobs(data) {
+  fs.mkdirSync(path.dirname(activeJobsPath), { recursive: true });
+  fs.writeFileSync(activeJobsPath, JSON.stringify(data, null, 2));
+}
+
+function upsertActiveJob(requestId, patch = {}) {
+  const jobs = readActiveJobs();
+  const current = jobs[requestId] || { request_id: requestId, created_at: new Date().toISOString() };
+  jobs[requestId] = { ...current, ...patch, updated_at: new Date().toISOString() };
+  writeActiveJobs(jobs);
+  return jobs[requestId];
+}
+
+function removeActiveJob(requestId) {
+  const jobs = readActiveJobs();
+  if (jobs[requestId]) {
+    delete jobs[requestId];
+    writeActiveJobs(jobs);
+  }
+}
+
 function buildRuntimeInfo() {
   const processorResolvedPath = require.resolve(processorScriptPath);
   const processorExists = fs.existsSync(processorResolvedPath);
@@ -412,6 +442,7 @@ function isPidAlive(pid) {
 function getGenerationRuntimeState(requestId) {
   const lockPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_fulfillment.lock');
   const progressPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_progress.json');
+  const activeJobs = readActiveJobs();
   let lock = null;
   let progress = null;
   try {
@@ -424,14 +455,16 @@ function getGenerationRuntimeState(requestId) {
   const lockAlive = lock ? isPidAlive(lock.pid) : false;
   const progressMatchesRequest = progress && progress.request_id === requestId;
   const lastHeartbeatMs = progress && progress.updated_at ? (now - new Date(progress.updated_at).getTime()) : null;
+  const activeJob = activeJobs[requestId] || null;
   return {
     lock,
     lockAlive,
     progress,
     progressMatchesRequest,
     lastHeartbeatMs,
-    workerActiveForRequest: Boolean(lock && lock.request_id === requestId && lockAlive),
-    orphaned: !lockAlive && (!progress || progressMatchesRequest) && (lastHeartbeatMs === null || lastHeartbeatMs > 5 * 60 * 1000)
+    activeJob,
+    workerActiveForRequest: Boolean((lock && lock.request_id === requestId && lockAlive) || (activeJob && isPidAlive(activeJob.worker_pid))),
+    orphaned: !lockAlive && !(activeJob && isPidAlive(activeJob.worker_pid)) && (!progress || progressMatchesRequest) && (lastHeartbeatMs === null || lastHeartbeatMs > 5 * 60 * 1000)
   };
 }
 
@@ -444,32 +477,45 @@ function assertPersistedRequest(requestId) {
 
 function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
+  const startupTs = new Date().toISOString();
+  upsertActiveJob(requestId, { status: 'starting', startup_timestamp: startupTs, processor_path: processorScriptPath, owner_pid: process.pid, worker_pid: null, last_heartbeat: startupTs });
   logRequestCreation('queue_insertion_attempted', { request_id: requestId });
   const child = execFile('node', [path.join(__dirname, 'scripts', 'process_paid_instant_answers.js'), '--request-id', requestId], { cwd: __dirname }, (error, stdout, stderr) => {
-    if (error) {
-      logRequestCreation('worker_exit', {
-        request_id: requestId,
-        worker_pid: child && child.pid,
-        error: error.message || String(error),
-        code: error.code || null,
-        signal: error.signal || null,
-        stdout_tail: String(stdout || '').slice(-1200),
-        stderr_tail: String(stderr || '').slice(-1200)
+    const exitPayload = {
+      request_id: requestId,
+      worker_pid: child && child.pid,
+      error: error ? (error.message || String(error)) : null,
+      code: error ? (error.code || null) : 0,
+      signal: error ? (error.signal || null) : null,
+      stdout_tail: String(stdout || '').slice(-1200),
+      stderr_tail: String(stderr || '').slice(-1200)
+    };
+    logRequestCreation('worker_exit', exitPayload);
+    const req = paidRequests.getRequestById(requestId);
+    if (req && req.request_status === 'generating' && req.fulfillment_status === 'processing') {
+      paidRequests.updateRequestStatus(requestId, {
+        request_status: 'failed',
+        fulfillment_status: 'failed',
+        error: error ? (error.signal ? `worker_exit_${error.signal}` : `worker_exit_${error.code || 'error'}`) : 'worker_exit_before_terminal_write'
       });
-    } else {
-      logRequestCreation('worker_exit', {
-        request_id: requestId,
-        worker_pid: child && child.pid,
-        code: 0,
-        signal: null,
-        stdout_tail: String(stdout || '').slice(-1200),
-        stderr_tail: String(stderr || '').slice(-1200)
-      });
+      logRequestCreation('terminal_status_write_on_worker_exit', { request_id: requestId, error: req.error || null, exit_code: exitPayload.code, exit_signal: exitPayload.signal });
     }
+    removeActiveJob(requestId);
   });
+  upsertActiveJob(requestId, { status: 'spawned', worker_pid: child.pid, last_heartbeat: new Date().toISOString() });
   logRequestCreation('worker_start', { request_id: requestId, worker_pid: child.pid, processor_path: processorScriptPath, cwd: __dirname });
-  child.on('spawn', () => logRequestCreation('worker_spawned', { request_id: requestId, worker_pid: child.pid }));
-  child.on('error', (error) => logRequestCreation('worker_spawn_error', { request_id: requestId, worker_pid: child.pid, error: error.message || String(error) }));
+  child.on('spawn', () => {
+    upsertActiveJob(requestId, { status: 'running', worker_pid: child.pid, last_heartbeat: new Date().toISOString() });
+    logRequestCreation('worker_spawned', { request_id: requestId, worker_pid: child.pid });
+  });
+  child.on('error', (error) => {
+    logRequestCreation('worker_spawn_error', { request_id: requestId, worker_pid: child.pid, error: error.message || String(error) });
+    const req = paidRequests.getRequestById(requestId);
+    if (req && req.request_status === 'generating' && req.fulfillment_status === 'processing') {
+      paidRequests.updateRequestStatus(requestId, { request_status: 'failed', fulfillment_status: 'failed', error: 'worker_spawn_error' });
+    }
+    removeActiveJob(requestId);
+  });
 }
 
 function renderInstantAnswerSuccessPage(requestId) {
@@ -2133,8 +2179,29 @@ app.get('/api/debug/request-runtime/:id', (req, res) => {
   res.json({ ok: true, request_id: req.params.id, runtime: getGenerationRuntimeState(req.params.id) });
 });
 
+function reconcileActiveJobsOnStartup() {
+  const jobs = readActiveJobs();
+  for (const [requestId, job] of Object.entries(jobs)) {
+    const alive = isPidAlive(job.worker_pid);
+    if (!alive) {
+      const req = paidRequests.getRequestById(requestId);
+      if (req && req.request_status === 'generating' && req.fulfillment_status === 'processing') {
+        paidRequests.updateRequestStatus(requestId, {
+          request_status: 'failed',
+          fulfillment_status: 'failed',
+          error: 'runtime_restart_during_generation'
+        });
+        logRequestCreation('startup_reconciled_abandoned_job', { request_id: requestId, worker_pid: job.worker_pid, last_heartbeat: job.last_heartbeat || null });
+      }
+      delete jobs[requestId];
+    }
+  }
+  writeActiveJobs(jobs);
+}
+
 app.listen(PORT, () => {
   const runtime = buildRuntimeInfo();
+  reconcileActiveJobsOnStartup();
   console.log(`Server running at http://localhost:${PORT}`);
   console.log('[runtime-info]', JSON.stringify(runtime));
 });
