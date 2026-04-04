@@ -30,7 +30,7 @@ const CATEGORY_LIMITS = {
   maxQueriesPerIteration: 12,
   maxFetchPerIteration: 14,
   maxTotalEvaluated: 40,
-  noProgressMs: 45 * 1000
+  noProgressMs: 90 * 1000
 };
 const AMAZON_HEADERS = {
   'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36',
@@ -140,22 +140,38 @@ function categoryProgressTracker(requestId) {
     iteration: 0,
     totalEvaluated: 0,
     seenCandidateFingerprints: [],
-    seenDomains: new Map()
+    seenDomains: new Map(),
+    lastProgressEventType: 'tracker_init',
+    lastDiscoveryAt: null,
+    lastFetchAt: null,
+    lastExtractAt: null,
+    lastQualifyAt: null,
+    repeatedSetActivity: null,
+    queryFamilyInFlight: []
   };
   return {
     mark(substage, patch = {}) {
       const counts = patch.counts || {};
+      const now = Date.now();
       const changed = ['discovered','fetched','extracted','qualified'].some((k) => Number(counts[k] || 0) > Number(state[k] || 0));
-      if (changed) state.lastProgressMs = Date.now();
+      const heartbeat = Boolean(patch.heartbeat);
+      if (changed || heartbeat) state.lastProgressMs = now;
       state.discovered = Math.max(state.discovered, Number(counts.discovered || state.discovered));
       state.fetched = Math.max(state.fetched, Number(counts.fetched || state.fetched));
       state.extracted = Math.max(state.extracted, Number(counts.extracted || state.extracted));
       state.qualified = Math.max(state.qualified, Number(counts.qualified || state.qualified));
       state.iteration = patch.iteration ?? state.iteration;
       state.totalEvaluated = patch.totalEvaluated ?? state.totalEvaluated;
+      state.lastProgressEventType = patch.eventType || (changed ? 'counter_change' : (heartbeat ? 'heartbeat' : state.lastProgressEventType));
+      if (Number(counts.discovered || 0) > 0) state.lastDiscoveryAt = new Date(now).toISOString();
+      if (Number(counts.fetched || 0) > 0) state.lastFetchAt = new Date(now).toISOString();
+      if (Number(counts.extracted || 0) > 0) state.lastExtractAt = new Date(now).toISOString();
+      if (Number(counts.qualified || 0) > 0) state.lastQualifyAt = new Date(now).toISOString();
+      if (patch.repeatedSetActivity !== undefined) state.repeatedSetActivity = patch.repeatedSetActivity;
+      if (patch.queryFamilyInFlight) state.queryFamilyInFlight = patch.queryFamilyInFlight;
       setActiveRuntimeStage('category_intelligence', substage);
-      writeProgress({ request_id: requestId, stage: substage, category_iteration: state.iteration, category_counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, last_progress_at: new Date(state.lastProgressMs).toISOString(), last_successful_transition: substage });
-      updateCategoryDebug(requestId, { current_substage: substage, iteration: state.iteration, counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, total_evaluated: state.totalEvaluated, last_progress_at: new Date(state.lastProgressMs).toISOString(), ...patch.debug });
+      writeProgress({ request_id: requestId, stage: substage, category_iteration: state.iteration, category_counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, last_progress_at: new Date(state.lastProgressMs).toISOString(), last_progress_event_type: state.lastProgressEventType, last_successful_transition: substage });
+      updateCategoryDebug(requestId, { current_substage: substage, iteration: state.iteration, counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, total_evaluated: state.totalEvaluated, last_progress_at: new Date(state.lastProgressMs).toISOString(), last_progress_event_type: state.lastProgressEventType, last_discovery_at: state.lastDiscoveryAt, last_fetch_at: state.lastFetchAt, last_extract_at: state.lastExtractAt, last_qualify_at: state.lastQualifyAt, repeated_set_activity: state.repeatedSetActivity, query_family_in_flight: state.queryFamilyInFlight, ...patch.debug });
     },
     assertProgress(substage) {
       if (!isWatchdogActiveFor(substage)) return;
@@ -163,7 +179,23 @@ function categoryProgressTracker(requestId) {
       if (stalledMs > CATEGORY_LIMITS.noProgressMs) {
         const err = new Error(`no_progress_${substage}`);
         err.code = 'category_no_progress';
-        err.meta = { substage, stalled_ms: stalledMs, counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified }, iteration: state.iteration, total_evaluated: state.totalEvaluated };
+        err.meta = {
+          stage: 'category_intelligence',
+          substage,
+          stalled_ms: stalledMs,
+          counts: { discovered: state.discovered, fetched: state.fetched, extracted: state.extracted, qualified: state.qualified },
+          iteration: state.iteration,
+          total_evaluated: state.totalEvaluated,
+          last_progress_at: new Date(state.lastProgressMs).toISOString(),
+          last_progress_event_type: state.lastProgressEventType,
+          last_discovery_at: state.lastDiscoveryAt,
+          last_fetch_at: state.lastFetchAt,
+          last_extract_at: state.lastExtractAt,
+          last_qualify_at: state.lastQualifyAt,
+          repeated_set_activity: state.repeatedSetActivity,
+          query_family_in_flight: state.queryFamilyInFlight,
+          async_tasks_running: false
+        };
         throw err;
       }
     },
@@ -787,14 +819,14 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
 
   for (let attemptIndex = 0; attemptIndex < Math.min(attempts.length, mode === 'category' ? 6 : CATEGORY_LIMITS.maxIterations); attemptIndex += 1) {
     const queries = Array.from(new Set((attempts[attemptIndex] || []).filter(Boolean))).slice(0, CATEGORY_LIMITS.maxQueriesPerIteration);
-    tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, debug: { queries_used: queries } });
+    tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, heartbeat: true, eventType: 'query_family_start', queryFamilyInFlight: queries, debug: { queries_used: queries } });
     const discovered = [];
     for (const q of queries) {
       try {
         const results = await withTimeout(fetchSearchResults(q), STAGE_TIMEOUTS_MS.category_substage, { stage: `category_discovery_pass${attemptIndex + 1}`, query: q, request_id: requestId });
         seedStats.push({ seed: q, stage: 'discovered', discovered_urls: results.length, iteration: attemptIndex + 1 });
         discovered.push(...results.map((item) => ({ ...item, query: q })));
-        tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: dedupeSources(discovered).length }, debug: { last_query: q } });
+        tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: dedupeSources(discovered).length }, heartbeat: true, eventType: 'query_completed', queryFamilyInFlight: queries, debug: { last_query: q } });
       } catch (error) {
         seedStats.push({ seed: q, stage: 'discovered', discovered_urls: 0, error: String(error.message || error), iteration: attemptIndex + 1 });
         rejected_sources.push({ stage: 'discovery', query: q, reason: String(error.message || error) });
@@ -828,8 +860,9 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
     const candidateUrls = prioritized.map((x) => x.href);
     const domainsThisIteration = tracker?.noteDomains(candidateUrls) || [];
     const uniqueDomainsThisIteration = Array.from(new Set(domainsThisIteration));
-    tracker?.mark(`category_diversity_check_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, debug: { discovered_urls: scoredDiscovered.map((x) => ({ href: x.href, source_type: x.source_type, score: x.discovery_score, query: x.query })), domains_this_iteration: uniqueDomainsThisIteration } });
-    if (tracker?.noteCandidateSet(candidateUrls)) {
+    const repeatedSet = tracker?.noteCandidateSet(candidateUrls);
+    tracker?.mark(`category_diversity_check_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, heartbeat: true, eventType: 'diversity_check', repeatedSetActivity: repeatedSet ? 'repeated_candidate_set' : 'new_candidate_set', queryFamilyInFlight: queries, debug: { discovered_urls: scoredDiscovered.map((x) => ({ href: x.href, source_type: x.source_type, score: x.discovery_score, query: x.query })), domains_this_iteration: uniqueDomainsThisIteration } });
+    if (repeatedSet) {
       rejected_sources.push({ stage: 'loop_guard', reason: 'repeated_candidate_set', iteration: attemptIndex + 1, domains_this_iteration: uniqueDomainsThisIteration });
       if (mode === 'category' && attemptIndex + 1 < attempts.length) continue;
       break;
