@@ -443,29 +443,70 @@ function isPidAlive(pid) {
 function getGenerationRuntimeState(requestId) {
   const lockPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_fulfillment.lock');
   const progressPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_progress.json');
+  const checkpointPath = path.join(__dirname, 'data', 'analytics', 'instant_answer_checkpoints', `${requestId}.json`);
   const activeJobs = readActiveJobs();
   let lock = null;
   let progress = null;
+  let checkpoint = null;
   try {
     if (fs.existsSync(lockPath)) lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
   } catch {}
   try {
     if (fs.existsSync(progressPath)) progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
   } catch {}
+  try {
+    if (fs.existsSync(checkpointPath)) checkpoint = JSON.parse(fs.readFileSync(checkpointPath, 'utf8'));
+  } catch {}
   const now = Date.now();
   const lockAlive = lock ? isPidAlive(lock.pid) : false;
   const progressMatchesRequest = progress && progress.request_id === requestId;
   const lastHeartbeatMs = progress && progress.updated_at ? (now - new Date(progress.updated_at).getTime()) : null;
   const activeJob = activeJobs[requestId] || null;
+  const checkpointStage = checkpoint ? checkpoint.stage || null : null;
+  const completedProducts = Array.isArray(checkpoint?.completed_products) ? checkpoint.completed_products.length : (checkpoint?.completed_products || 0);
+  const progressCounts = progressMatchesRequest ? (progress.category_counts || {}) : {};
+  const runtimeFields = progressMatchesRequest ? {
+    active_stage: progress.runtime_active_stage || progress.stage || null,
+    active_substage: progress.runtime_active_substage || progress.current_substage || null,
+    discovered_count: progressCounts.discovered || 0,
+    fetched_count: progressCounts.fetched || 0,
+    extracted_count: progressCounts.extracted || 0,
+    qualified_count: progressCounts.qualified || 0,
+    products_selected_count: checkpoint?.product_result?.products ? checkpoint.product_result.products.length : 0,
+    products_analyzed_count: completedProducts,
+    publish_started: ['publish_prepare','publish_sync','publish_done'].includes(progress.stage),
+    last_progress_event_type: progress.last_progress_event_type || null,
+    query_family_in_flight: progress.query_family_in_flight || null,
+    async_tasks_running: activeJob ? isPidAlive(activeJob.worker_pid) : false,
+    last_heartbeat_at: progress.updated_at || null,
+    last_counter_change_at: progress.last_progress_at || null
+  } : {
+    active_stage: checkpointStage,
+    active_substage: null,
+    discovered_count: 0,
+    fetched_count: 0,
+    extracted_count: 0,
+    qualified_count: 0,
+    products_selected_count: checkpoint?.product_result?.products ? checkpoint.product_result.products.length : 0,
+    products_analyzed_count: completedProducts,
+    publish_started: checkpointStage === 'final_output_ready',
+    last_progress_event_type: null,
+    query_family_in_flight: null,
+    async_tasks_running: activeJob ? isPidAlive(activeJob.worker_pid) : false,
+    last_heartbeat_at: activeJob?.last_heartbeat || null,
+    last_counter_change_at: null
+  };
   return {
     lock,
     lockAlive,
     progress,
+    checkpoint,
     progressMatchesRequest,
     lastHeartbeatMs,
     activeJob,
     workerActiveForRequest: Boolean((lock && lock.request_id === requestId && lockAlive) || (activeJob && isPidAlive(activeJob.worker_pid))),
-    orphaned: !lockAlive && !(activeJob && isPidAlive(activeJob.worker_pid)) && (!progress || progressMatchesRequest) && (lastHeartbeatMs === null || lastHeartbeatMs > 5 * 60 * 1000)
+    orphaned: !lockAlive && !(activeJob && isPidAlive(activeJob.worker_pid)) && (!progress || progressMatchesRequest) && (lastHeartbeatMs === null || lastHeartbeatMs > 5 * 60 * 1000),
+    ...runtimeFields
   };
 }
 
