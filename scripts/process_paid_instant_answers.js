@@ -1916,9 +1916,11 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   const queryTokens = normalize(`${query} ${productName}`).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
   const refinedSeeds = buildProductSearchSeeds(productName, query);
   if (product?.source === 'amazon_search') {
+    const reviewSignal = Number(product.review_count || 0);
+    const ratingSignal = Number(product.rating || 0);
     const pros = [
-      `Strong Amazon shopper validation with about ${product.review_count || 0} reviews.`,
-      `Solid visible rating around ${product.rating || '4+'} stars for this category.`,
+      reviewSignal > 0 ? `Strong Amazon shopper validation with about ${reviewSignal} reviews.` : null,
+      ratingSignal > 0 ? `Solid visible rating around ${ratingSignal} stars for this category.` : `Strong overall fit for this category based on the current Amazon listing match.`,
       categoryIntelligence?.top_praises?.[0] || `Good fit for common ${query} priorities.`
     ].filter(Boolean);
     const cons = [
