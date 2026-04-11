@@ -2001,11 +2001,13 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   }
 
   const coverage = new Set(validSources.map((item) => item.source_type));
-  const hasStrongReview = validSources.some((item) => ['web_review', 'google_reviews'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
+  let hasStrongReview = validSources.some((item) => ['web_review', 'google_reviews'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
   let hasStrongSecondary = validSources.some((item) => ['forum', 'reddit'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
   let amazonFallback = amazonPrimary?.ok ? amazonPrimary : null;
   if (amazonFallback?.ok) {
+    hasStrongReview = true;
     hasStrongSecondary = true;
+    coverage.add('amazon_search');
   }
   if (hasStrongReview && !hasStrongSecondary) {
     writeProgress({ request_id: request.request_id, stage: 'product_amazon_fallback', product: productName, last_successful_transition: 'product_amazon_fallback' });
