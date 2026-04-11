@@ -549,9 +549,17 @@ function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
   const startupTs = new Date().toISOString();
   upsertActiveJob(requestId, { status: 'queued', startup_timestamp: startupTs, processor_path: processorScriptPath, owner_pid: process.pid, worker_pid: null, last_heartbeat: startupTs, queue_mode: 'durable_worker' });
-  queue.enqueueJob(requestId);
   logRequestCreation('queue_insertion_attempted', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker' });
-  logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker' });
+  queue.enqueueJob(requestId);
+  let queued = queue.getJob(requestId);
+  if (!queued) {
+    queue.enqueueJob(requestId);
+    queued = queue.getJob(requestId);
+  }
+  if (!queued) {
+    throw new Error(`queue_enqueue_failed:${requestId}`);
+  }
+  logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker', queue_status: queued.status || null });
 }
 
 function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = '') {
