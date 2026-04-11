@@ -554,7 +554,7 @@ function kickOffInstantAnswerProcessing(requestId) {
   logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker' });
 }
 
-function renderInstantAnswerSuccessPage(requestId) {
+function renderInstantAnswerSuccessPage(requestId, slugHint = '') {
   return `<!doctype html>
   <html>
   <head>
@@ -640,7 +640,9 @@ function renderInstantAnswerSuccessPage(requestId) {
     </main>
     <script>
       const requestId = ${JSON.stringify(requestId || '')};
+      const slugHint = ${JSON.stringify(slugHint || '')};
       const sessionId = new URLSearchParams(window.location.search).get('session_id') || '';
+      let missingRequestPolls = 0;
       const titleEl = document.getElementById('title');
       const subEl = document.getElementById('sub');
       const badgeEl = document.getElementById('badge');
@@ -698,13 +700,42 @@ function renderInstantAnswerSuccessPage(requestId) {
         return false;
       }
 
+      async function maybeRedirectBySlugHint() {
+        if (!slugHint) return false;
+        try {
+          const res = await fetch('/article/' + encodeURIComponent(slugHint), { method: 'GET', cache: 'no-store' });
+          const text = await res.text();
+          if (res.ok && !/Article unavailable|not approved for display/i.test(text)) {
+            const targetUrl = '/article/' + slugHint;
+            setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your comparison is ready. Redirecting you now...');
+            titleEl.textContent = 'Your comparison is ready.';
+            ctaEl.style.display = 'block';
+            articleLinkEl.href = targetUrl;
+            setTimeout(() => { window.location.href = targetUrl; }, 1200);
+            return true;
+          }
+        } catch {}
+        return false;
+      }
+
       async function poll() {
-        if (!requestId) return;
+        if (!requestId) {
+          if (await maybeRedirectBySlugHint()) return;
+          return;
+        }
         try {
           const qs = sessionId ? ('?session_id=' + encodeURIComponent(sessionId)) : '';
           const res = await fetch('/api/instant-answer/request/' + encodeURIComponent(requestId) + qs, { cache: 'no-store' });
+          if (res.status === 404) {
+            missingRequestPolls += 1;
+            badgeEl.textContent = 'Finalizing your article';
+            if (missingRequestPolls >= 3 && await maybeRedirectBySlugHint()) return;
+            setTimeout(poll, 2000);
+            return;
+          }
           const data = await res.json();
           if (res.ok && data.request) {
+            missingRequestPolls = 0;
             const done = applyRequestState(data.request);
             if (done) return;
           } else {
@@ -712,6 +743,7 @@ function renderInstantAnswerSuccessPage(requestId) {
           }
         } catch {
           badgeEl.textContent = 'Reconnecting';
+          if (missingRequestPolls >= 3 && await maybeRedirectBySlugHint()) return;
         }
         setTimeout(poll, 2000);
       }
@@ -2117,14 +2149,15 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
       const persisted = assertPersistedRequest(updated.request_id);
       logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'free', module: 'checkout_free', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
-      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'free', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}` });
+      const slugHint = slugifyQuery(updated.normalized_query || updated.raw_query || '');
+      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'free', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}` });
       return res.json({
         ok: true,
         request_id: updated.request_id,
         access_mode: 'free',
         request_persisted: true,
         free_articles_remaining_after_this: Math.max(0, 3 - (access.freeArticlesUsed + 1)),
-        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}`
+        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}`
       });
     }
 
@@ -2146,14 +2179,15 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
       const persisted = assertPersistedRequest(updated.request_id);
       logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'bundle', module: 'checkout_bundle', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
-      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'bundle', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}` });
+      const slugHint = slugifyQuery(updated.normalized_query || updated.raw_query || '');
+      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'bundle', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}` });
       return res.json({
         ok: true,
         request_id: updated.request_id,
         access_mode: 'bundle',
         request_persisted: true,
         articles_remaining_balance: access.paidBalance,
-        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}`
+        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}`
       });
     }
 
@@ -2188,7 +2222,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
 });
 
 app.get('/instant-answer/success', (req, res) => {
-  res.send(renderInstantAnswerSuccessPage(req.query.request_id || ''));
+  res.send(renderInstantAnswerSuccessPage(req.query.request_id || '', req.query.slug_hint || ''));
 });
 
 app.get('/instant-answer/cancel', (req, res) => {
