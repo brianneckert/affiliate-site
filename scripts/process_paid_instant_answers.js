@@ -1928,7 +1928,15 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
     return {
       ok: true,
       product_analysis: analysis,
-      evidence_sources: (categoryEvidenceSources || []).slice(0, 10),
+      evidence_sources: (categoryEvidenceSources || []).length
+        ? (categoryEvidenceSources || []).slice(0, 10)
+        : [{
+            href: product.affiliate_url || product.canonical_product_url || `https://www.amazon.com/dp/${product.asin || ''}`,
+            title: product.product_name,
+            source_type: 'amazon_search',
+            page_title: product.product_name,
+            page_excerpt: `Amazon search fallback evidence for ${product.product_name}`
+          }],
       debug: {
         product: productName,
         shortcut: 'amazon_search_heuristic_analysis',
