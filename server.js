@@ -161,14 +161,14 @@ function recoverPublishedInstantAnswerBySlug(articleSlug) {
   const registry = readRegistry();
   const payload = buildPublishedInstantAnswerPayload(match, output);
   const existing = (registry.articles || []).find((item) => item.article_slug === payload.slug);
+  const articleDirRel = `data/articles/${payload.slug}`;
+  const articleDir = path.join(__dirname, articleDirRel);
+  fs.mkdirSync(articleDir, { recursive: true });
+  fs.writeFileSync(path.join(articleDir, 'contentproduction.json'), JSON.stringify(payload.content, null, 2));
+  fs.writeFileSync(path.join(articleDir, 'productintelligence.json'), JSON.stringify(payload.intelligence, null, 2));
+  fs.writeFileSync(path.join(articleDir, 'compliance.json'), JSON.stringify(payload.compliance, null, 2));
+  registry.articles = registry.articles || [];
   if (!existing) {
-    const articleDirRel = `data/articles/${payload.slug}`;
-    const articleDir = path.join(__dirname, articleDirRel);
-    fs.mkdirSync(articleDir, { recursive: true });
-    fs.writeFileSync(path.join(articleDir, 'contentproduction.json'), JSON.stringify(payload.content, null, 2));
-    fs.writeFileSync(path.join(articleDir, 'productintelligence.json'), JSON.stringify(payload.intelligence, null, 2));
-    fs.writeFileSync(path.join(articleDir, 'compliance.json'), JSON.stringify(payload.compliance, null, 2));
-    registry.articles = registry.articles || [];
     registry.articles.push({
       article_slug: payload.slug,
       category: payload.content.category,
@@ -187,8 +187,21 @@ function recoverPublishedInstantAnswerBySlug(articleSlug) {
       duplicate_of: null,
       source_request_id: match.request_id
     });
-    fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+  } else {
+    existing.category = payload.content.category;
+    existing.title = payload.content.title;
+    existing.output_dir = articleDirRel;
+    existing.article_dir = articleDirRel;
+    existing.topic_family = payload.content.category;
+    existing.generation_status = 'published';
+    existing.publish_status = 'published';
+    existing.validation_result = { passed: true };
+    existing.published_at = match.published_at || new Date().toISOString();
+    existing.source_article_family = 'instant_answer_paid';
+    existing.related_articles = Array.isArray(output.top_matches) ? output.top_matches.map((x) => x.article_slug).filter(Boolean) : [];
+    existing.source_request_id = match.request_id;
   }
+  fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
 
   const bundle = readArticleBundle(payload.slug);
   if (bundle) return bundle;
@@ -2220,6 +2233,13 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     const registry = readRegistry();
     const published = (registry.articles || []).find((a) => a.article_slug === inferredSlug && a.publish_status === 'published');
     if (published) {
+      const registry = readRegistry();
+      const entry = (registry.articles || []).find((a) => a.article_slug === inferredSlug);
+      if (entry) {
+        entry.published_at = new Date().toISOString();
+        entry.publish_status = 'published';
+        fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+      }
       request = paidRequests.updateRequestStatus(request.request_id, {
         generated_article_slug: inferredSlug,
         published_slug: inferredSlug,
