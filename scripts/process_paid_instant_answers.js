@@ -1828,11 +1828,18 @@ async function fetchAmazonProducts(query) {
   if (broadFallback.length >= 5) return broadFallback;
 
   const exactMatchFallback = products
-    .filter((item) => item.rating >= 4.0)
+    .filter((item) => item.rating >= 4.0 || (item.query_fit_tokens?.length || 0) >= 2)
     .sort((a, b) => (b.query_fit_tokens?.length || 0) - (a.query_fit_tokens?.length || 0) || b.rating - a.rating || b.review_count - a.review_count)
     .slice(0, 5);
 
-  return exactMatchFallback;
+  if (exactMatchFallback.length >= 5) return exactMatchFallback;
+
+  const serplessQueryFitFallback = products
+    .filter((item) => (item.query_fit_tokens?.length || 0) >= 2)
+    .sort((a, b) => (b.query_fit_tokens?.length || 0) - (a.query_fit_tokens?.length || 0) || b.rating - a.rating || b.review_count - a.review_count)
+    .slice(0, 5);
+
+  return serplessQueryFitFallback;
 }
 
 function buildFromExisting(request, published) {
