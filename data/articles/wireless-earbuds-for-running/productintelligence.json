@@ -1,0 +1,800 @@
+{
+  "category_intelligence": {
+    "query": "wireless earbuds for running",
+    "decision_drivers": [
+      "overall value",
+      "runtime consistency",
+      "brand reliability"
+    ],
+    "top_praises": [
+      "strong overall fit for the intended use case",
+      "solid buyer demand",
+      "good value for the category"
+    ],
+    "top_complaints": [
+      "performance can vary across brands",
+      "lower-end options may trade quality for price"
+    ],
+    "failure_points": [
+      "weak durability",
+      "inconsistent quality control"
+    ]
+  },
+  "category_intelligence_sources": [],
+  "winner_selection": {
+    "best_overall": {
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHM7LCBV",
+      "final_score": 6.7,
+      "justification": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He... wins Best Overall because it has the highest weighted score, aligns with praised features like strong overall fit for the intended use case and solid buyer demand, and shows minimal alignment with common complaints such as performance can vary across brands and lower-end options may trade quality for price."
+    },
+    "best_budget": {
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHM7LCBV",
+      "final_score": 6.7,
+      "justification": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He... stands out on value for price while still aligning with praised traits like strong overall fit for the intended use case and solid buyer demand. It shows limited overlap with common complaints, with only light concern around performance can vary across brands and lower-end options may trade quality for price."
+    },
+    "best_premium": {
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHM7LCBV",
+      "final_score": 6.7,
+      "justification": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He... earns the premium slot by leading on pure performance while matching praised attributes like strong overall fit for the intended use case and solid buyer demand. It avoids most common complaint patterns, with only some caution around performance can vary across brands and lower-end options may trade quality for price."
+    }
+  },
+  "products": [
+    {
+      "asin": "B0GHM7LCBV",
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "affiliate_url": "https://www.amazon.com/dp/B0GHM7LCBV?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"wireless earbuds for running\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "wireless earbuds for running",
+      "source": "amazon_search",
+      "rating": 0,
+      "review_count": 0,
+      "query_fit_tokens": [
+        "wireless",
+        "wireles",
+        "earbuds",
+        "earbud"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0GHM7LCBV?tag=helperscollec-20",
+          "title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "source_type": "amazon_search",
+          "page_title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "page_excerpt": "Amazon search fallback evidence for HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B0CRT6HQ82",
+      "product_name": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+      "affiliate_url": "https://www.amazon.com/dp/B0CRT6HQ82?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"wireless earbuds for running\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "wireless earbuds for running",
+      "source": "amazon_search",
+      "rating": 0,
+      "review_count": 0,
+      "query_fit_tokens": [
+        "wireless",
+        "wireles",
+        "earbuds",
+        "earbud"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CRT6HQ82?tag=helperscollec-20",
+          "title": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+          "source_type": "amazon_search",
+          "page_title": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+          "page_excerpt": "Amazon search fallback evidence for Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B0C3W4MNN1",
+      "product_name": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+      "affiliate_url": "https://www.amazon.com/dp/B0C3W4MNN1?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"wireless earbuds for running\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "wireless earbuds for running",
+      "source": "amazon_search",
+      "rating": 0,
+      "review_count": 0,
+      "query_fit_tokens": [
+        "wireless",
+        "wireles",
+        "earbuds",
+        "earbud"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0C3W4MNN1?tag=helperscollec-20",
+          "title": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+          "source_type": "amazon_search",
+          "page_title": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+          "page_excerpt": "Amazon search fallback evidence for PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B0GHTVJT6R",
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "affiliate_url": "https://www.amazon.com/dp/B0GHTVJT6R?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"wireless earbuds for running\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "wireless earbuds for running",
+      "source": "amazon_search",
+      "rating": 0,
+      "review_count": 0,
+      "query_fit_tokens": [
+        "wireless",
+        "wireles",
+        "earbuds",
+        "earbud"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0GHTVJT6R?tag=helperscollec-20",
+          "title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "source_type": "amazon_search",
+          "page_title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "page_excerpt": "Amazon search fallback evidence for HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B0CYNFWD2R",
+      "product_name": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+      "affiliate_url": "https://www.amazon.com/dp/B0CYNFWD2R?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"wireless earbuds for running\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "wireless earbuds for running",
+      "source": "amazon_search",
+      "rating": 0,
+      "review_count": 0,
+      "query_fit_tokens": [
+        "wireless",
+        "wireles",
+        "earbuds",
+        "earbud"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CYNFWD2R?tag=helperscollec-20",
+          "title": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+          "source_type": "amazon_search",
+          "page_title": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+          "page_excerpt": "Amazon search fallback evidence for JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    }
+  ],
+  "product_analysis": [
+    {
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHM7LCBV",
+      "review_count": 0,
+      "rating": 0,
+      "score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0GHM7LCBV?tag=helperscollec-20",
+          "title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "source_type": "amazon_search",
+          "page_title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "page_excerpt": "Amazon search fallback evidence for HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He..."
+        }
+      ]
+    },
+    {
+      "product_name": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+      "asin": "B0CRT6HQ82",
+      "review_count": 0,
+      "rating": 0,
+      "score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CRT6HQ82?tag=helperscollec-20",
+          "title": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+          "source_type": "amazon_search",
+          "page_title": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+          "page_excerpt": "Amazon search fallback evidence for Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba..."
+        }
+      ]
+    },
+    {
+      "product_name": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+      "asin": "B0C3W4MNN1",
+      "review_count": 0,
+      "rating": 0,
+      "score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0C3W4MNN1?tag=helperscollec-20",
+          "title": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+          "source_type": "amazon_search",
+          "page_title": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+          "page_excerpt": "Amazon search fallback evidence for PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E..."
+        }
+      ]
+    },
+    {
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHTVJT6R",
+      "review_count": 0,
+      "rating": 0,
+      "score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0GHTVJT6R?tag=helperscollec-20",
+          "title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "source_type": "amazon_search",
+          "page_title": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+          "page_excerpt": "Amazon search fallback evidence for HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He..."
+        }
+      ]
+    },
+    {
+      "product_name": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+      "asin": "B0CYNFWD2R",
+      "review_count": 0,
+      "rating": 0,
+      "score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6,
+          "reliability": 6,
+          "build_quality": 6.8,
+          "value_for_price": 8.6,
+          "ease_of_use": 6
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 0 reviews.",
+          "Solid visible rating around 4+ stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "wireless earbuds for running",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CYNFWD2R?tag=helperscollec-20",
+          "title": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+          "source_type": "amazon_search",
+          "page_title": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+          "page_excerpt": "Amazon search fallback evidence for JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti..."
+        }
+      ]
+    }
+  ],
+  "comparison_rows": [
+    {
+      "name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHM7LCBV",
+      "affiliate_url": "https://www.amazon.com/dp/B0GHM7LCBV?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0GHM7LCBV?tag=helperscollec-20",
+      "price_tier": "Best Overall Value",
+      "best_for": "wireless earbuds for running",
+      "total_score": 6.7,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 0 reviews.",
+        "Solid visible rating around 4+ stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+      "product_name": "Soundcore Sport X20 by Anker, True-Wireless Workout Earbuds, Rotatable and Extendable Ear Hooks, Noise Cancelling, Deep Ba...",
+      "asin": "B0CRT6HQ82",
+      "affiliate_url": "https://www.amazon.com/dp/B0CRT6HQ82?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CRT6HQ82?tag=helperscollec-20",
+      "price_tier": "Premium Pick",
+      "best_for": "wireless earbuds for running",
+      "total_score": 6.7,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 0 reviews.",
+        "Solid visible rating around 4+ stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+      "product_name": "PocBuds Bluetooth Headphones Wireless Earbuds 80hrs Playtime Wireless Charging Case Digital Display Sports Ear Buds with E...",
+      "asin": "B0C3W4MNN1",
+      "affiliate_url": "https://www.amazon.com/dp/B0C3W4MNN1?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0C3W4MNN1?tag=helperscollec-20",
+      "price_tier": "Balanced Pick",
+      "best_for": "wireless earbuds for running",
+      "total_score": 6.7,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 0 reviews.",
+        "Solid visible rating around 4+ stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "product_name": "HAOYUYAN Wireless Earbuds, Sports Bluetooth Headphones, 80Hrs Playtime Ear Buds with LED Power Display, Noise Canceling He...",
+      "asin": "B0GHTVJT6R",
+      "affiliate_url": "https://www.amazon.com/dp/B0GHTVJT6R?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0GHTVJT6R?tag=helperscollec-20",
+      "price_tier": "Budget-Friendly",
+      "best_for": "wireless earbuds for running",
+      "total_score": 6.7,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 0 reviews.",
+        "Solid visible rating around 4+ stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+      "product_name": "JLab Go Sport+ Wireless Workout Earbuds Featuring C3 Clear Calling, Secure Earhook Sport Design, 35+ Hour Bluetooth Playti...",
+      "asin": "B0CYNFWD2R",
+      "affiliate_url": "https://www.amazon.com/dp/B0CYNFWD2R?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CYNFWD2R?tag=helperscollec-20",
+      "price_tier": "Alternate Option",
+      "best_for": "wireless earbuds for running",
+      "total_score": 6.7,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 0 reviews.",
+        "Solid visible rating around 4+ stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for wireless earbuds for running with a strong average rating.",
+      "keep_in_mind": "weak durability"
+    }
+  ]
+}

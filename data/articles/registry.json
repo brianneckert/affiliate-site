@@ -4526,6 +4526,27 @@
       "related_articles": [],
       "duplicate_of": null,
       "source_request_id": "0fc567e2-fd59-4db7-89c5-e1686c41d5eb"
+    },
+    {
+      "article_slug": "wireless-earbuds-for-running",
+      "category": "wireless earbuds for running",
+      "title": "Wireless Earbuds For Running",
+      "output_dir": "data/articles/wireless-earbuds-for-running",
+      "article_dir": "data/articles/wireless-earbuds-for-running",
+      "topic_family": "wireless earbuds for running",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-04-11",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true,
+        "category_intelligence_required": true
+      },
+      "published_at": "2026-04-11T05:48:22.872Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [],
+      "duplicate_of": null,
+      "source_request_id": "48ec3860-c988-4fca-817f-06e6df340ccf"
     }
   ]
 }
