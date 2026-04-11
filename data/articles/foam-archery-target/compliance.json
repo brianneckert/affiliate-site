@@ -1,9 +1,4 @@
 {
   "passed": true,
-  "mode": "amazon_search_fallback",
-  "category_intelligence_required": true,
-  "sentiment_extraction_required": true,
-  "non_winner_explanations_required": true,
-  "category_pros_cons_required": true,
-  "decision_engine_mode": true
+  "mode": "amazon_search_fallback"
 }

@@ -40,6 +40,7 @@ const AMAZON_HEADERS = {
   'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36',
   'accept-language': 'en-US,en;q=0.9'
 };
+const AMAZON_ASSOCIATE_TAG = process.env.AMAZON_ASSOCIATE_TAG || 'helperscollec-20';
 const AMAZON_REVIEW_MIN_COUNT = 100;
 const SEARCH_HEADERS = {
   'user-agent': AMAZON_HEADERS['user-agent'],
@@ -1618,21 +1619,28 @@ async function buildCategoryIntelligence(request) {
 
 function loadPublishedArticles() {
   const reg = readJson(registryPath);
-  return (reg.articles || []).filter((a) => a.publish_status === 'published').map((entry) => {
-    const dir = path.join(ROOT, entry.article_dir);
-    const content = JSON.parse(fs.readFileSync(path.join(dir, 'contentproduction.json'), 'utf8'));
-    const intelligence = JSON.parse(fs.readFileSync(path.join(dir, 'productintelligence.json'), 'utf8'));
-    return {
-      entry,
-      content,
-      intelligence,
-      article_slug: entry.article_slug,
-      title: content.title || entry.title,
-      summary: content.summary || '',
-      top_pick: content.top_pick || '',
-      category: entry.category || content.category || '',
-      search_text: [content.title || '', content.summary || '', content.top_pick || '', entry.category || '', ...(content.comparison || []).map(x => x.name || '')].join(' ').toLowerCase()
-    };
+  return (reg.articles || []).filter((a) => a.publish_status === 'published').flatMap((entry) => {
+    try {
+      const dir = path.join(ROOT, entry.article_dir);
+      const contentPath = path.join(dir, 'contentproduction.json');
+      const intelligencePath = path.join(dir, 'productintelligence.json');
+      if (!fs.existsSync(contentPath) || !fs.existsSync(intelligencePath)) return [];
+      const content = JSON.parse(fs.readFileSync(contentPath, 'utf8'));
+      const intelligence = JSON.parse(fs.readFileSync(intelligencePath, 'utf8'));
+      return [{
+        entry,
+        content,
+        intelligence,
+        article_slug: entry.article_slug,
+        title: content.title || entry.title,
+        summary: content.summary || '',
+        top_pick: content.top_pick || '',
+        category: entry.category || content.category || '',
+        search_text: [content.title || '', content.summary || '', content.top_pick || '', entry.category || '', ...(content.comparison || []).map(x => x.name || '')].join(' ').toLowerCase()
+      }];
+    } catch {
+      return [];
+    }
   });
 }
 
@@ -1644,6 +1652,20 @@ function parseReviewCount(raw = '') {
 function parseRating(raw = '') {
   const match = String(raw).match(/(\d+(?:\.\d+)?)/);
   return match ? Number(match[1]) : 0;
+}
+
+function buildAmazonAffiliateUrl(rawUrl = '', asin = '') {
+  const canonical = asin ? `https://www.amazon.com/dp/${asin}` : String(rawUrl || '');
+  try {
+    const url = new URL(canonical);
+    if (url.hostname.includes('amazon.')) {
+      url.search = '';
+      url.searchParams.set('tag', AMAZON_ASSOCIATE_TAG);
+      return url.toString();
+    }
+  } catch {}
+  if (asin) return `https://www.amazon.com/dp/${asin}?tag=${encodeURIComponent(AMAZON_ASSOCIATE_TAG)}`;
+  return canonical;
 }
 
 async function fetchAmazonReviewSentiment(product) {
@@ -1740,6 +1762,10 @@ async function fetchAmazonProducts(query) {
   if (!res.ok) throw new Error(`amazon_search_http_${res.status}`);
   const products = [];
   const seen = new Set();
+  const normalizedQuery = normalize(query);
+  const rawTokens = normalizedQuery.split(' ').filter(Boolean).filter((token) => !STOPWORDS.has(token));
+  const mustHaveTokens = rawTokens.filter((token) => ['foam', 'archery', 'target', 'desk', 'lamp', 'lamps'].includes(token));
+  const expandedQueryTokens = Array.from(new Set(rawTokens.flatMap((token) => token.endsWith('s') ? [token, token.slice(0, -1)] : [token, `${token}s`])));
   const blockRegex = /<div[^>]+data-asin="([A-Z0-9]{10})"[\s\S]{0,30000}?<\/div>\s*<\/div>/gi;
   let blockMatch;
   while ((blockMatch = blockRegex.exec(html)) !== null) {
@@ -1758,19 +1784,25 @@ async function fetchAmazonProducts(query) {
     const title = titleMatch ? cleanText(titleMatch[1]) : '';
     const rating = parseRating(ratingMatch ? ratingMatch[1] : '');
     const reviewCount = parseReviewCount(reviewMatch ? reviewMatch[1] : '');
+    const normalizedTitle = normalize(title);
+    const tokenMatches = expandedQueryTokens.filter((token) => normalizedTitle.includes(token));
+    const hasMustHaveMismatch = mustHaveTokens.some((token) => !normalizedTitle.includes(token));
 
     if (!href || !title) continue;
+    if (hasMustHaveMismatch) continue;
+    if (tokenMatches.length < Math.max(2, Math.min(3, mustHaveTokens.length || expandedQueryTokens.length || 1))) continue;
     seen.add(asin);
     products.push({
       asin,
       product_name: title,
-      affiliate_url: href.startsWith('http') ? href : `https://www.amazon.com${href}`,
-      why_it_won: `Selected using review-volume and rating thresholds for "${query}".`,
-      notes: 'Chosen by descending review count with rating minimums, not by Amazon result position.',
+      affiliate_url: buildAmazonAffiliateUrl(href.startsWith('http') ? href : `https://www.amazon.com${href}`, asin),
+      why_it_won: `Selected using query-fit, review-volume, and rating thresholds for "${query}".`,
+      notes: 'Chosen for exact query fit first, then by descending review count and rating thresholds.',
       best_for: query,
       source: 'amazon_search',
       rating,
-      review_count: reviewCount
+      review_count: reviewCount,
+      query_fit_tokens: tokenMatches
     });
   }
 
@@ -1793,7 +1825,14 @@ async function fetchAmazonProducts(query) {
     .sort((a, b) => b.review_count - a.review_count || b.rating - a.rating)
     .slice(0, 5);
 
-  return broadFallback;
+  if (broadFallback.length >= 5) return broadFallback;
+
+  const exactMatchFallback = products
+    .filter((item) => item.rating >= 4.0)
+    .sort((a, b) => (b.query_fit_tokens?.length || 0) - (a.query_fit_tokens?.length || 0) || b.rating - a.rating || b.review_count - a.review_count)
+    .slice(0, 5);
+
+  return exactMatchFallback;
 }
 
 function buildFromExisting(request, published) {
