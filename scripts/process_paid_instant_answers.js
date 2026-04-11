@@ -1764,7 +1764,7 @@ async function fetchAmazonProducts(query) {
   const seen = new Set();
   const normalizedQuery = normalize(query);
   const rawTokens = normalizedQuery.split(' ').filter(Boolean).filter((token) => token.length >= 3 && !STOPWORDS.has(token));
-  const mustHaveTokens = rawTokens.filter((token) => ['foam', 'archery', 'target', 'desk', 'lamp', 'lamps', 'earbuds', 'earbud', 'running', 'battery', 'batteries'].includes(token));
+  const mustHaveTokens = rawTokens.filter((token) => ['foam', 'archery', 'target', 'desk', 'lamp', 'lamps', 'earbuds', 'earbud', 'battery', 'batteries'].includes(token));
   const expandToken = (token) => {
     if (!token || token.length < 3) return [];
     if (token.endsWith('ies') && token.length > 4) return [token, token.slice(0, -3) + 'y'];
