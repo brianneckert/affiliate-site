@@ -1,0 +1,795 @@
+{
+  "category_intelligence": {
+    "query": "stainless steel paper towel holder",
+    "decision_drivers": [
+      "overall value",
+      "runtime consistency",
+      "brand reliability"
+    ],
+    "top_praises": [
+      "strong overall fit for the intended use case",
+      "solid buyer demand",
+      "good value for the category"
+    ],
+    "top_complaints": [
+      "performance can vary across brands",
+      "lower-end options may trade quality for price"
+    ],
+    "failure_points": [
+      "weak durability",
+      "inconsistent quality control"
+    ]
+  },
+  "category_intelligence_sources": [],
+  "winner_selection": {
+    "best_overall": {
+      "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "asin": "B07HYZCBV5",
+      "final_score": 8.8,
+      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop wins Best Overall because it has the highest weighted score, aligns with praised features like strong overall fit for the intended use case and solid buyer demand, and shows minimal alignment with common complaints such as performance can vary across brands and lower-end options may trade quality for price."
+    },
+    "best_budget": {
+      "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "asin": "B07HYZCBV5",
+      "final_score": 8.8,
+      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop stands out on value for price while still aligning with praised traits like strong overall fit for the intended use case and solid buyer demand. It shows limited overlap with common complaints, with only light concern around performance can vary across brands and lower-end options may trade quality for price."
+    },
+    "best_premium": {
+      "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "asin": "B07HYZCBV5",
+      "final_score": 8.8,
+      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop earns the premium slot by leading on pure performance while matching praised attributes like strong overall fit for the intended use case and solid buyer demand. It avoids most common complaint patterns, with only some caution around performance can vary across brands and lower-end options may trade quality for price."
+    }
+  },
+  "products": [
+    {
+      "asin": "B07HYZCBV5",
+      "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "affiliate_url": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"stainless steel paper towel holder\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "stainless steel paper towel holder",
+      "source": "amazon_search",
+      "rating": 4.8,
+      "review_count": 17214,
+      "query_fit_tokens": [
+        "paper",
+        "towel",
+        "holder"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 17214 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.8 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
+          "title": "OXO Good Grips Steady Paper Towel Holder Countertop",
+          "source_type": "amazon_search",
+          "page_title": "OXO Good Grips Steady Paper Towel Holder Countertop",
+          "page_excerpt": "Amazon search fallback evidence for OXO Good Grips Steady Paper Towel Holder Countertop"
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 9,
+          "speed_responsiveness": 8.2,
+          "reliability": 8.2,
+          "build_quality": 9,
+          "value_for_price": 10,
+          "ease_of_use": 8.2
+        },
+        "final_score": 8.8,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B0024AKCTS",
+      "product_name": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+      "affiliate_url": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"stainless steel paper towel holder\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "stainless steel paper towel holder",
+      "source": "amazon_search",
+      "rating": 4.7,
+      "review_count": 28696,
+      "query_fit_tokens": [
+        "paper",
+        "towel",
+        "holder"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 28696 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
+          "title": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+          "source_type": "amazon_search",
+          "page_title": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+          "page_excerpt": "Amazon search fallback evidence for Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.8,
+          "speed_responsiveness": 8,
+          "reliability": 8,
+          "build_quality": 8.8,
+          "value_for_price": 10,
+          "ease_of_use": 8
+        },
+        "final_score": 8.6,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B000F5IB60",
+      "product_name": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+      "affiliate_url": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"stainless steel paper towel holder\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "stainless steel paper towel holder",
+      "source": "amazon_search",
+      "rating": 4.7,
+      "review_count": 25640,
+      "query_fit_tokens": [
+        "paper",
+        "towel",
+        "holder"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 25640 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
+          "title": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+          "source_type": "amazon_search",
+          "page_title": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+          "page_excerpt": "Amazon search fallback evidence for Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.8,
+          "speed_responsiveness": 8,
+          "reliability": 8,
+          "build_quality": 8.8,
+          "value_for_price": 10,
+          "ease_of_use": 8
+        },
+        "final_score": 8.6,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B000W8AF2S",
+      "product_name": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+      "affiliate_url": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"stainless steel paper towel holder\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "stainless steel paper towel holder",
+      "source": "amazon_search",
+      "rating": 4.6,
+      "review_count": 30885,
+      "query_fit_tokens": [
+        "paper",
+        "towel",
+        "holder"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 30885 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.6 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
+          "title": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+          "source_type": "amazon_search",
+          "page_title": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+          "page_excerpt": "Amazon search fallback evidence for OXO Good Grips SimplyTear Paper Towel Holder Countertop"
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.7,
+          "speed_responsiveness": 7.9,
+          "reliability": 7.9,
+          "build_quality": 8.7,
+          "value_for_price": 10,
+          "ease_of_use": 7.9
+        },
+        "final_score": 8.5,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    },
+    {
+      "asin": "B08L37BPBN",
+      "product_name": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+      "affiliate_url": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"stainless steel paper towel holder\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "stainless steel paper towel holder",
+      "source": "amazon_search",
+      "rating": 4.4,
+      "review_count": 33079,
+      "query_fit_tokens": [
+        "paper",
+        "towel",
+        "holder"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 33079 reviews.",
+          "Solid visible rating around 4.4 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.4 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
+          "title": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+          "source_type": "amazon_search",
+          "page_title": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+          "page_excerpt": "Amazon search fallback evidence for Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.5,
+          "speed_responsiveness": 7.7,
+          "reliability": 7.7,
+          "build_quality": 8.5,
+          "value_for_price": 10,
+          "ease_of_use": 7.7
+        },
+        "final_score": 8.3,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      }
+    }
+  ],
+  "product_analysis": [
+    {
+      "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "asin": "B07HYZCBV5",
+      "review_count": 17214,
+      "rating": 4.8,
+      "score": {
+        "category_scores": {
+          "core_performance": 9,
+          "speed_responsiveness": 8.2,
+          "reliability": 8.2,
+          "build_quality": 9,
+          "value_for_price": 10,
+          "ease_of_use": 8.2
+        },
+        "final_score": 8.8,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 17214 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.8 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
+          "title": "OXO Good Grips Steady Paper Towel Holder Countertop",
+          "source_type": "amazon_search",
+          "page_title": "OXO Good Grips Steady Paper Towel Holder Countertop",
+          "page_excerpt": "Amazon search fallback evidence for OXO Good Grips Steady Paper Towel Holder Countertop"
+        }
+      ]
+    },
+    {
+      "product_name": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+      "asin": "B0024AKCTS",
+      "review_count": 28696,
+      "rating": 4.7,
+      "score": {
+        "category_scores": {
+          "core_performance": 8.8,
+          "speed_responsiveness": 8,
+          "reliability": 8,
+          "build_quality": 8.8,
+          "value_for_price": 10,
+          "ease_of_use": 8
+        },
+        "final_score": 8.6,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 28696 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
+          "title": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+          "source_type": "amazon_search",
+          "page_title": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+          "page_excerpt": "Amazon search fallback evidence for Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe..."
+        }
+      ]
+    },
+    {
+      "product_name": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+      "asin": "B000F5IB60",
+      "review_count": 25640,
+      "rating": 4.7,
+      "score": {
+        "category_scores": {
+          "core_performance": 8.8,
+          "speed_responsiveness": 8,
+          "reliability": 8,
+          "build_quality": 8.8,
+          "value_for_price": 10,
+          "ease_of_use": 8
+        },
+        "final_score": 8.6,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 25640 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
+          "title": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+          "source_type": "amazon_search",
+          "page_title": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+          "page_excerpt": "Amazon search fallback evidence for Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta..."
+        }
+      ]
+    },
+    {
+      "product_name": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+      "asin": "B000W8AF2S",
+      "review_count": 30885,
+      "rating": 4.6,
+      "score": {
+        "category_scores": {
+          "core_performance": 8.7,
+          "speed_responsiveness": 7.9,
+          "reliability": 7.9,
+          "build_quality": 8.7,
+          "value_for_price": 10,
+          "ease_of_use": 7.9
+        },
+        "final_score": 8.5,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 30885 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.6 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
+          "title": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+          "source_type": "amazon_search",
+          "page_title": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+          "page_excerpt": "Amazon search fallback evidence for OXO Good Grips SimplyTear Paper Towel Holder Countertop"
+        }
+      ]
+    },
+    {
+      "product_name": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+      "asin": "B08L37BPBN",
+      "review_count": 33079,
+      "rating": 4.4,
+      "score": {
+        "category_scores": {
+          "core_performance": 8.5,
+          "speed_responsiveness": 7.7,
+          "reliability": 7.7,
+          "build_quality": 8.5,
+          "value_for_price": 10,
+          "ease_of_use": 7.7
+        },
+        "final_score": 8.3,
+        "weights": {
+          "core_performance": 0.295,
+          "speed_responsiveness": 0.179,
+          "reliability": 0.161,
+          "build_quality": 0.161,
+          "value_for_price": 0.116,
+          "ease_of_use": 0.089
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 33079 reviews.",
+          "Solid visible rating around 4.4 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.4 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "stainless steel paper towel holder",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
+          "title": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+          "source_type": "amazon_search",
+          "page_title": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+          "page_excerpt": "Amazon search fallback evidence for Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain..."
+        }
+      ]
+    }
+  ],
+  "comparison_rows": [
+    {
+      "name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
+      "asin": "B07HYZCBV5",
+      "affiliate_url": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
+      "price_tier": "Best Overall Value",
+      "best_for": "stainless steel paper towel holder",
+      "total_score": 8.8,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 17214 reviews.",
+        "Solid visible rating around 4.8 stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.8 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+      "product_name": "Kamenstein Perfect Tear Wall Mount Paper Towel Holder, Patented Design for One-Handed Use, Rounded Finial, 14-Inch, Brushe...",
+      "asin": "B0024AKCTS",
+      "affiliate_url": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
+      "price_tier": "Premium Pick",
+      "best_for": "stainless steel paper towel holder",
+      "total_score": 8.6,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 28696 reviews.",
+        "Solid visible rating around 4.7 stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+      "product_name": "Spectrum Chrome Paper Towel Holder Countertop Kitchen Organizer, Easy Tear Modern Freestanding Kitchen Hand Towel Roll Sta...",
+      "asin": "B000F5IB60",
+      "affiliate_url": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
+      "price_tier": "Balanced Pick",
+      "best_for": "stainless steel paper towel holder",
+      "total_score": 8.6,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 25640 reviews.",
+        "Solid visible rating around 4.7 stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+      "product_name": "OXO Good Grips SimplyTear Paper Towel Holder Countertop",
+      "asin": "B000W8AF2S",
+      "affiliate_url": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
+      "price_tier": "Budget-Friendly",
+      "best_for": "stainless steel paper towel holder",
+      "total_score": 8.5,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 30885 reviews.",
+        "Solid visible rating around 4.6 stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.6 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+      "product_name": "Paper Towel Holders for Kitchen,Paper Towels Bulk- Self-Adhesive Under Cabinet,Both Available in Adhesive and Screws,Stain...",
+      "asin": "B08L37BPBN",
+      "affiliate_url": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
+      "price_tier": "Alternate Option",
+      "best_for": "stainless steel paper towel holder",
+      "total_score": 8.3,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 33079 reviews.",
+        "Solid visible rating around 4.4 stars for this category.",
+        "strong overall fit for the intended use case"
+      ],
+      "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.4 average rating.",
+      "keep_in_mind": "weak durability"
+    }
+  ]
+}
