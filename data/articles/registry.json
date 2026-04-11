@@ -4484,6 +4484,27 @@
       "related_articles": [],
       "duplicate_of": null,
       "source_request_id": "0995d1f6-4fb9-452d-8789-0c8eca10abc2"
+    },
+    {
+      "article_slug": "foam-archery-target",
+      "category": "foam archery target",
+      "title": "Foam Archery Target",
+      "output_dir": "data/articles/foam-archery-target",
+      "article_dir": "data/articles/foam-archery-target",
+      "topic_family": "foam archery target",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-04-11",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true,
+        "category_intelligence_required": true
+      },
+      "published_at": "2026-04-11T00:16:10.709Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [],
+      "duplicate_of": null,
+      "source_request_id": "a8400d7a-0702-4fd8-bf26-b05ab98f0ee3"
     }
   ]
 }
