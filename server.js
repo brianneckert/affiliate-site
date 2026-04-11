@@ -1024,11 +1024,14 @@ function renderHome(req) {
         if (!raw) return [];
         const normalized = raw.toLowerCase();
         const tokens = normalized.split(/\s+/).filter(Boolean);
+        const specificitySignals = ['for ', 'with ', 'under ', 'over ', 'inch', 'inches', 'tall', 'wide', 'deep', 'outdoor', 'outdoors', 'indoor', 'bathroom', 'kitchen', 'office', 'bedroom', 'garage', 'commercial', 'stainless', 'plastic', 'metal'];
+        const hasSpecificitySignal = specificitySignals.some(function(signal) { return normalized.includes(signal); });
+        if (tokens.length >= 4 || hasSpecificitySignal) return [];
         const genericLocationFacets = ['for bathroom', 'for kitchen', 'for office', 'for bedroom', 'for garage', 'for outdoors'];
         const genericSizeFacets = ['small', 'large', 'compact', 'heavy duty'];
         const genericStyleFacets = ['with lid', 'stainless steel', 'under $50', 'best overall'];
         const suggestions = [];
-        const alreadyHas = (phrase) => normalized.includes(phrase.toLowerCase());
+        const alreadyHas = function(phrase) { return normalized.includes(phrase.toLowerCase()); };
         for (const phrase of [...genericLocationFacets, ...genericSizeFacets, ...genericStyleFacets]) {
           if (!alreadyHas(phrase)) suggestions.push(raw + ' ' + phrase);
         }
