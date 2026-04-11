@@ -7,11 +7,13 @@ const createPaidRequests = require('../paid_requests');
 
 const ROOT = path.resolve(__dirname, '..');
 const paidRequests = createPaidRequests({ rootDir: ROOT });
+const analyticsDir = path.join(ROOT, 'data', 'analytics');
 const workerLogPath = path.join(analyticsDir, 'instant_answer_worker_events.jsonl');
 let activeRequestId = null;
+let checkpointHook = null;
+let shutdownRequested = null;
 const registryPath = path.join(ROOT, 'data', 'articles', 'registry.json');
 const outputsDir = path.join(ROOT, 'data', 'instant_answers');
-const analyticsDir = path.join(ROOT, 'data', 'analytics');
 const lockPath = path.join(analyticsDir, 'instant_answer_fulfillment.lock');
 const progressPath = path.join(analyticsDir, 'instant_answer_progress.json');
 const checkpointsDir = path.join(analyticsDir, 'instant_answer_checkpoints');
@@ -271,6 +273,10 @@ function loadCheckpoint(requestId) {
   return fs.existsSync(file) ? readJson(file) : null;
 }
 
+function setCheckpointHook(fn) {
+  checkpointHook = fn;
+}
+
 function saveCheckpoint(requestId, patch = {}) {
   const file = checkpointPath(requestId);
   const existed = fs.existsSync(file);
@@ -287,6 +293,9 @@ function saveCheckpoint(requestId, patch = {}) {
     checkpoint_saved_at: next.updated_at,
     last_successful_transition: 'checkpoint_saved'
   });
+  if (checkpointHook) {
+    try { checkpointHook(requestId, next); } catch {}
+  }
   return next;
 }
 
@@ -306,9 +315,10 @@ function ensureActiveLock(requestId = null) {
     const parsed = raw.startsWith('{') ? JSON.parse(raw) : { started_at_ms: Number(raw) || Date.now() };
     const ageMs = Date.now() - Number(parsed.started_at_ms || Date.now());
     const alive = isPidAlive(parsed.pid);
-    if (!alive || ageMs > STAGE_TIMEOUTS_MS.total_request) {
+    const sameRequest = requestId && parsed.request_id && parsed.request_id === requestId;
+    if (!alive || ageMs > STAGE_TIMEOUTS_MS.total_request || sameRequest) {
       fs.unlinkSync(lockPath);
-      writeProgress({ stage: 'lock_cleared', request_id: requestId, stall_reason: !alive ? 'stale_lock_dead_pid' : 'stale_lock_timeout', lock_age_ms: ageMs });
+      writeProgress({ stage: 'lock_cleared', request_id: requestId, stall_reason: !alive ? 'stale_lock_dead_pid' : (sameRequest ? 'stale_lock_same_request_reclaim' : 'stale_lock_timeout'), lock_age_ms: ageMs });
       return null;
     }
     return parsed;
@@ -344,21 +354,62 @@ function extractSourceType(url = '', title = '', snippet = '', query = '') {
 
   const haystack = `${decodedUrl} ${title} ${snippet}`.toLowerCase();
   const queryText = String(query || '').toLowerCase();
+  const articleSignal = /review|reviews|best-|\bbest\b|comparison|compare|guide|buying guide|buying-guide|roundup|tested|picks|pros and cons|editorial|article|blog/.test(haystack);
+  const discussionSignal = /reddit|forum|thread|discussion|comments|community|board|showthread|topic/.test(haystack);
+  const retailerDomain = /amazon\.|walmart\.|wayfair\.|ikea\.|homedepot\.|staples\.|target\.|ashleyfurniture\.|potterybarn\./.test(decodedUrl);
+  const retailerBrowseSignal = /\/b\/|\/browse\/|\/category\/|\/categories\/|\/shop\/|\/sb0\/|\bnode=\d+\b|\bcat_[a-z0-9]+\b|\/search\b/.test(decodedUrl);
+  const retailerProductSignal = retailerDomain && /\/dp\/|\/gp\/product\/|\/ip\/|\/products?\/|\/p\/|\/itm\//.test(decodedUrl);
   const isRedditQuery = /(^|\s|:)reddit(\.com)?(\s|$)/.test(queryText);
-  const isForumQuery = /forum|archerytalk|bbs|board/.test(queryText);
-  const isReviewQuery = /reviews?|consumer reports|trustpilot|g2|comparison|buying guide|guide/.test(queryText);
+  const isForumQuery = /forum|archerytalk|bbs|board|discussion/.test(queryText);
+  const isReviewQuery = /reviews?|consumer reports|trustpilot|g2|comparison|buying guide|guide|roundup|tested|picks|pros and cons/.test(queryText);
 
   if (decodedUrl.includes('reddit.com/r/') && decodedUrl.includes('/comments/')) return 'reddit';
+  if (decodedUrl.includes('reddit.com')) return isRedditQuery || discussionSignal ? 'reddit' : 'forum';
   if (/proboards\.com\/(thread|board)\//.test(decodedUrl) || decodedUrl.includes('archerytalk.com/threads/') || /forum|showthread|topic|post|\/thread\//.test(decodedUrl)) return 'forum';
-  if (haystack.includes('trustpilot') || haystack.includes('g2.com') || haystack.includes('consumer reports') || haystack.includes('customer review') || haystack.includes('customer reviews') || haystack.includes('tested and reviewed') || haystack.includes('buying guide') || haystack.includes('comparison') || haystack.includes('review')) return 'google_reviews';
+  if (retailerBrowseSignal && retailerDomain) return 'retailer_browse';
+  if (retailerProductSignal) return 'product_detail';
+  if (discussionSignal && (isForumQuery || /forum|thread|discussion/.test(haystack))) return 'forum';
+  if (articleSignal) return 'web_review';
+  if (haystack.includes('trustpilot') || haystack.includes('g2.com') || haystack.includes('consumer reports') || haystack.includes('customer review') || haystack.includes('customer reviews')) return 'google_reviews';
 
   if (isRedditQuery && decodedUrl.includes('reddit.com')) return 'reddit';
   if (isForumQuery && /forum|thread|discussion/.test(haystack)) return 'forum';
-  if (isReviewQuery) return 'google_reviews';
+  if (isReviewQuery) return 'web_review';
+  if (retailerDomain) return retailerProductSignal ? 'product_detail' : 'retailer_browse';
   return 'web_review';
 }
 
 async function fetchSearchResults(query) {
+  const usefulSignal = /review|reviews|best|comparison|compare|guide|buying guide|buying-guide|roundup|tested|picks|pros and cons|forum|reddit|discussion|thread/i;
+  const junkPattern = /dictionary|grammar|english language|language learning|merriam-webster|cambridge dictionary|collins dictionary|stackexchange|hinative|quora|wikipedia/i;
+  const retailerBrowsePattern = /\/b\/|\/browse\/|\/category\/|\/categories\/|\/shop\/|\/sb0\/|\bnode=\d+\b|\bcat_[a-z0-9]+\b|\/search\b/i;
+  const retailerDomainPattern = /amazon\.|walmart\.|wayfair\.|ikea\.|homedepot\.|staples\.|target\.|ashleyfurniture\.|potterybarn\./i;
+  const redditIndexPattern = /reddit\.com\/(r\/[a-z0-9_+-]+\/?$|$|r\/[^/]+\/(about|wiki|top)\/?)/i;
+  const genericNavPattern = /(^https?:\/\/[^/]+\/?$)|\/all-sports-schedule\/|\/marketplace\/?$|\/forums?\/?$|\/brands?\/?$/i;
+  const normalizeRawResult = (href, title, snippet, engine) => ({ href, title, snippet, source_type: extractSourceType(href, title, snippet, query), query, discovery_engine: engine });
+  const filterRawResults = (items = []) => {
+    const kept = [];
+    for (const item of items) {
+      const href = String(item.href || '');
+      const title = String(item.title || '');
+      const snippet = String(item.snippet || '');
+      const haystack = `${href} ${title} ${snippet}`;
+      const type = item.source_type || extractSourceType(href, title, snippet, query);
+      const hasUsefulSignal = usefulSignal.test(haystack);
+      const isRetailerBrowse = retailerDomainPattern.test(href) && retailerBrowsePattern.test(href);
+      const isRedditIndex = redditIndexPattern.test(href);
+      const isGenericNav = genericNavPattern.test(href);
+      const isJunk = junkPattern.test(haystack);
+      if (isJunk) continue;
+      if (isRetailerBrowse && !hasUsefulSignal) continue;
+      if (isRedditIndex) continue;
+      if (isGenericNav && !hasUsefulSignal) continue;
+      kept.push({ ...item, source_type: type });
+      if (kept.length >= 8) break;
+    }
+    return kept;
+  };
+
   const collectHtmlResults = (html, mode = 'html') => {
     const results = [];
     const regex = mode === 'lite'
@@ -371,10 +422,10 @@ async function fetchSearchResults(query) {
       const snippet = cleanText(match[3]);
       if (!href || !title || !snippet) continue;
       if (/privacy protected by duckduckgo|\bad viewing ads\b/i.test(title) || /duckduckgo\.com\/y\.js\?ad_domain=/i.test(href)) continue;
-      results.push({ href, title, snippet, source_type: extractSourceType(href, title, snippet, query), query, discovery_engine: mode === 'lite' ? 'duckduckgo_lite' : 'duckduckgo_html' });
-      if (results.length >= 8) break;
+      results.push(normalizeRawResult(href, title, snippet, mode === 'lite' ? 'duckduckgo_lite' : 'duckduckgo_html'));
+      if (results.length >= 16) break;
     }
-    return results;
+    return filterRawResults(results);
   };
 
   const collectRssResults = (xml) => {
@@ -387,10 +438,25 @@ async function fetchSearchResults(query) {
       const title = cleanText((block.match(/<title>([\s\S]*?)<\/title>/i) || [])[1] || '');
       const snippet = cleanText((block.match(/<description>([\s\S]*?)<\/description>/i) || [])[1] || '');
       if (!href || !title || !snippet) continue;
-      results.push({ href, title, snippet, source_type: extractSourceType(href, title, snippet, query), query, discovery_engine: 'bing_rss' });
-      if (results.length >= 8) break;
+      results.push(normalizeRawResult(href, title, snippet, 'bing_rss'));
+      if (results.length >= 16) break;
     }
-    return results;
+    return filterRawResults(results);
+  };
+
+  const collectBraveHtmlResults = (html) => {
+    const results = [];
+    const blockRegex = /data-type="web"[\s\S]{0,4000}?<a href="([^"]+)"[^>]*>[\s\S]{0,2500}?<div class="title search-snippet-title[^"]*"[^>]*>([\s\S]*?)<\/div>[\s\S]{0,2500}?(?:<div class="content[^"]*">([\s\S]*?)<\/div>)?/gi;
+    let match;
+    while ((match = blockRegex.exec(html)) !== null) {
+      const href = cleanText(match[1]);
+      const title = cleanText(match[2]);
+      const snippet = cleanText(match[3] || '');
+      if (!href || !title) continue;
+      results.push(normalizeRawResult(href, title, snippet, 'brave_html'));
+      if (results.length >= 16) break;
+    }
+    return filterRawResults(results);
   };
 
   const primaryUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
@@ -420,6 +486,15 @@ async function fetchSearchResults(query) {
     if (rssRes.ok) {
       const rssResults = collectRssResults(await rssRes.text());
       if (rssResults.length) return rssResults;
+    }
+  } catch {}
+
+  const braveUrl = `https://search.brave.com/search?q=${encodeURIComponent(query)}&source=web`;
+  try {
+    const braveRes = await fetch(braveUrl, { headers: SEARCH_HEADERS, signal: AbortSignal.timeout(15000) });
+    if (braveRes.ok) {
+      const braveResults = collectBraveHtmlResults(await braveRes.text());
+      if (braveResults.length) return braveResults;
     }
   } catch {}
 
@@ -510,12 +585,24 @@ function scoreDiscoveredSource(item, discoveryTokens = []) {
   const slugRelevantHits = expandedTerms.filter((token) => href.toLowerCase().includes(token)).length;
   const meaningfulSlug = /[a-z]{4,}-[a-z]{4,}/.test(href);
   const genericBestOnly = /\bbest\b/.test(title) && titleRelevantHits === 0 && slugRelevantHits === 0;
+  const editorialSignal = /review|reviews|best-|comparison|compare|guide|buying-guide|buying guide|roundup|blog|article|forum|reddit|discussion|tested|pros and cons/.test(haystack);
+  const retailerBrowsePattern = /\/b\/|\/browse\/|\/category\/|\/categories\/|\/shop\/|\/sb0\/|\bnode=\d+\b|\bcat_[a-z0-9]+\b|\?page=|\?sr=|\/search\b/;
+  const retailerDomainPattern = /amazon\.|walmart\.|wayfair\.|ikea\.|homedepot\.|staples\.|target\.|ashleyfurniture\.|potterybarn\./;
+  const retailerBrowsePage = ['google_reviews', 'web_review'].includes(sourceType) && retailerDomainPattern.test(href) && retailerBrowsePattern.test(href);
+  const retailerDetailPage = ['google_reviews', 'web_review'].includes(sourceType) && retailerDomainPattern.test(href) && !retailerBrowsePattern.test(href);
   let reject = urlIntent.reject || null;
   if (!reject && ['google_reviews','web_review'].includes(sourceType) && relevantHits < Math.max(1, Math.min(2, discoveryTokens.length))) reject = 'low_topic_relevance';
   if (!reject && genericBestOnly) reject = 'generic_best_without_context';
   if (!reject && sourceType === 'web_review' && titleRelevantHits === 0 && slugRelevantHits === 0) reject = 'review_without_topic_slug_or_title';
+  if (!reject && retailerBrowsePage && !editorialSignal) reject = 'retailer_browse_page';
   let score = urlIntent.score + (overlap * 2) + (meaningfulSlug ? 1 : 0) + relevantHits + titleRelevantHits + slugRelevantHits;
   if (/review|comparison|tested|guide|pros and cons|buying guide/.test(haystack)) score += 2;
+  if (/forum|reddit|discussion/.test(haystack)) score += 3;
+  if (/roundup|blog|article|compare/.test(haystack)) score += 2;
+  if (retailerBrowsePage) score -= 8;
+  if (retailerDetailPage && !editorialSignal) score -= 3;
+  if (['forum', 'reddit'].includes(sourceType)) score += 2;
+  if (['google_reviews', 'web_review'].includes(sourceType) && editorialSignal) score += 2;
   return { score, overlap, sourceType, urlIntent: { ...urlIntent, reject }, relevantHits, titleRelevantHits, slugRelevantHits };
 }
 
@@ -720,101 +807,91 @@ function buildBroadCategoryQueries(baseQuery = '') {
 }
 
 function buildDiversifiedCategoryQueries(baseQuery = '', iteration = 1) {
-  const q = normalize(baseQuery);
-  const synonyms = {
-    'archery target': ['bow target', 'arrow target', 'shooting target'],
-    'broadheads': ['hunting arrows', 'fixed blade broadheads', 'mechanical broadheads'],
-    'broadhead': ['hunting arrow', 'fixed blade', 'mechanical broadhead']
-  };
-  const replacements = [q];
-  for (const [from, tos] of Object.entries(synonyms)) {
-    if (q.includes(from)) tos.forEach((to) => replacements.push(q.replace(from, to)));
-  }
-  const bases = Array.from(new Set(replacements));
+  const topic = String(baseQuery || '').trim();
+  if (!topic) return [];
   const out = [];
-  for (const base of bases) {
-    if (iteration === 1) {
-      out.push(`${base} review`, `${base} comparison`, `${base} pros and cons`, `${base} test results`, `${base} buying guide`);
-    } else if (iteration === 2) {
-      out.push(`how to choose ${base}`, `what to look for in ${base}`, `${base} vs bag target`, `${base} vs foam target`, `${base} guide`);
-    } else {
-      out.push(`targets that broadheads won't destroy`, `what targets stop broadheads best`, `best material for ${base}`, `foam vs bag ${base}`, `best target for fixed blade broadheads comparison`);
-    }
+  if (iteration === 1) {
+    out.push(
+      `${topic} review`,
+      `${topic} comparison`,
+      `${topic} pros and cons`,
+      `${topic} test results`,
+      `${topic} buying guide`
+    );
+  } else if (iteration === 2) {
+    out.push(
+      `${topic} long term review`,
+      `${topic} tested and reviewed`,
+      `${topic} buyer complaints`,
+      `${topic} forum discussion`,
+      `${topic} reddit`
+    );
+  } else {
+    out.push(
+      `${topic} best options`,
+      `${topic} top picks`,
+      `${topic} review guide`,
+      `${topic} comparison guide`,
+      `${topic} buying guide`
+    );
   }
   return Array.from(new Set(out.map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean)));
 }
 
 function buildReviewFocusedQueries(baseQuery = '', iteration = 1) {
-  const base = normalize(baseQuery);
-  const compact = base.split(' ').filter((token) => token && !['best','top','for','the','and','with'].includes(token)).join(' ');
+  const topic = String(baseQuery || '').trim();
+  if (!topic) return [];
   const variants = [
-    `${baseQuery} review`,
-    `${baseQuery} comparison`,
-    `${baseQuery} test results`,
-    `${baseQuery} guide`,
-    `${baseQuery} pros and cons`,
-    `${compact} review`,
-    `${compact} comparison`,
-    `${compact} test`,
-    `${compact} results`,
-    `what is the best ${compact}`,
-    `${compact} vs field point`,
-    `${compact} durability review`,
-    `best foam target for broadheads review`,
-    `archery broadhead target test results`,
-    `archery target comparison broadhead vs field point`,
-    `3d archery target broadhead durability review`,
-    `foam vs bag archery target broadheads`,
-    `best broadhead target test results`
+    `${topic} review`,
+    `${topic} comparison`,
+    `${topic} test results`,
+    `${topic} buying guide`,
+    `${topic} pros and cons`
   ];
   if (iteration >= 2) {
     variants.push(
-      `${compact} buyer's guide`,
-      `${compact} long term review`,
-      `${compact} tested and reviewed`,
-      `${compact} broadhead target review`,
-      `${compact} layered target review`
+      `${topic} buyer complaints`,
+      `${topic} long term review`,
+      `${topic} tested and reviewed`,
+      `${topic} forum discussion`
     );
   }
   if (iteration >= 3) {
     variants.push(
-      `${compact} top picks`,
-      `${compact} review guide`,
-      `${compact} comparison guide`,
-      `${compact} best options broadheads`
+      `${topic} top picks`,
+      `${topic} review guide`,
+      `${topic} comparison guide`,
+      `${topic} best options`
     );
   }
-  return Array.from(new Set(variants.filter(Boolean)));
+  return Array.from(new Set(variants.map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean)));
 }
 
 function buildFallbackDiscoveryQueries(baseQuery = '', mode = 'category') {
-  const normalizedBase = normalize(baseQuery);
-  const compact = normalizedBase.split(' ').filter((token) => token && !['best','top','for','the','and','with','guide','comparison'].includes(token)).join(' ');
-  const seed = compact || normalizedBase;
+  const topic = String(baseQuery || '').trim();
+  if (!topic) return [];
   if (mode === 'product') {
-    return [
-      `${baseQuery} reviews`,
-      `${baseQuery} archery target review`,
-      `${baseQuery} broadhead target`,
-      `${baseQuery} complaints`,
-      `${baseQuery} durability`,
-      `${baseQuery} easy arrow removal`,
-      `reddit ${seed}`,
-      `site:archerytalk.com ${seed}`
-    ];
+    return Array.from(new Set([
+      `${topic} reviews`,
+      `${topic} comparison`,
+      `${topic} buying guide`,
+      `${topic} forum discussion`,
+      `${topic} reddit`,
+      `${topic} buyer complaints`,
+      `${topic} pros and cons`,
+      `${topic} best options`
+    ]));
   }
-  return [
-    `${baseQuery} reviews`,
-    `${seed} broadhead target review`,
-    `reddit ${seed}`,
-    `site:reddit.com ${seed}`,
-    `${seed} forum`,
-    `site:archerytalk.com ${seed}`,
-    `${seed} buyer complaints`,
-    `${seed} durability`,
-    `${seed} easy arrow removal`,
-    `${seed} fixed blade broadhead target`
-  ];
+  return Array.from(new Set([
+    `${topic} reviews`,
+    `${topic} comparison`,
+    `${topic} buying guide`,
+    `${topic} forum discussion`,
+    `${topic} reddit`,
+    `${topic} buyer complaints`,
+    `${topic} pros and cons`,
+    `${topic} best options`
+  ]));
 }
 
 async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens, mode = 'category', minQualifyingSources = 6, requestId = null, queryShape = null }) {
@@ -836,6 +913,30 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
       attempts.push(buildDiversifiedCategoryQueries(baseQuery, 3));
     }
   }
+
+  if (mode === 'category' && queryShape !== 'broad_category_query') {
+    const normalizedBase = normalize(baseQuery);
+    const preserveTopicPhrase = (query = '') => {
+      const raw = String(query || '').trim();
+      if (!raw) return null;
+      const normalized = normalize(raw);
+      if (!normalizedBase) return raw;
+      if (normalized.includes(normalizedBase)) return raw;
+      if (/^reddit\s+/.test(normalized)) return `${baseQuery} reddit`;
+      if (/^site:reddit\.com\s+/.test(normalized)) return `${baseQuery} reddit`;
+      if (/\s+reddit$/.test(normalized)) return `${baseQuery} reddit`;
+      if (/\s+forum$/.test(normalized) || /forum discussion/.test(normalized)) return `${baseQuery} forum discussion`;
+      if (/\s+reviews?$/.test(normalized) || /\s+review$/.test(normalized)) return `${baseQuery} review`;
+      if (/buyer complaints/.test(normalized)) return `${baseQuery} buyer complaints`;
+      if (/pros and cons/.test(normalized)) return `${baseQuery} pros and cons`;
+      if (/buying guide|guide/.test(normalized)) return `${baseQuery} buying guide`;
+      if (/comparison/.test(normalized)) return `${baseQuery} comparison`;
+      return null;
+    };
+    for (let i = 0; i < attempts.length; i += 1) {
+      attempts[i] = Array.from(new Set((attempts[i] || []).map(preserveTopicPhrase).filter(Boolean)));
+    }
+  }
   const rejected_sources = [];
   const seedStats = [];
   const discoveryTokens = normalize(baseQuery).split(' ').filter((token) => token.length >= 4 && !STOPWORDS.has(token));
@@ -843,9 +944,14 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
   let reviewIterations = 0;
   const tracker = mode === 'category' && requestId ? categoryProgressTracker(requestId) : null;
   let totalEvaluated = 0;
+  const globallySeenCandidateUrls = new Set();
+  const globallyWeakDomains = new Set();
+  const globallyWeakQueries = new Set();
 
   for (let attemptIndex = 0; attemptIndex < Math.min(attempts.length, mode === 'category' ? 6 : CATEGORY_LIMITS.maxIterations); attemptIndex += 1) {
-    const queries = Array.from(new Set((attempts[attemptIndex] || []).filter(Boolean))).slice(0, CATEGORY_LIMITS.maxQueriesPerIteration);
+    const queries = Array.from(new Set((attempts[attemptIndex] || []).filter(Boolean)))
+      .filter((q) => !globallyWeakQueries.has(normalize(q)))
+      .slice(0, CATEGORY_LIMITS.maxQueriesPerIteration);
     tracker?.mark(`category_source_discovery_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, heartbeat: true, eventType: 'query_family_start', queryFamilyInFlight: queries, debug: { queries_used: queries } });
     const discovered = [];
     for (const q of queries) {
@@ -872,30 +978,74 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
       return keep;
     }).sort((a, b) => b.discovery_score - a.discovery_score);
 
+    const sourceTypeBudgets = mode === 'category'
+      ? { web_review: 8, forum: 4, reddit: 3, google_reviews: 2, product_detail: 2, retailer_browse: 0 }
+      : null;
+    const sourceTypeUsage = {};
+    const filteredDiscovered = scoredDiscovered.filter((item) => {
+      const href = String(item.href || '').toLowerCase();
+      const host = getUrlSignals(item.href).host;
+      const queryKey = normalize(item.query || '');
+      const type = item.source_type || 'unknown';
+      if (globallySeenCandidateUrls.has(href)) {
+        rejected_sources.push({ stage: 'candidate_reuse_filter', href: item.href, query: item.query, reason: 'candidate_seen_in_prior_pass', source_type: item.source_type });
+        return false;
+      }
+      if (globallyWeakDomains.has(host)) {
+        rejected_sources.push({ stage: 'candidate_reuse_filter', href: item.href, query: item.query, reason: 'domain_marked_weak_in_prior_pass', source_type: item.source_type });
+        return false;
+      }
+      if (globallyWeakQueries.has(queryKey)) {
+        rejected_sources.push({ stage: 'candidate_reuse_filter', href: item.href, query: item.query, reason: 'query_marked_weak_in_prior_pass', source_type: item.source_type });
+        return false;
+      }
+      if (mode === 'category' && ['retailer_browse'].includes(type)) {
+        rejected_sources.push({ stage: 'candidate_reuse_filter', href: item.href, query: item.query, reason: 'weak_result_class_budget_protection', source_type: item.source_type });
+        return false;
+      }
+      if (sourceTypeBudgets) {
+        sourceTypeUsage[type] = sourceTypeUsage[type] || 0;
+        if (sourceTypeUsage[type] >= (sourceTypeBudgets[type] ?? 3)) {
+          rejected_sources.push({ stage: 'candidate_reuse_filter', href: item.href, query: item.query, reason: 'source_type_budget_exhausted', source_type: item.source_type });
+          return false;
+        }
+        sourceTypeUsage[type] += 1;
+      }
+      return true;
+    });
+
     const coverageBuckets = new Set();
     const prioritized = [];
-    for (const item of scoredDiscovered) {
+    for (const item of filteredDiscovered) {
       const bucket = item.source_type || 'unknown';
       if (!coverageBuckets.has(bucket)) {
         prioritized.push(item);
         coverageBuckets.add(bucket);
       }
     }
-    for (const item of scoredDiscovered) {
+    for (const item of filteredDiscovered) {
       if (!prioritized.find((x) => x.href === item.href)) prioritized.push(item);
     }
     const candidateUrls = prioritized.map((x) => x.href);
     const domainsThisIteration = tracker?.noteDomains(candidateUrls) || [];
     const uniqueDomainsThisIteration = Array.from(new Set(domainsThisIteration));
-    const repeatedSet = tracker?.noteCandidateSet(candidateUrls);
-    tracker?.mark(`category_diversity_check_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, heartbeat: true, eventType: 'diversity_check', repeatedSetActivity: repeatedSet ? 'repeated_candidate_set' : 'new_candidate_set', queryFamilyInFlight: queries, debug: { discovered_urls: scoredDiscovered.map((x) => ({ href: x.href, source_type: x.source_type, score: x.discovery_score, query: x.query })), domains_this_iteration: uniqueDomainsThisIteration } });
+    const repeatedSet = candidateUrls.length ? tracker?.noteCandidateSet(candidateUrls) : false;
+    const zeroDiscovery = scoredDiscovered.length === 0 || candidateUrls.length === 0;
+    tracker?.mark(`category_diversity_check_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, heartbeat: true, eventType: 'diversity_check', repeatedSetActivity: zeroDiscovery ? 'zero_discovery' : (repeatedSet ? 'repeated_candidate_set' : 'new_candidate_set'), queryFamilyInFlight: queries, debug: { discovered_urls: scoredDiscovered.map((x) => ({ href: x.href, source_type: x.source_type, score: x.discovery_score, query: x.query })), domains_this_iteration: uniqueDomainsThisIteration, zero_discovery: zeroDiscovery } });
+    if (zeroDiscovery) {
+      rejected_sources.push({ stage: 'loop_guard', reason: 'zero_discovery', iteration: attemptIndex + 1, discovered_urls: scoredDiscovered.length, candidate_urls: candidateUrls.length });
+      queries.forEach((q) => globallyWeakQueries.add(normalize(q)));
+      if (mode === 'category' && attemptIndex + 1 < attempts.length) continue;
+    }
     if (repeatedSet) {
       rejected_sources.push({ stage: 'loop_guard', reason: 'repeated_candidate_set', iteration: attemptIndex + 1, domains_this_iteration: uniqueDomainsThisIteration });
+      uniqueDomainsThisIteration.forEach((domain) => globallyWeakDomains.add(domain));
       if (mode === 'category' && attemptIndex + 1 < attempts.length) continue;
       break;
     }
-    if (mode === 'category' && uniqueDomainsThisIteration.length < 5 && attemptIndex + 1 < attempts.length) {
+    if (mode === 'category' && uniqueDomainsThisIteration.length < 3 && attemptIndex + 1 < attempts.length) {
       rejected_sources.push({ stage: 'loop_guard', reason: 'new_domain_quota_not_met', iteration: attemptIndex + 1, unique_domains: uniqueDomainsThisIteration.length });
+      uniqueDomainsThisIteration.forEach((domain) => globallyWeakDomains.add(domain));
       continue;
     }
 
@@ -918,13 +1068,20 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
         })
       : prioritized;
 
-    const candidateQueue = prioritizedSources.slice(0, CATEGORY_LIMITS.maxTotalEvaluated - totalEvaluated);
+    const candidateQueue = prioritizedSources
+      .filter((source) => !globallySeenCandidateUrls.has(String(source.href || '').toLowerCase()))
+      .sort((a, b) => {
+        const typeRank = (item) => ({ web_review: 5, forum: 4, reddit: 3, google_reviews: 2, product_detail: 1, retailer_browse: 0 }[item.source_type] ?? 1);
+        return (typeRank(b) * 100 + b.discovery_score) - (typeRank(a) * 100 + a.discovery_score);
+      })
+      .slice(0, CATEGORY_LIMITS.maxTotalEvaluated - totalEvaluated);
     let reviewQualifiedCount = 0;
     const minReviewQualified = mode === 'category' ? 1 : 0;
     tracker?.mark(`category_fetch_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length }, debug: { candidate_queue_size: candidateQueue.length } });
     for (const source of candidateQueue) {
       if ((fetched.length >= CATEGORY_LIMITS.maxFetchPerIteration && reviewQualifiedCount >= minReviewQualified) || totalEvaluated >= CATEGORY_LIMITS.maxTotalEvaluated) break;
       fetched.push(source.href);
+      globallySeenCandidateUrls.add(String(source.href || '').toLowerCase());
       totalEvaluated += 1;
       fetchedByType[source.source_type] = (fetchedByType[source.source_type] || 0) + 1;
       const currentSeed = seedRollup.get(source.query) || { seed: source.query, fetched_urls: 0, qualified_urls: 0, qualifying_types: {} };
@@ -941,8 +1098,17 @@ async function discoverAndQualifySources({ baseQuery, searchQueries, queryTokens
         tracker?.mark(`category_qualification_pass${attemptIndex + 1}`, { iteration: attemptIndex + 1, totalEvaluated, counts: { discovered: scoredDiscovered.length, fetched: fetched.length, extracted: qualified.length, qualified: qualified.length } });
       } else {
         rejected_sources.push({ stage: 'qualification', href: source.href, query: source.query, reason: result.rejection_reason, overlap: result.overlap || null, extracted_chars: result.extracted_chars || null, source_type: source.source_type });
+        const failedHost = getUrlSignals(source.href).host;
+        if (mode === 'category' && failedHost && ['query_overlap_too_low', 'extracted_text_too_short', 'fetch_http_429', 'fetch_timeout'].includes(result.rejection_reason)) {
+          globallyWeakDomains.add(failedHost);
+          globallyWeakQueries.add(normalize(source.query || ''));
+        }
       }
       tracker?.assertProgress(`category_fetch_pass${attemptIndex + 1}`);
+    }
+
+    if (mode === 'category' && qualified.length === 0) {
+      queries.forEach((q) => globallyWeakQueries.add(normalize(q)));
     }
 
     finalStats = {
@@ -1319,14 +1485,14 @@ async function buildCategoryIntelligence(request) {
   const searchQueries = queryShape === 'broad_category_query'
     ? broadCategoryQueries
     : [
-        `${query} broadhead target review`,
+        `${query} review`,
         `${query} comparison`,
-        `broadhead target forum discussion`,
-        `best target for broadheads reddit`,
-        `archerytalk best broadhead target`,
-        `layered foam vs bag target broadheads`,
-        `best target for field points and broadheads review`,
-        `${query} buyer complaints`
+        `${query} forum discussion`,
+        `${query} reddit`,
+        `${query} buyer complaints`,
+        `${query} pros and cons`,
+        `${query} buying guide`,
+        `${query} best options`
       ];
 
   writeProgress({ request_id: request.request_id, stage: 'category_seed_generation', category_queries: searchQueries, query_shape: queryShape, last_successful_transition: 'category_seed_generation' });
@@ -1574,7 +1740,7 @@ async function fetchAmazonProducts(query) {
   if (!res.ok) throw new Error(`amazon_search_http_${res.status}`);
   const products = [];
   const seen = new Set();
-  const blockRegex = /<div[^>]+data-asin="([A-Z0-9]{10})"[\s\S]{0,12000}?<\/div>\s*<\/div>/gi;
+  const blockRegex = /<div[^>]+data-asin="([A-Z0-9]{10})"[\s\S]{0,30000}?<\/div>\s*<\/div>/gi;
   let blockMatch;
   while ((blockMatch = blockRegex.exec(html)) !== null) {
     const asin = blockMatch[1];
@@ -1620,7 +1786,14 @@ async function fetchAmazonProducts(query) {
     .sort((a, b) => b.review_count - a.review_count || b.rating - a.rating)
     .slice(0, 5);
 
-  return nicheFallback;
+  if (nicheFallback.length >= 5) return nicheFallback;
+
+  const broadFallback = products
+    .filter((item) => item.rating >= 4.0 && item.review_count >= 100)
+    .sort((a, b) => b.review_count - a.review_count || b.rating - a.rating)
+    .slice(0, 5);
+
+  return broadFallback;
 }
 
 function buildFromExisting(request, published) {
@@ -1690,17 +1863,54 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   const query = String(request.normalized_query || request.raw_query || '').trim();
   const queryTokens = normalize(`${query} ${productName}`).split(' ').filter((token) => token.length >= 3 && !STOPWORDS.has(token));
   const refinedSeeds = buildProductSearchSeeds(productName, query);
+  if (product?.source === 'amazon_search') {
+    const pros = [
+      `Strong Amazon shopper validation with about ${product.review_count || 0} reviews.`,
+      `Solid visible rating around ${product.rating || '4+'} stars for this category.`,
+      categoryIntelligence?.top_praises?.[0] || `Good fit for common ${query} priorities.`
+    ].filter(Boolean);
+    const cons = [
+      categoryIntelligence?.top_complaints?.[0] || `May share the usual tradeoffs seen across ${query}.`,
+      categoryIntelligence?.failure_points?.[0] || 'Check long-term durability details before buying.',
+      'Amazon search selection is stronger on demand signals than hands-on lab verification.'
+    ].filter(Boolean);
+    const analysis = {
+      pros,
+      cons,
+      matches_praises: (categoryIntelligence?.top_praises || []).slice(0, 3),
+      matches_complaints: (categoryIntelligence?.top_complaints || []).slice(0, 3),
+      unique_strength: `High review-volume Amazon pick for ${query} with a ${product.rating || 'strong'} average rating.`,
+      hidden_issues: categoryIntelligence?.failure_points?.[0] || 'Long-term reliability and build quality need closer review.',
+      best_for: product.best_for || query,
+      avoid_if: categoryIntelligence?.top_complaints?.[0] || `You want a fully hands-on editorially tested pick only.`,
+      amazon_review_sentiment: null,
+      evidence_tier: 'tier_0_amazon_search_plus_category_intelligence'
+    };
+    return {
+      ok: true,
+      product_analysis: analysis,
+      evidence_sources: (categoryEvidenceSources || []).slice(0, 10),
+      debug: {
+        product: productName,
+        shortcut: 'amazon_search_heuristic_analysis',
+        qualifying_sources: (categoryEvidenceSources || []).length,
+        coverage: Array.from(new Set((categoryEvidenceSources || []).map((item) => item.source_type).filter(Boolean)))
+      }
+    };
+  }
+  const amazonPrimary = null;
   const reviewQueries = Array.from(new Set([
     `${productName} reviews`,
-    `${productName} archery target review`,
-    `${productName} broadhead target`,
+    `${productName} review`,
     `${productName} complaints`,
-    ...refinedSeeds.flatMap((seed) => ([`${seed} review`, `${seed} field point broadhead review`, `${seed} durability review`]))
+    `${productName} pros and cons`,
+    `${productName} long term review`,
+    ...refinedSeeds.flatMap((seed) => ([`${seed} review`, `${seed} durability review`, `${seed} tested and reviewed`]))
   ]));
   const discussionQueries = Array.from(new Set([
-    `reddit ${productName}`,
-    `${productName} archerytalk`,
-    ...refinedSeeds.flatMap((seed) => ([`${seed} forum`, `${seed} reddit`, `${seed} archerytalk`, `${seed} hunting forum`]))
+    `${productName} reddit`,
+    `${productName} forum discussion`,
+    ...refinedSeeds.flatMap((seed) => ([`${seed} forum`, `${seed} reddit`, `${seed} user discussion`]))
   ]));
 
   const objectives = [
@@ -1709,16 +1919,18 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   ];
 
   const objectiveRuns = [];
-  for (const objective of objectives) {
-    writeProgress({ request_id: request.request_id, stage: `product_discovery_${objective.name}`, product: productName, objective: objective.name, last_successful_transition: `product_discovery_${objective.name}` });
-    const result = await discoverAndQualifySources({
-      baseQuery: productName,
-      searchQueries: objective.queries,
-      queryTokens,
-      mode: 'product',
-      minQualifyingSources: 1
-    });
-    objectiveRuns.push({ objective: objective.name, queries: objective.queries, ...result });
+  if (!amazonPrimary?.ok) {
+    for (const objective of objectives) {
+      writeProgress({ request_id: request.request_id, stage: `product_discovery_${objective.name}`, product: productName, objective: objective.name, last_successful_transition: `product_discovery_${objective.name}` });
+      const result = await discoverAndQualifySources({
+        baseQuery: productName,
+        searchQueries: objective.queries,
+        queryTokens,
+        mode: 'product',
+        minQualifyingSources: 1
+      });
+      objectiveRuns.push({ objective: objective.name, queries: objective.queries, ...result });
+    }
   }
 
   const productNameTokens = normalize(productName).split(' ').filter((token) => token.length >= 4 && !STOPWORDS.has(token));
@@ -1732,6 +1944,9 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
     const text = `${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`;
     return productMentionConfidence(text, productName) >= 0.66 && topicRelevanceConfidence(text, query, productName) >= 0.4;
   }));
+  if (amazonPrimary?.ok) {
+    validSources = dedupeSources([...validSources, ...categoryFallbackSources.slice(0, 6)]);
+  }
   const hasSecondary = validSources.some((item) => ['forum', 'reddit'].includes(item.source_type));
   if (!hasSecondary && categoryFallbackSources.length) {
     writeProgress({ request_id: request.request_id, stage: 'product_fallback_mode', product: productName, last_successful_transition: 'product_fallback_mode' });
@@ -1741,7 +1956,10 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   const coverage = new Set(validSources.map((item) => item.source_type));
   const hasStrongReview = validSources.some((item) => ['web_review', 'google_reviews'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
   let hasStrongSecondary = validSources.some((item) => ['forum', 'reddit'].includes(item.source_type) && productMentionConfidence(`${item.title || ''} ${item.page_title || ''} ${item.snippet || ''} ${item.page_excerpt || ''}`, productName) >= 0.66);
-  let amazonFallback = null;
+  let amazonFallback = amazonPrimary?.ok ? amazonPrimary : null;
+  if (amazonFallback?.ok) {
+    hasStrongSecondary = true;
+  }
   if (hasStrongReview && !hasStrongSecondary) {
     writeProgress({ request_id: request.request_id, stage: 'product_amazon_fallback', product: productName, last_successful_transition: 'product_amazon_fallback' });
     amazonFallback = await fetchAmazonReviewSentiment(product);
@@ -1807,6 +2025,21 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
       if (bestForCues.some((cue) => lower.includes(cue))) bestForFragments.push(fragment);
       if (avoidIfCues.some((cue) => lower.includes(cue))) avoidIfFragments.push(fragment);
     }
+  }
+
+  const sentimentFragments = amazonFallback?.ok ? [
+    ...(amazonFallback.amazon_review_sentiment?.top_praises || []),
+    ...(amazonFallback.amazon_review_sentiment?.top_complaints || []),
+    ...(amazonFallback.amazon_review_sentiment?.common_failures || []),
+    amazonFallback.amazon_review_sentiment?.durability_feedback || '',
+    amazonFallback.amazon_review_sentiment?.performance_feedback || ''
+  ].filter(Boolean) : [];
+  for (const fragment of sentimentFragments) {
+    const lower = fragment.toLowerCase();
+    allFragments.push(fragment);
+    if (prosCues.some((cue) => lower.includes(cue))) prosFragments.push(fragment);
+    if (consCues.some((cue) => lower.includes(cue))) consFragments.push(fragment);
+    if (hiddenIssueCues.some((cue) => lower.includes(cue))) hiddenIssueFragments.push(fragment);
   }
 
   const pros = dedupeAndFill(rankPhrases(prosFragments, queryTokens), allFragments, queryTokens).slice(0, 6);
@@ -1888,9 +2121,10 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
 async function buildFromAmazonSearch(request) {
   const products = await fetchAmazonProducts(request.normalized_query || request.raw_query);
   const qTokens = normalize(request.raw_query).split(' ').filter(Boolean);
-  const titleMatches = products.filter((p) => qTokens.some((t) => p.product_name.toLowerCase().includes(t))).length;
-  if (products.length < 5 || titleMatches < Math.min(2, qTokens.length || 1)) {
-    return { ok: false, error: 'weak_amazon_search_match' };
+  const expandedTokens = Array.from(new Set(qTokens.flatMap((t) => t.endsWith('s') ? [t, t.slice(0, -1)] : [t, `${t}s`])));
+  const titleMatches = products.filter((p) => expandedTokens.some((t) => normalize(p.product_name).includes(t))).length;
+  if (products.length < 5 || titleMatches < Math.min(2, expandedTokens.length || 1)) {
+    return { ok: false, error: 'weak_amazon_search_match', debug: { products_found: products.length, title_matches: titleMatches, expanded_tokens: expandedTokens } };
   }
   return {
     ok: true,
@@ -1943,7 +2177,7 @@ async function buildOutput(request, published) {
     }
     setActiveRuntimeStage('product_analysis', 'product_analysis_active');
     writeProgress({ request_id: request.request_id, stage: 'product_analysis_active', product: product.product_name, completed_products: analyzedProducts.length, elapsed_stage_ms: Date.now() - startedAt, last_successful_transition: `product_analysis_active:${product.product_name}` });
-    const analysisResult = await withTimeout(buildProductAnalysis(product, request, intelligenceResult.category_intelligence, intelligenceResult.evidence_sources || []), 75 * 1000, { stage: 'product_analysis', request_id: request.request_id, product: product.product_name });
+    const analysisResult = await withTimeout(buildProductAnalysis(product, request, intelligenceResult.category_intelligence, intelligenceResult.evidence_sources || []), 120 * 1000, { stage: 'product_analysis', request_id: request.request_id, product: product.product_name });
     if (!analysisResult.ok || !analysisResult.product_analysis) {
       saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, stage: 'product_analysis_partial', failed_product: product.product_name });
       return { ok: false, error: analysisResult.error || 'product_analysis_missing', debug: analysisResult.debug || null };
@@ -2219,29 +2453,30 @@ async function processOne(request) {
   return { request_id: request.request_id, status: 'completed', published_slug: updated.published_slug, published_url: updated.published_url, strategy: result.strategy };
 }
 
-async function main() {
-  const requestIdArg = process.argv.includes('--request-id') ? process.argv[process.argv.indexOf('--request-id') + 1] : null;
-  activeRequestId = requestIdArg || null;
-  logWorkerEvent('worker_main_start', { argv: process.argv.slice(2) });
-  const existingLock = ensureActiveLock(requestIdArg);
+async function runGeneration(requestIdArg, options = {}) {
+  const requestId = requestIdArg || null;
+  activeRequestId = requestId;
+  if (options.onCheckpoint) setCheckpointHook(options.onCheckpoint);
+  logWorkerEvent('worker_main_start', { argv: requestId ? ['--request-id', requestId] : process.argv.slice(2) });
+  const existingLock = ensureActiveLock(requestId);
   if (existingLock) {
     console.log(JSON.stringify({ ok: false, error: 'lock_exists', lock: existingLock }));
     process.exit(1);
   }
-  fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, request_id: requestIdArg || null, started_at: nowIso(), started_at_ms: Date.now() }));
-  logWorkerEvent('worker_lock_acquired', { lock_path: lockPath, request_id: requestIdArg || null });
+  fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, request_id: requestId, started_at: nowIso(), started_at_ms: Date.now() }));
+  logWorkerEvent('worker_lock_acquired', { lock_path: lockPath, request_id: requestId });
   try {
     const all = paidRequests.readPaidRequests();
-    const queue = all.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated', 'generating'].includes(r.request_status));
-    if (requestIdArg) {
-      const stuck = all.find((r) => r.request_id === requestIdArg && r.request_status === 'generating');
+    const queue = all.filter((r) => (!requestId || r.request_id === requestId) && r.payment_status === 'paid' && ['paid_pending', 'validated', 'generating'].includes(r.request_status));
+    if (requestId) {
+      const stuck = all.find((r) => r.request_id === requestId && r.request_status === 'generating');
       if (stuck) {
-        paidRequests.updateRequestStatus(requestIdArg, { request_status: 'paid_pending', fulfillment_status: null, error: null });
-        writeProgress({ request_id: requestIdArg, stage: 'recovered_stuck_request', last_successful_transition: 'stuck_state_reset' });
+        paidRequests.updateRequestStatus(requestId, { request_status: 'paid_pending', fulfillment_status: null, error: null });
+        writeProgress({ request_id: requestId, stage: 'recovered_stuck_request', last_successful_transition: 'stuck_state_reset' });
       }
     }
     const refreshed = paidRequests.readPaidRequests();
-    const runnableQueue = refreshed.filter((r) => (!requestIdArg || r.request_id === requestIdArg) && r.payment_status === 'paid' && ['paid_pending', 'validated'].includes(r.request_status));
+    const runnableQueue = refreshed.filter((r) => (!requestId || r.request_id === requestId) && r.payment_status === 'paid' && ['paid_pending', 'validated'].includes(r.request_status));
     const results = [];
     for (const item of runnableQueue) {
       try {
@@ -2257,15 +2492,45 @@ async function main() {
         results.push({ request_id: item.request_id, status: 'failed', error: stageError, debug: error?.meta || null });
       }
     }
-    console.log(JSON.stringify({ ok: true, processed: results.length, results }, null, 2));
+    if (!options.silent) console.log(JSON.stringify({ ok: true, processed: results.length, results }, null, 2));
+    return { ok: true, processed: results.length, results };
   } finally {
     logWorkerEvent('worker_main_finally', { lock_present: fs.existsSync(lockPath) });
     if (fs.existsSync(lockPath)) fs.unlinkSync(lockPath);
+    checkpointHook = null;
   }
+}
+
+async function main() {
+  const requestIdArg = process.argv.includes('--request-id') ? process.argv[process.argv.indexOf('--request-id') + 1] : null;
+  await runGeneration(requestIdArg, { silent: false });
+}
+
+function deferActiveShutdown(signal, extra = {}) {
+  shutdownRequested = signal;
+  if (!activeRequestId) return false;
+  try {
+    saveCheckpoint(activeRequestId, {
+      stage: 'shutdown_requested',
+      shutdown_signal: signal,
+      shutdown_requested_at: nowIso(),
+      ...extra
+    });
+    writeProgress({
+      request_id: activeRequestId,
+      stage: 'shutdown_requested',
+      shutdown_signal: signal,
+      shutdown_deferred_until_completion: true,
+      last_successful_transition: 'shutdown_requested'
+    });
+    logWorkerEvent('worker_shutdown_deferred', { request_id: activeRequestId, signal, ...extra });
+  } catch {}
+  return true;
 }
 
 process.on('uncaughtException', (error) => {
   logWorkerEvent('uncaught_exception', { error: error.message || String(error), stack: error.stack || null });
+  if (deferActiveShutdown(shutdownRequested || 'uncaughtException', { error: 'worker_uncaught_exception' })) return;
   if (activeRequestId) {
     try {
       paidRequests.updateRequestStatus(activeRequestId, { fulfillment_status: 'failed', request_status: 'failed', error: 'worker_uncaught_exception' });
@@ -2277,6 +2542,7 @@ process.on('uncaughtException', (error) => {
 
 process.on('unhandledRejection', (error) => {
   logWorkerEvent('unhandled_rejection', { error: String(error && error.message ? error.message : error), stack: error && error.stack ? error.stack : null });
+  if (deferActiveShutdown(shutdownRequested || 'unhandledRejection', { error: 'worker_unhandled_rejection' })) return;
   if (activeRequestId) {
     try {
       paidRequests.updateRequestStatus(activeRequestId, { fulfillment_status: 'failed', request_status: 'failed', error: 'worker_unhandled_rejection' });
@@ -2288,13 +2554,18 @@ process.on('unhandledRejection', (error) => {
 
 process.on('SIGTERM', () => {
   logWorkerEvent('worker_signal', { signal: 'SIGTERM' });
-  if (activeRequestId) {
-    try {
-      paidRequests.updateRequestStatus(activeRequestId, { fulfillment_status: 'failed', request_status: 'failed', error: 'worker_sigterm' });
-      logWorkerEvent('worker_terminal_status_write', { request_id: activeRequestId, request_status: 'failed', fulfillment_status: 'failed', error: 'worker_sigterm' });
-    } catch {}
-  }
+  if (deferActiveShutdown('SIGTERM')) return;
   process.exit(143);
 });
 
-main();
+process.on('SIGINT', () => {
+  logWorkerEvent('worker_signal', { signal: 'SIGINT' });
+  if (deferActiveShutdown('SIGINT')) return;
+  process.exit(130);
+});
+
+module.exports = { runGeneration };
+
+if (require.main === module) {
+  main();
+}

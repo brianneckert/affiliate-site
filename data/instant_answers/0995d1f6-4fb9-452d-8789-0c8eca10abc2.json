@@ -1,0 +1,1104 @@
+{
+  "ok": true,
+  "strategy": "amazon_search_fallback",
+  "request_id": "0995d1f6-4fb9-452d-8789-0c8eca10abc2",
+  "raw_query": "best desk lamps",
+  "normalized_query": "best desk lamps",
+  "generated_at": "2026-04-10T23:41:26.993Z",
+  "top_matches": [],
+  "answer_summary": "Built directly from live Amazon search results for \"best desk lamps\".",
+  "products": [
+    {
+      "asin": "B0D1DLY4H4",
+      "product_name": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio...",
+      "affiliate_url": "https://www.amazon.com/SKYLEO-Led-Desk-Lamp-Brightness/dp/B0D1DLY4H4/ref=sr_1_25?dib=eyJ2IjoiMSJ9.lIDkXa7wQ4qEnbNbovW_rFmdoFtjmlV0nTggRSezxtxm7bUIMLkdZkQ0hhNhTU0eHVUN4DLfP89cv7qr56OVkbmUT9fQd8mGFOJv5tNtn65noRFJJXU2yZdcqiG3kSFeXwcNLccaWHAxq69CF2-0PlyS0WJTNCg2cFvvfBclxmN2Xe3D6JKRIl_JkZISatkVjM1tf4BSFiuYS52SHdDetywXH5n5rw4qgti3Hxu2oO_MyALMP3--omSOAnhRzQdx50BlRsNjVJyKnPeYo7gc6XHhII-_iPMgBCFCwew27eM.uAD2TUEhy_tOOIeuYzHINw4D-VIGXPVdXE22nSr7Phc&dib_tag=se&keywords=best+desk+lamps&qid=1775864485&sr=8-25",
+      "why_it_won": "Selected using review-volume and rating thresholds for \"best desk lamps\".",
+      "notes": "Chosen by descending review count with rating minimums, not by Amazon result position.",
+      "best_for": "best desk lamps",
+      "source": "amazon_search",
+      "rating": 4.4,
+      "review_count": 3621,
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 3621 reviews.",
+          "Solid visible rating around 4.4 stars for this category.",
+          "eye strain"
+        ],
+        "cons": [
+          "reduce eye",
+          "joe task",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "eye strain",
+          "cnn underscored",
+          "reduce eye"
+        ],
+        "matches_complaints": [
+          "reduce eye",
+          "eye strain",
+          "easy energy"
+        ],
+        "unique_strength": "High review-volume Amazon pick for best desk lamps with a 4.4 average rating.",
+        "hidden_issues": "joe task",
+        "best_for": "best desk lamps",
+        "avoid_if": "reduce eye",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2026, tested and reviewed for function and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamps",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2026, tested and reviewed for function and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes all the difference.",
+          "extracted_chars": 12339,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "10 Best Desk Lamps of 2025, Tested by Experts",
+          "page_title": "The 10 Best Desk Lamps for Your Home Office",
+          "href": "https://www.goodhousekeeping.com/home-products/g44879285/best-desk-lamps/",
+          "snippet": "We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.",
+          "page_excerpt": "10 Best Desk Lamps of 2025, Tested by Experts. . The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts. The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts If you’re not a fan of overhead lighting, a great desk lamp can help you study for an exam late into the night or complete a work assignment while it’s dark and rainy outside. Some lamps even have features like multiple temperatures if you dislike a bright white light, phone chargers, and extending necks to create your ideal <a href=\"https://www.goodhousekeeping.com/home-products/g42285814/best-home-office-desk/\" rel=\"nofollow\" data-token-index=\"1\" tabindex=\"0\" target=\"_blank\">home office desk</a> setup. </p><p>To find the <strong>best desk lamps</strong>, our experts in the <a href=\"https://www.goodhousekeeping.com/about/institute/a19748212/good-housekeeping-institute-product-reviews/\" rel=\"noopener noreferrer\" data-token-index=\"3\"",
+          "extracted_chars": 12207,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "page_title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "href": "https://www.theepochtimes.com/epochbuy/best-desk-lamps-reviews-5634444",
+          "snippet": "Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs",
+          "page_excerpt": "The Best Desk Lamps of 2024 | Reviews & Top Picks. . The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks. The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks Deals Health & Wellness Home & Garden Kitchen & Dining Electronics Outdoors Fashion Games & Hobbies Pets Tech Gifts Money Deals Health & Wellness Personal Care Cycling Exercise Medical Supplies Fitness Trackers Home & Garden Kitchen & Dining Electronics Accessories Audio Batteries & Charging Cameras Computers Gaming Headphones Laptops Outdoors Camping Hiking Outdoor Gear Snow Swim Fashion Apparel Bags Shoes Fashion Accessories Games & Hobbies Games & Puzzles Holiday & Seasonal Crafts Music EpochBuy items are selected by The Deals Team, independent of The Epoch Times newsroom. We may earn a commission from qualifying purc",
+          "extracted_chars": 2319,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "16 Best Desk Lamps | The Strategist",
+          "page_title": "The 16 Very Best Desk Lamps",
+          "href": "https://nymag.com/strategist/article/best-desk-lamps.html",
+          "snippet": "The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.",
+          "page_excerpt": "16 Best Desk Lamps | The Strategist. . The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist. The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist Every product is independently selected by (obsessive) editors. Things you buy through our links may earn us a commission. Best in Class Skip article list The Very Best Face Washes The Very Best Face Washes The 8 Very Best White Button-down Shirts for Women The 8 Very Best White Button-down Shirts… The Very Best Portable Air Conditioners The Very Best Portable Air Conditioners The 12 Very Best Facial Masks The 12 Very Best Facial Masks The 15 Very Best Sunscreens The 15 Very Best Sunscreens There’s a New Generation of Window AC Units There’s a New Generation of Window AC Un… The Very Best Mascaras The Very Best Mascaras The 12 Very Best Jeans for Women The 12 Very Best Jeans for Women The Best",
+          "extracted_chars": 12232,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamp",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes a",
+          "extracted_chars": 12357,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide",
+          "page_title": "This color-changing desk lamp is one of my favorite home office upgrades of the year",
+          "href": "https://www.tomsguide.com/best-picks/best-desk-lamps",
+          "snippet": "Thanks to this lamp",
+          "page_excerpt": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. . This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide Skip to main content Club Benefits - Join our community JOIN NOW 12 Member Features 24/7 Access Available 30K+ Active Members Exclusive Newsletters Tech news direct to your inbox Polls Have your say in tech polls Quizzes Test your tech knowledge Member Competitions Member-only chances to win Community Forums Connect with members Exclusive Discounts Members get exclusive savings GET CLUB ACCESS QUICK For the fastest way to join Tom's Guide Club enter your email below. We'll send you a confirmation and sign you up to our to keep you updated on all the latest news. By submitting your information you agree to the Terms & Conditions and and are aged 16 or over. FIND OUT ABOUT OUR M",
+          "extracted_chars": 10189,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter",
+          "page_title": "These Gorgeous Desk Lamps Are All About Form and Function",
+          "href": "https://www.nytimes.com/wirecutter/reviews/best-led-desk-lamp/",
+          "snippet": "We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.",
+          "page_excerpt": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. . These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter SKIP A miniature, modern, minimalist lamp that bends to your will: Koncept Z-Bar Mini Desk Lamp A color-customizable task lamp that doubles as a bedside light: Gantri Analog Task Light A back-to-the-basics, all-steel desk lamp built to last a lifetime: Schoolhouse Joe Task Lamp A space-saving and energy-efficient lamp with a long reach: Uplift LED Desk Lamp E7 With Clamp An intuitive LED desk lamp: Humanscale Nova A classic architect-style lamp: IKEA Forså Work Lamp A classic adjustable shade lamp: Article Leap Table Lamp A tall, slender desk lamp with hands-free controls: Tangram Desk Lamp Aether Other desk lamps worth considering Who should get this Why you should trust us How we",
+          "extracted_chars": 12229,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "page_title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "href": "https://www.cnn.com/cnn-underscored/home/best-desk-lamp",
+          "snippet": "See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.",
+          "page_excerpt": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. . The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored. The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored All products are independently selected and reviewed by CNN&nbsp;Underscored editors. When you buy through links on our site, we may earn a commission. Learn more Home Furniture & Decor The 10 best desk lamps for a well-lit workspace, according to interior designers and editors By Nikol Slatinska , CNN Underscored Published 8:00 AM EST, Fri January 30, 2026 Link Copied! Sophie Shaw/CNN Underscored In this article Best desk lamps What to look for in a desk lamp FAQs Meet our experts Why trust CNN Underscored Quick pic",
+          "extracted_chars": 12333,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps forum discussion",
+          "title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "page_title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "href": "https://www.shine.lighting/threads/top-brands-for-office-study-desk-lamps.37/",
+          "snippet": "The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work...",
+          "page_excerpt": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum. . Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum. Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum New posts Search forums Menu Register Install the app Install Forums The Lighting Industry Best of the Industry You are using an out of date browser. It may not display this or other websites correctly. You should upgrade or use an alternative browser . Vote &nbsp; Top Brands for Office/Study Desk Lamps Thread starter Splendor Start date Jul 31, 2023 Tags desk and workstation lighting office lighting task lighting Currently reading: Vote &nbsp; Top Brands for Office/Study Desk Lamps X Voting statistics 5 5 5 4 4 4 3 3 2 2 2 2 2 1 1",
+          "extracted_chars": 12301,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps | Tested & Ranked",
+          "page_title": "The Best Desk Lamps",
+          "href": "https://www.techgearlab.com/topics/small-and-home-office/best-desk-lamp",
+          "snippet": "We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside...",
+          "page_excerpt": "The Best Desk Lamps | Tested & Ranked. . The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked. The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked Reviews You Can Rely On We buy all the products we test &mdash; no freebies from companies. If you purchase through our links, we may earn a commission, which helps support our testing. Home Office Office Furniture By Ross Patton &sdot; Senior Review Editor&nbsp; &sdot; &nbsp; Updated January 5, 2024 Contributions From: Austin Palmer & Miya Tsudome We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside, and our testers made sure to test each model's adjustability, lighting coverage, and features to help you find the lamp that best suits your needs. Whether you're looking for something sleek and bright, classic and dimmable,",
+          "extracted_chars": 12218,
+          "query_overlap": 2
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 7.2,
+          "speed_responsiveness": 7.2,
+          "reliability": 7.2,
+          "build_quality": 8,
+          "value_for_price": 7.2,
+          "ease_of_use": 8
+        },
+        "final_score": 7.4,
+        "weights": {
+          "core_performance": 0.291,
+          "speed_responsiveness": 0.194,
+          "reliability": 0.146,
+          "build_quality": 0.146,
+          "value_for_price": 0.097,
+          "ease_of_use": 0.126
+        }
+      }
+    },
+    {
+      "asin": "B0CRY97FPB",
+      "product_name": "One Beat LED Small Desk Lamp Power Strip 5ft Extension Cord, 3 Outlets, 4 USB Ports(2 USB C), 4 Modes, 5 Level Touch- Hom...",
+      "affiliate_url": "https://www.amazon.com/Outlets-Bedroom-Bedside-Extension-Essentials/dp/B0CRY97FPB/ref=sr_1_16?dib=eyJ2IjoiMSJ9.lIDkXa7wQ4qEnbNbovW_rFmdoFtjmlV0nTggRSezxtxm7bUIMLkdZkQ0hhNhTU0eHVUN4DLfP89cv7qr56OVkbmUT9fQd8mGFOJv5tNtn65noRFJJXU2yZdcqiG3kSFeXwcNLccaWHAxq69CF2-0PlyS0WJTNCg2cFvvfBclxmN2Xe3D6JKRIl_JkZISatkVjM1tf4BSFiuYS52SHdDetywXH5n5rw4qgti3Hxu2oO_MyALMP3--omSOAnhRzQdx50BlRsNjVJyKnPeYo7gc6XHhII-_iPMgBCFCwew27eM.uAD2TUEhy_tOOIeuYzHINw4D-VIGXPVdXE22nSr7Phc&dib_tag=se&keywords=best+desk+lamps&qid=1775864485&sr=8-16",
+      "why_it_won": "Selected using review-volume and rating thresholds for \"best desk lamps\".",
+      "notes": "Chosen by descending review count with rating minimums, not by Amazon result position.",
+      "best_for": "best desk lamps",
+      "source": "amazon_search",
+      "rating": 4.6,
+      "review_count": 2282,
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 2282 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "eye strain"
+        ],
+        "cons": [
+          "reduce eye",
+          "joe task",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "eye strain",
+          "cnn underscored",
+          "reduce eye"
+        ],
+        "matches_complaints": [
+          "reduce eye",
+          "eye strain",
+          "easy energy"
+        ],
+        "unique_strength": "High review-volume Amazon pick for best desk lamps with a 4.6 average rating.",
+        "hidden_issues": "joe task",
+        "best_for": "best desk lamps",
+        "avoid_if": "reduce eye",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2026, tested and reviewed for function and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamps",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2026, tested and reviewed for function and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes all the difference.",
+          "extracted_chars": 12339,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "10 Best Desk Lamps of 2025, Tested by Experts",
+          "page_title": "The 10 Best Desk Lamps for Your Home Office",
+          "href": "https://www.goodhousekeeping.com/home-products/g44879285/best-desk-lamps/",
+          "snippet": "We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.",
+          "page_excerpt": "10 Best Desk Lamps of 2025, Tested by Experts. . The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts. The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts If you’re not a fan of overhead lighting, a great desk lamp can help you study for an exam late into the night or complete a work assignment while it’s dark and rainy outside. Some lamps even have features like multiple temperatures if you dislike a bright white light, phone chargers, and extending necks to create your ideal <a href=\"https://www.goodhousekeeping.com/home-products/g42285814/best-home-office-desk/\" rel=\"nofollow\" data-token-index=\"1\" tabindex=\"0\" target=\"_blank\">home office desk</a> setup. </p><p>To find the <strong>best desk lamps</strong>, our experts in the <a href=\"https://www.goodhousekeeping.com/about/institute/a19748212/good-housekeeping-institute-product-reviews/\" rel=\"noopener noreferrer\" data-token-index=\"3\"",
+          "extracted_chars": 12207,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "page_title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "href": "https://www.theepochtimes.com/epochbuy/best-desk-lamps-reviews-5634444",
+          "snippet": "Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs",
+          "page_excerpt": "The Best Desk Lamps of 2024 | Reviews & Top Picks. . The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks. The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks Deals Health & Wellness Home & Garden Kitchen & Dining Electronics Outdoors Fashion Games & Hobbies Pets Tech Gifts Money Deals Health & Wellness Personal Care Cycling Exercise Medical Supplies Fitness Trackers Home & Garden Kitchen & Dining Electronics Accessories Audio Batteries & Charging Cameras Computers Gaming Headphones Laptops Outdoors Camping Hiking Outdoor Gear Snow Swim Fashion Apparel Bags Shoes Fashion Accessories Games & Hobbies Games & Puzzles Holiday & Seasonal Crafts Music EpochBuy items are selected by The Deals Team, independent of The Epoch Times newsroom. We may earn a commission from qualifying purc",
+          "extracted_chars": 2319,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "16 Best Desk Lamps | The Strategist",
+          "page_title": "The 16 Very Best Desk Lamps",
+          "href": "https://nymag.com/strategist/article/best-desk-lamps.html",
+          "snippet": "The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.",
+          "page_excerpt": "16 Best Desk Lamps | The Strategist. . The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist. The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist Every product is independently selected by (obsessive) editors. Things you buy through our links may earn us a commission. Best in Class Skip article list The Very Best Face Washes The Very Best Face Washes The 8 Very Best White Button-down Shirts for Women The 8 Very Best White Button-down Shirts… The Very Best Portable Air Conditioners The Very Best Portable Air Conditioners The 12 Very Best Facial Masks The 12 Very Best Facial Masks The 15 Very Best Sunscreens The 15 Very Best Sunscreens There’s a New Generation of Window AC Units There’s a New Generation of Window AC Un… The Very Best Mascaras The Very Best Mascaras The 12 Very Best Jeans for Women The 12 Very Best Jeans for Women The Best",
+          "extracted_chars": 12232,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamp",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes a",
+          "extracted_chars": 12357,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide",
+          "page_title": "This color-changing desk lamp is one of my favorite home office upgrades of the year",
+          "href": "https://www.tomsguide.com/best-picks/best-desk-lamps",
+          "snippet": "Thanks to this lamp",
+          "page_excerpt": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. . This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide Skip to main content Club Benefits - Join our community JOIN NOW 12 Member Features 24/7 Access Available 30K+ Active Members Exclusive Newsletters Tech news direct to your inbox Polls Have your say in tech polls Quizzes Test your tech knowledge Member Competitions Member-only chances to win Community Forums Connect with members Exclusive Discounts Members get exclusive savings GET CLUB ACCESS QUICK For the fastest way to join Tom's Guide Club enter your email below. We'll send you a confirmation and sign you up to our to keep you updated on all the latest news. By submitting your information you agree to the Terms & Conditions and and are aged 16 or over. FIND OUT ABOUT OUR M",
+          "extracted_chars": 10189,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter",
+          "page_title": "These Gorgeous Desk Lamps Are All About Form and Function",
+          "href": "https://www.nytimes.com/wirecutter/reviews/best-led-desk-lamp/",
+          "snippet": "We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.",
+          "page_excerpt": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. . These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter SKIP A miniature, modern, minimalist lamp that bends to your will: Koncept Z-Bar Mini Desk Lamp A color-customizable task lamp that doubles as a bedside light: Gantri Analog Task Light A back-to-the-basics, all-steel desk lamp built to last a lifetime: Schoolhouse Joe Task Lamp A space-saving and energy-efficient lamp with a long reach: Uplift LED Desk Lamp E7 With Clamp An intuitive LED desk lamp: Humanscale Nova A classic architect-style lamp: IKEA Forså Work Lamp A classic adjustable shade lamp: Article Leap Table Lamp A tall, slender desk lamp with hands-free controls: Tangram Desk Lamp Aether Other desk lamps worth considering Who should get this Why you should trust us How we",
+          "extracted_chars": 12229,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "page_title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "href": "https://www.cnn.com/cnn-underscored/home/best-desk-lamp",
+          "snippet": "See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.",
+          "page_excerpt": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. . The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored. The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored All products are independently selected and reviewed by CNN&nbsp;Underscored editors. When you buy through links on our site, we may earn a commission. Learn more Home Furniture & Decor The 10 best desk lamps for a well-lit workspace, according to interior designers and editors By Nikol Slatinska , CNN Underscored Published 8:00 AM EST, Fri January 30, 2026 Link Copied! Sophie Shaw/CNN Underscored In this article Best desk lamps What to look for in a desk lamp FAQs Meet our experts Why trust CNN Underscored Quick pic",
+          "extracted_chars": 12333,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps forum discussion",
+          "title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "page_title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "href": "https://www.shine.lighting/threads/top-brands-for-office-study-desk-lamps.37/",
+          "snippet": "The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work...",
+          "page_excerpt": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum. . Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum. Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum New posts Search forums Menu Register Install the app Install Forums The Lighting Industry Best of the Industry You are using an out of date browser. It may not display this or other websites correctly. You should upgrade or use an alternative browser . Vote &nbsp; Top Brands for Office/Study Desk Lamps Thread starter Splendor Start date Jul 31, 2023 Tags desk and workstation lighting office lighting task lighting Currently reading: Vote &nbsp; Top Brands for Office/Study Desk Lamps X Voting statistics 5 5 5 4 4 4 3 3 2 2 2 2 2 1 1",
+          "extracted_chars": 12301,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps | Tested & Ranked",
+          "page_title": "The Best Desk Lamps",
+          "href": "https://www.techgearlab.com/topics/small-and-home-office/best-desk-lamp",
+          "snippet": "We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside...",
+          "page_excerpt": "The Best Desk Lamps | Tested & Ranked. . The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked. The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked Reviews You Can Rely On We buy all the products we test &mdash; no freebies from companies. If you purchase through our links, we may earn a commission, which helps support our testing. Home Office Office Furniture By Ross Patton &sdot; Senior Review Editor&nbsp; &sdot; &nbsp; Updated January 5, 2024 Contributions From: Austin Palmer & Miya Tsudome We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside, and our testers made sure to test each model's adjustability, lighting coverage, and features to help you find the lamp that best suits your needs. Whether you're looking for something sleek and bright, classic and dimmable,",
+          "extracted_chars": 12218,
+          "query_overlap": 2
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 7.2,
+          "speed_responsiveness": 7.2,
+          "reliability": 7.2,
+          "build_quality": 8,
+          "value_for_price": 7.2,
+          "ease_of_use": 8
+        },
+        "final_score": 7.4,
+        "weights": {
+          "core_performance": 0.291,
+          "speed_responsiveness": 0.194,
+          "reliability": 0.146,
+          "build_quality": 0.146,
+          "value_for_price": 0.097,
+          "ease_of_use": 0.126
+        }
+      }
+    },
+    {
+      "asin": "B0F22BR222",
+      "product_name": "shinelife LED Desk Lamp for Office Home, Bright Desk Light with USB Charging Port, Adjustable Dimmable Desk Lamps 5 Modes ...",
+      "affiliate_url": "https://www.amazon.com/shinelife-Charging-Adjustable-Dimmable-Brightness/dp/B0F22BR222/ref=sr_1_34?dib=eyJ2IjoiMSJ9.lIDkXa7wQ4qEnbNbovW_rFmdoFtjmlV0nTggRSezxtxm7bUIMLkdZkQ0hhNhTU0eHVUN4DLfP89cv7qr56OVkbmUT9fQd8mGFOJv5tNtn65noRFJJXU2yZdcqiG3kSFeXwcNLccaWHAxq69CF2-0PlyS0WJTNCg2cFvvfBclxmN2Xe3D6JKRIl_JkZISatkVjM1tf4BSFiuYS52SHdDetywXH5n5rw4qgti3Hxu2oO_MyALMP3--omSOAnhRzQdx50BlRsNjVJyKnPeYo7gc6XHhII-_iPMgBCFCwew27eM.uAD2TUEhy_tOOIeuYzHINw4D-VIGXPVdXE22nSr7Phc&dib_tag=se&keywords=best+desk+lamps&qid=1775864485&sr=8-34",
+      "why_it_won": "Selected using review-volume and rating thresholds for \"best desk lamps\".",
+      "notes": "Chosen by descending review count with rating minimums, not by Amazon result position.",
+      "best_for": "best desk lamps",
+      "source": "amazon_search",
+      "rating": 4.7,
+      "review_count": 613,
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 613 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "eye strain"
+        ],
+        "cons": [
+          "reduce eye",
+          "joe task",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "eye strain",
+          "cnn underscored",
+          "reduce eye"
+        ],
+        "matches_complaints": [
+          "reduce eye",
+          "eye strain",
+          "easy energy"
+        ],
+        "unique_strength": "High review-volume Amazon pick for best desk lamps with a 4.7 average rating.",
+        "hidden_issues": "joe task",
+        "best_for": "best desk lamps",
+        "avoid_if": "reduce eye",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2026, tested and reviewed for function and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamps",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2026, tested and reviewed for function and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes all the difference.",
+          "extracted_chars": 12339,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "10 Best Desk Lamps of 2025, Tested by Experts",
+          "page_title": "The 10 Best Desk Lamps for Your Home Office",
+          "href": "https://www.goodhousekeeping.com/home-products/g44879285/best-desk-lamps/",
+          "snippet": "We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.",
+          "page_excerpt": "10 Best Desk Lamps of 2025, Tested by Experts. . The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts. The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts If you’re not a fan of overhead lighting, a great desk lamp can help you study for an exam late into the night or complete a work assignment while it’s dark and rainy outside. Some lamps even have features like multiple temperatures if you dislike a bright white light, phone chargers, and extending necks to create your ideal <a href=\"https://www.goodhousekeeping.com/home-products/g42285814/best-home-office-desk/\" rel=\"nofollow\" data-token-index=\"1\" tabindex=\"0\" target=\"_blank\">home office desk</a> setup. </p><p>To find the <strong>best desk lamps</strong>, our experts in the <a href=\"https://www.goodhousekeeping.com/about/institute/a19748212/good-housekeeping-institute-product-reviews/\" rel=\"noopener noreferrer\" data-token-index=\"3\"",
+          "extracted_chars": 12207,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "page_title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "href": "https://www.theepochtimes.com/epochbuy/best-desk-lamps-reviews-5634444",
+          "snippet": "Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs",
+          "page_excerpt": "The Best Desk Lamps of 2024 | Reviews & Top Picks. . The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks. The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks Deals Health & Wellness Home & Garden Kitchen & Dining Electronics Outdoors Fashion Games & Hobbies Pets Tech Gifts Money Deals Health & Wellness Personal Care Cycling Exercise Medical Supplies Fitness Trackers Home & Garden Kitchen & Dining Electronics Accessories Audio Batteries & Charging Cameras Computers Gaming Headphones Laptops Outdoors Camping Hiking Outdoor Gear Snow Swim Fashion Apparel Bags Shoes Fashion Accessories Games & Hobbies Games & Puzzles Holiday & Seasonal Crafts Music EpochBuy items are selected by The Deals Team, independent of The Epoch Times newsroom. We may earn a commission from qualifying purc",
+          "extracted_chars": 2319,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "16 Best Desk Lamps | The Strategist",
+          "page_title": "The 16 Very Best Desk Lamps",
+          "href": "https://nymag.com/strategist/article/best-desk-lamps.html",
+          "snippet": "The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.",
+          "page_excerpt": "16 Best Desk Lamps | The Strategist. . The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist. The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist Every product is independently selected by (obsessive) editors. Things you buy through our links may earn us a commission. Best in Class Skip article list The Very Best Face Washes The Very Best Face Washes The 8 Very Best White Button-down Shirts for Women The 8 Very Best White Button-down Shirts… The Very Best Portable Air Conditioners The Very Best Portable Air Conditioners The 12 Very Best Facial Masks The 12 Very Best Facial Masks The 15 Very Best Sunscreens The 15 Very Best Sunscreens There’s a New Generation of Window AC Units There’s a New Generation of Window AC Un… The Very Best Mascaras The Very Best Mascaras The 12 Very Best Jeans for Women The 12 Very Best Jeans for Women The Best",
+          "extracted_chars": 12232,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamp",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes a",
+          "extracted_chars": 12357,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide",
+          "page_title": "This color-changing desk lamp is one of my favorite home office upgrades of the year",
+          "href": "https://www.tomsguide.com/best-picks/best-desk-lamps",
+          "snippet": "Thanks to this lamp",
+          "page_excerpt": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. . This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide Skip to main content Club Benefits - Join our community JOIN NOW 12 Member Features 24/7 Access Available 30K+ Active Members Exclusive Newsletters Tech news direct to your inbox Polls Have your say in tech polls Quizzes Test your tech knowledge Member Competitions Member-only chances to win Community Forums Connect with members Exclusive Discounts Members get exclusive savings GET CLUB ACCESS QUICK For the fastest way to join Tom's Guide Club enter your email below. We'll send you a confirmation and sign you up to our to keep you updated on all the latest news. By submitting your information you agree to the Terms & Conditions and and are aged 16 or over. FIND OUT ABOUT OUR M",
+          "extracted_chars": 10189,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter",
+          "page_title": "These Gorgeous Desk Lamps Are All About Form and Function",
+          "href": "https://www.nytimes.com/wirecutter/reviews/best-led-desk-lamp/",
+          "snippet": "We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.",
+          "page_excerpt": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. . These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter SKIP A miniature, modern, minimalist lamp that bends to your will: Koncept Z-Bar Mini Desk Lamp A color-customizable task lamp that doubles as a bedside light: Gantri Analog Task Light A back-to-the-basics, all-steel desk lamp built to last a lifetime: Schoolhouse Joe Task Lamp A space-saving and energy-efficient lamp with a long reach: Uplift LED Desk Lamp E7 With Clamp An intuitive LED desk lamp: Humanscale Nova A classic architect-style lamp: IKEA Forså Work Lamp A classic adjustable shade lamp: Article Leap Table Lamp A tall, slender desk lamp with hands-free controls: Tangram Desk Lamp Aether Other desk lamps worth considering Who should get this Why you should trust us How we",
+          "extracted_chars": 12229,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "page_title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "href": "https://www.cnn.com/cnn-underscored/home/best-desk-lamp",
+          "snippet": "See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.",
+          "page_excerpt": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. . The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored. The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored All products are independently selected and reviewed by CNN&nbsp;Underscored editors. When you buy through links on our site, we may earn a commission. Learn more Home Furniture & Decor The 10 best desk lamps for a well-lit workspace, according to interior designers and editors By Nikol Slatinska , CNN Underscored Published 8:00 AM EST, Fri January 30, 2026 Link Copied! Sophie Shaw/CNN Underscored In this article Best desk lamps What to look for in a desk lamp FAQs Meet our experts Why trust CNN Underscored Quick pic",
+          "extracted_chars": 12333,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps forum discussion",
+          "title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "page_title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "href": "https://www.shine.lighting/threads/top-brands-for-office-study-desk-lamps.37/",
+          "snippet": "The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work...",
+          "page_excerpt": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum. . Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum. Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum New posts Search forums Menu Register Install the app Install Forums The Lighting Industry Best of the Industry You are using an out of date browser. It may not display this or other websites correctly. You should upgrade or use an alternative browser . Vote &nbsp; Top Brands for Office/Study Desk Lamps Thread starter Splendor Start date Jul 31, 2023 Tags desk and workstation lighting office lighting task lighting Currently reading: Vote &nbsp; Top Brands for Office/Study Desk Lamps X Voting statistics 5 5 5 4 4 4 3 3 2 2 2 2 2 1 1",
+          "extracted_chars": 12301,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps | Tested & Ranked",
+          "page_title": "The Best Desk Lamps",
+          "href": "https://www.techgearlab.com/topics/small-and-home-office/best-desk-lamp",
+          "snippet": "We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside...",
+          "page_excerpt": "The Best Desk Lamps | Tested & Ranked. . The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked. The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked Reviews You Can Rely On We buy all the products we test &mdash; no freebies from companies. If you purchase through our links, we may earn a commission, which helps support our testing. Home Office Office Furniture By Ross Patton &sdot; Senior Review Editor&nbsp; &sdot; &nbsp; Updated January 5, 2024 Contributions From: Austin Palmer & Miya Tsudome We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside, and our testers made sure to test each model's adjustability, lighting coverage, and features to help you find the lamp that best suits your needs. Whether you're looking for something sleek and bright, classic and dimmable,",
+          "extracted_chars": 12218,
+          "query_overlap": 2
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.8,
+          "speed_responsiveness": 6.8,
+          "reliability": 6.8,
+          "build_quality": 7.6,
+          "value_for_price": 6.8,
+          "ease_of_use": 7.6
+        },
+        "final_score": 7,
+        "weights": {
+          "core_performance": 0.291,
+          "speed_responsiveness": 0.194,
+          "reliability": 0.146,
+          "build_quality": 0.146,
+          "value_for_price": 0.097,
+          "ease_of_use": 0.126
+        }
+      }
+    },
+    {
+      "asin": "B0DQTRH3V4",
+      "product_name": "LitONES Led Desk Lamps for Home Office with Base, Tall Desk Lamp with 50 Light Modes & Memory and Timer Func Computer Ligh...",
+      "affiliate_url": "https://www.amazon.com/LitONES-Office-Function-Conference-Architect/dp/B0DQTRH3V4/ref=sr_1_10?dib=eyJ2IjoiMSJ9.lIDkXa7wQ4qEnbNbovW_rFmdoFtjmlV0nTggRSezxtxm7bUIMLkdZkQ0hhNhTU0eHVUN4DLfP89cv7qr56OVkbmUT9fQd8mGFOJv5tNtn65noRFJJXU2yZdcqiG3kSFeXwcNLccaWHAxq69CF2-0PlyS0WJTNCg2cFvvfBclxmN2Xe3D6JKRIl_JkZISatkVjM1tf4BSFiuYS52SHdDetywXH5n5rw4qgti3Hxu2oO_MyALMP3--omSOAnhRzQdx50BlRsNjVJyKnPeYo7gc6XHhII-_iPMgBCFCwew27eM.uAD2TUEhy_tOOIeuYzHINw4D-VIGXPVdXE22nSr7Phc&dib_tag=se&keywords=best+desk+lamps&qid=1775864485&sr=8-10",
+      "why_it_won": "Selected using review-volume and rating thresholds for \"best desk lamps\".",
+      "notes": "Chosen by descending review count with rating minimums, not by Amazon result position.",
+      "best_for": "best desk lamps",
+      "source": "amazon_search",
+      "rating": 4.8,
+      "review_count": 239,
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 239 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "eye strain"
+        ],
+        "cons": [
+          "reduce eye",
+          "joe task",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "eye strain",
+          "cnn underscored",
+          "reduce eye"
+        ],
+        "matches_complaints": [
+          "reduce eye",
+          "eye strain",
+          "easy energy"
+        ],
+        "unique_strength": "High review-volume Amazon pick for best desk lamps with a 4.8 average rating.",
+        "hidden_issues": "joe task",
+        "best_for": "best desk lamps",
+        "avoid_if": "reduce eye",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2026, tested and reviewed for function and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamps",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2026, tested and reviewed for function and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes all the difference.",
+          "extracted_chars": 12339,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "10 Best Desk Lamps of 2025, Tested by Experts",
+          "page_title": "The 10 Best Desk Lamps for Your Home Office",
+          "href": "https://www.goodhousekeeping.com/home-products/g44879285/best-desk-lamps/",
+          "snippet": "We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.",
+          "page_excerpt": "10 Best Desk Lamps of 2025, Tested by Experts. . The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts. The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts If you’re not a fan of overhead lighting, a great desk lamp can help you study for an exam late into the night or complete a work assignment while it’s dark and rainy outside. Some lamps even have features like multiple temperatures if you dislike a bright white light, phone chargers, and extending necks to create your ideal <a href=\"https://www.goodhousekeeping.com/home-products/g42285814/best-home-office-desk/\" rel=\"nofollow\" data-token-index=\"1\" tabindex=\"0\" target=\"_blank\">home office desk</a> setup. </p><p>To find the <strong>best desk lamps</strong>, our experts in the <a href=\"https://www.goodhousekeeping.com/about/institute/a19748212/good-housekeeping-institute-product-reviews/\" rel=\"noopener noreferrer\" data-token-index=\"3\"",
+          "extracted_chars": 12207,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "page_title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "href": "https://www.theepochtimes.com/epochbuy/best-desk-lamps-reviews-5634444",
+          "snippet": "Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs",
+          "page_excerpt": "The Best Desk Lamps of 2024 | Reviews & Top Picks. . The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks. The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks Deals Health & Wellness Home & Garden Kitchen & Dining Electronics Outdoors Fashion Games & Hobbies Pets Tech Gifts Money Deals Health & Wellness Personal Care Cycling Exercise Medical Supplies Fitness Trackers Home & Garden Kitchen & Dining Electronics Accessories Audio Batteries & Charging Cameras Computers Gaming Headphones Laptops Outdoors Camping Hiking Outdoor Gear Snow Swim Fashion Apparel Bags Shoes Fashion Accessories Games & Hobbies Games & Puzzles Holiday & Seasonal Crafts Music EpochBuy items are selected by The Deals Team, independent of The Epoch Times newsroom. We may earn a commission from qualifying purc",
+          "extracted_chars": 2319,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "16 Best Desk Lamps | The Strategist",
+          "page_title": "The 16 Very Best Desk Lamps",
+          "href": "https://nymag.com/strategist/article/best-desk-lamps.html",
+          "snippet": "The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.",
+          "page_excerpt": "16 Best Desk Lamps | The Strategist. . The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist. The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist Every product is independently selected by (obsessive) editors. Things you buy through our links may earn us a commission. Best in Class Skip article list The Very Best Face Washes The Very Best Face Washes The 8 Very Best White Button-down Shirts for Women The 8 Very Best White Button-down Shirts… The Very Best Portable Air Conditioners The Very Best Portable Air Conditioners The 12 Very Best Facial Masks The 12 Very Best Facial Masks The 15 Very Best Sunscreens The 15 Very Best Sunscreens There’s a New Generation of Window AC Units There’s a New Generation of Window AC Un… The Very Best Mascaras The Very Best Mascaras The 12 Very Best Jeans for Women The 12 Very Best Jeans for Women The Best",
+          "extracted_chars": 12232,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamp",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes a",
+          "extracted_chars": 12357,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide",
+          "page_title": "This color-changing desk lamp is one of my favorite home office upgrades of the year",
+          "href": "https://www.tomsguide.com/best-picks/best-desk-lamps",
+          "snippet": "Thanks to this lamp",
+          "page_excerpt": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. . This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide Skip to main content Club Benefits - Join our community JOIN NOW 12 Member Features 24/7 Access Available 30K+ Active Members Exclusive Newsletters Tech news direct to your inbox Polls Have your say in tech polls Quizzes Test your tech knowledge Member Competitions Member-only chances to win Community Forums Connect with members Exclusive Discounts Members get exclusive savings GET CLUB ACCESS QUICK For the fastest way to join Tom's Guide Club enter your email below. We'll send you a confirmation and sign you up to our to keep you updated on all the latest news. By submitting your information you agree to the Terms & Conditions and and are aged 16 or over. FIND OUT ABOUT OUR M",
+          "extracted_chars": 10189,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter",
+          "page_title": "These Gorgeous Desk Lamps Are All About Form and Function",
+          "href": "https://www.nytimes.com/wirecutter/reviews/best-led-desk-lamp/",
+          "snippet": "We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.",
+          "page_excerpt": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. . These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter SKIP A miniature, modern, minimalist lamp that bends to your will: Koncept Z-Bar Mini Desk Lamp A color-customizable task lamp that doubles as a bedside light: Gantri Analog Task Light A back-to-the-basics, all-steel desk lamp built to last a lifetime: Schoolhouse Joe Task Lamp A space-saving and energy-efficient lamp with a long reach: Uplift LED Desk Lamp E7 With Clamp An intuitive LED desk lamp: Humanscale Nova A classic architect-style lamp: IKEA Forså Work Lamp A classic adjustable shade lamp: Article Leap Table Lamp A tall, slender desk lamp with hands-free controls: Tangram Desk Lamp Aether Other desk lamps worth considering Who should get this Why you should trust us How we",
+          "extracted_chars": 12229,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "page_title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "href": "https://www.cnn.com/cnn-underscored/home/best-desk-lamp",
+          "snippet": "See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.",
+          "page_excerpt": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. . The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored. The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored All products are independently selected and reviewed by CNN&nbsp;Underscored editors. When you buy through links on our site, we may earn a commission. Learn more Home Furniture & Decor The 10 best desk lamps for a well-lit workspace, according to interior designers and editors By Nikol Slatinska , CNN Underscored Published 8:00 AM EST, Fri January 30, 2026 Link Copied! Sophie Shaw/CNN Underscored In this article Best desk lamps What to look for in a desk lamp FAQs Meet our experts Why trust CNN Underscored Quick pic",
+          "extracted_chars": 12333,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps forum discussion",
+          "title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "page_title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "href": "https://www.shine.lighting/threads/top-brands-for-office-study-desk-lamps.37/",
+          "snippet": "The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work...",
+          "page_excerpt": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum. . Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum. Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum New posts Search forums Menu Register Install the app Install Forums The Lighting Industry Best of the Industry You are using an out of date browser. It may not display this or other websites correctly. You should upgrade or use an alternative browser . Vote &nbsp; Top Brands for Office/Study Desk Lamps Thread starter Splendor Start date Jul 31, 2023 Tags desk and workstation lighting office lighting task lighting Currently reading: Vote &nbsp; Top Brands for Office/Study Desk Lamps X Voting statistics 5 5 5 4 4 4 3 3 2 2 2 2 2 1 1",
+          "extracted_chars": 12301,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps | Tested & Ranked",
+          "page_title": "The Best Desk Lamps",
+          "href": "https://www.techgearlab.com/topics/small-and-home-office/best-desk-lamp",
+          "snippet": "We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside...",
+          "page_excerpt": "The Best Desk Lamps | Tested & Ranked. . The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked. The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked Reviews You Can Rely On We buy all the products we test &mdash; no freebies from companies. If you purchase through our links, we may earn a commission, which helps support our testing. Home Office Office Furniture By Ross Patton &sdot; Senior Review Editor&nbsp; &sdot; &nbsp; Updated January 5, 2024 Contributions From: Austin Palmer & Miya Tsudome We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside, and our testers made sure to test each model's adjustability, lighting coverage, and features to help you find the lamp that best suits your needs. Whether you're looking for something sleek and bright, classic and dimmable,",
+          "extracted_chars": 12218,
+          "query_overlap": 2
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.5,
+          "speed_responsiveness": 6.5,
+          "reliability": 6.5,
+          "build_quality": 7.3,
+          "value_for_price": 6.5,
+          "ease_of_use": 7.3
+        },
+        "final_score": 6.7,
+        "weights": {
+          "core_performance": 0.291,
+          "speed_responsiveness": 0.194,
+          "reliability": 0.146,
+          "build_quality": 0.146,
+          "value_for_price": 0.097,
+          "ease_of_use": 0.126
+        }
+      }
+    },
+    {
+      "asin": "B08GDW5JYF",
+      "product_name": "Globe Electric x Novogratz 52887 18\" Desk Lamp, Matte Brass Finish, Adjustable Height, Balance Arm, Rotary Switch on Shad...",
+      "affiliate_url": "https://www.amazon.com/Globe-Electric-52887-Tacoma-1-Light/dp/B08GDW5JYF/ref=sr_1_60?dib=eyJ2IjoiMSJ9.lIDkXa7wQ4qEnbNbovW_rFmdoFtjmlV0nTggRSezxtxm7bUIMLkdZkQ0hhNhTU0eHVUN4DLfP89cv7qr56OVkbmUT9fQd8mGFOJv5tNtn65noRFJJXU2yZdcqiG3kSFeXwcNLccaWHAxq69CF2-0PlyS0WJTNCg2cFvvfBclxmN2Xe3D6JKRIl_JkZISatkVjM1tf4BSFiuYS52SHdDetywXH5n5rw4qgti3Hxu2oO_MyALMP3--omSOAnhRzQdx50BlRsNjVJyKnPeYo7gc6XHhII-_iPMgBCFCwew27eM.uAD2TUEhy_tOOIeuYzHINw4D-VIGXPVdXE22nSr7Phc&dib_tag=se&keywords=best+desk+lamps&qid=1775864485&sr=8-60",
+      "why_it_won": "Selected using review-volume and rating thresholds for \"best desk lamps\".",
+      "notes": "Chosen by descending review count with rating minimums, not by Amazon result position.",
+      "best_for": "best desk lamps",
+      "source": "amazon_search",
+      "rating": 4.4,
+      "review_count": 649,
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 649 reviews.",
+          "Solid visible rating around 4.4 stars for this category.",
+          "eye strain"
+        ],
+        "cons": [
+          "reduce eye",
+          "joe task",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "eye strain",
+          "cnn underscored",
+          "reduce eye"
+        ],
+        "matches_complaints": [
+          "reduce eye",
+          "eye strain",
+          "easy energy"
+        ],
+        "unique_strength": "High review-volume Amazon pick for best desk lamps with a 4.4 average rating.",
+        "hidden_issues": "joe task",
+        "best_for": "best desk lamps",
+        "avoid_if": "reduce eye",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2026, tested and reviewed for function and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamps",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2026, tested and reviewed for function and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes all the difference.",
+          "extracted_chars": 12339,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "10 Best Desk Lamps of 2025, Tested by Experts",
+          "page_title": "The 10 Best Desk Lamps for Your Home Office",
+          "href": "https://www.goodhousekeeping.com/home-products/g44879285/best-desk-lamps/",
+          "snippet": "We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.",
+          "page_excerpt": "10 Best Desk Lamps of 2025, Tested by Experts. . The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts. The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts If you’re not a fan of overhead lighting, a great desk lamp can help you study for an exam late into the night or complete a work assignment while it’s dark and rainy outside. Some lamps even have features like multiple temperatures if you dislike a bright white light, phone chargers, and extending necks to create your ideal <a href=\"https://www.goodhousekeeping.com/home-products/g42285814/best-home-office-desk/\" rel=\"nofollow\" data-token-index=\"1\" tabindex=\"0\" target=\"_blank\">home office desk</a> setup. </p><p>To find the <strong>best desk lamps</strong>, our experts in the <a href=\"https://www.goodhousekeeping.com/about/institute/a19748212/good-housekeeping-institute-product-reviews/\" rel=\"noopener noreferrer\" data-token-index=\"3\"",
+          "extracted_chars": 12207,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "page_title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+          "href": "https://www.theepochtimes.com/epochbuy/best-desk-lamps-reviews-5634444",
+          "snippet": "Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs",
+          "page_excerpt": "The Best Desk Lamps of 2024 | Reviews & Top Picks. . The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks. The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks Deals Health & Wellness Home & Garden Kitchen & Dining Electronics Outdoors Fashion Games & Hobbies Pets Tech Gifts Money Deals Health & Wellness Personal Care Cycling Exercise Medical Supplies Fitness Trackers Home & Garden Kitchen & Dining Electronics Accessories Audio Batteries & Charging Cameras Computers Gaming Headphones Laptops Outdoors Camping Hiking Outdoor Gear Snow Swim Fashion Apparel Bags Shoes Fashion Accessories Games & Hobbies Games & Puzzles Holiday & Seasonal Crafts Music EpochBuy items are selected by The Deals Team, independent of The Epoch Times newsroom. We may earn a commission from qualifying purc",
+          "extracted_chars": 2319,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "16 Best Desk Lamps | The Strategist",
+          "page_title": "The 16 Very Best Desk Lamps",
+          "href": "https://nymag.com/strategist/article/best-desk-lamps.html",
+          "snippet": "The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.",
+          "page_excerpt": "16 Best Desk Lamps | The Strategist. . The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist. The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist Every product is independently selected by (obsessive) editors. Things you buy through our links may earn us a commission. Best in Class Skip article list The Very Best Face Washes The Very Best Face Washes The 8 Very Best White Button-down Shirts for Women The 8 Very Best White Button-down Shirts… The Very Best Portable Air Conditioners The Very Best Portable Air Conditioners The 12 Very Best Facial Masks The 12 Very Best Facial Masks The 15 Very Best Sunscreens The 15 Very Best Sunscreens There’s a New Generation of Window AC Units There’s a New Generation of Window AC Un… The Very Best Mascaras The Very Best Mascaras The 12 Very Best Jeans for Women The 12 Very Best Jeans for Women The Best",
+          "extracted_chars": 12232,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style",
+          "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+          "href": "https://www.businessinsider.com/guides/home/best-desk-lamp",
+          "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+          "page_excerpt": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes a",
+          "extracted_chars": 12357,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps comparison",
+          "title": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide",
+          "page_title": "This color-changing desk lamp is one of my favorite home office upgrades of the year",
+          "href": "https://www.tomsguide.com/best-picks/best-desk-lamps",
+          "snippet": "Thanks to this lamp",
+          "page_excerpt": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. . This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide Skip to main content Club Benefits - Join our community JOIN NOW 12 Member Features 24/7 Access Available 30K+ Active Members Exclusive Newsletters Tech news direct to your inbox Polls Have your say in tech polls Quizzes Test your tech knowledge Member Competitions Member-only chances to win Community Forums Connect with members Exclusive Discounts Members get exclusive savings GET CLUB ACCESS QUICK For the fastest way to join Tom's Guide Club enter your email below. We'll send you a confirmation and sign you up to our to keep you updated on all the latest news. By submitting your information you agree to the Terms & Conditions and and are aged 16 or over. FIND OUT ABOUT OUR M",
+          "extracted_chars": 10189,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter",
+          "page_title": "These Gorgeous Desk Lamps Are All About Form and Function",
+          "href": "https://www.nytimes.com/wirecutter/reviews/best-led-desk-lamp/",
+          "snippet": "We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.",
+          "page_excerpt": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. . These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter SKIP A miniature, modern, minimalist lamp that bends to your will: Koncept Z-Bar Mini Desk Lamp A color-customizable task lamp that doubles as a bedside light: Gantri Analog Task Light A back-to-the-basics, all-steel desk lamp built to last a lifetime: Schoolhouse Joe Task Lamp A space-saving and energy-efficient lamp with a long reach: Uplift LED Desk Lamp E7 With Clamp An intuitive LED desk lamp: Humanscale Nova A classic architect-style lamp: IKEA Forså Work Lamp A classic adjustable shade lamp: Article Leap Table Lamp A tall, slender desk lamp with hands-free controls: Tangram Desk Lamp Aether Other desk lamps worth considering Who should get this Why you should trust us How we",
+          "extracted_chars": 12229,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "web_review",
+          "source_class": "review",
+          "query": "best desk lamps review",
+          "title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "page_title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+          "href": "https://www.cnn.com/cnn-underscored/home/best-desk-lamp",
+          "snippet": "See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.",
+          "page_excerpt": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. . The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored. The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored All products are independently selected and reviewed by CNN&nbsp;Underscored editors. When you buy through links on our site, we may earn a commission. Learn more Home Furniture & Decor The 10 best desk lamps for a well-lit workspace, according to interior designers and editors By Nikol Slatinska , CNN Underscored Published 8:00 AM EST, Fri January 30, 2026 Link Copied! Sophie Shaw/CNN Underscored In this article Best desk lamps What to look for in a desk lamp FAQs Meet our experts Why trust CNN Underscored Quick pic",
+          "extracted_chars": 12333,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps forum discussion",
+          "title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "page_title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+          "href": "https://www.shine.lighting/threads/top-brands-for-office-study-desk-lamps.37/",
+          "snippet": "The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work...",
+          "page_excerpt": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum. . Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum. Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum New posts Search forums Menu Register Install the app Install Forums The Lighting Industry Best of the Industry You are using an out of date browser. It may not display this or other websites correctly. You should upgrade or use an alternative browser . Vote &nbsp; Top Brands for Office/Study Desk Lamps Thread starter Splendor Start date Jul 31, 2023 Tags desk and workstation lighting office lighting task lighting Currently reading: Vote &nbsp; Top Brands for Office/Study Desk Lamps X Voting statistics 5 5 5 4 4 4 3 3 2 2 2 2 2 1 1",
+          "extracted_chars": 12301,
+          "query_overlap": 2
+        },
+        {
+          "source_type": "forum",
+          "source_class": "community",
+          "query": "best desk lamps review",
+          "title": "The Best Desk Lamps | Tested & Ranked",
+          "page_title": "The Best Desk Lamps",
+          "href": "https://www.techgearlab.com/topics/small-and-home-office/best-desk-lamp",
+          "snippet": "We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside...",
+          "page_excerpt": "The Best Desk Lamps | Tested & Ranked. . The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked. The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked Reviews You Can Rely On We buy all the products we test &mdash; no freebies from companies. If you purchase through our links, we may earn a commission, which helps support our testing. Home Office Office Furniture By Ross Patton &sdot; Senior Review Editor&nbsp; &sdot; &nbsp; Updated January 5, 2024 Contributions From: Austin Palmer & Miya Tsudome We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside, and our testers made sure to test each model's adjustability, lighting coverage, and features to help you find the lamp that best suits your needs. Whether you're looking for something sleek and bright, classic and dimmable,",
+          "extracted_chars": 12218,
+          "query_overlap": 2
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 6.4,
+          "speed_responsiveness": 6.4,
+          "reliability": 6.4,
+          "build_quality": 7.2,
+          "value_for_price": 6.4,
+          "ease_of_use": 7.2
+        },
+        "final_score": 6.6,
+        "weights": {
+          "core_performance": 0.291,
+          "speed_responsiveness": 0.194,
+          "reliability": 0.146,
+          "build_quality": 0.146,
+          "value_for_price": 0.097,
+          "ease_of_use": 0.126
+        }
+      }
+    }
+  ],
+  "winner_selection": {
+    "best_overall": {
+      "product_name": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio...",
+      "asin": "B0D1DLY4H4",
+      "final_score": 7.4,
+      "justification": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio... wins Best Overall because it has the highest weighted score, aligns with praised features like eye strain and cnn underscored, and shows minimal alignment with common complaints such as reduce eye and eye strain."
+    },
+    "best_budget": {
+      "product_name": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio...",
+      "asin": "B0D1DLY4H4",
+      "final_score": 7.4,
+      "justification": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio... stands out on value for price while still aligning with praised traits like eye strain and cnn underscored. It shows limited overlap with common complaints, with only light concern around reduce eye and eye strain."
+    },
+    "best_premium": {
+      "product_name": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio...",
+      "asin": "B0D1DLY4H4",
+      "final_score": 7.4,
+      "justification": "SKYLEO Desk Lamp for Home Office, Eye Comfortable LED Desk Light for Long Hours, Adjustable Swing Arm with Memory Functio... earns the premium slot by leading on pure performance while matching praised attributes like eye strain and cnn underscored. It avoids most common complaint patterns, with only some caution around reduce eye and eye strain."
+    }
+  },
+  "category_intelligence": {
+    "top_praises": [
+      "eye strain",
+      "cnn underscored",
+      "reduce eye",
+      "2024 picks",
+      "easy energy",
+      "2025 tested",
+      "tested reviewed",
+      "adjustable easy",
+      "energy efficient",
+      "reduce eye strain"
+    ],
+    "top_complaints": [
+      "reduce eye",
+      "eye strain",
+      "easy energy",
+      "tested task",
+      "task reduce",
+      "adjustable easy",
+      "strain brighten",
+      "task reduce eye",
+      "energy efficient",
+      "efficient tested"
+    ],
+    "decision_drivers": [
+      "may earn",
+      "buy through",
+      "through links",
+      "earn commission",
+      "buy through links",
+      "may earn commission",
+      "joe task",
+      "led lamp",
+      "site may",
+      "rely buy"
+    ],
+    "failure_points": [
+      "joe task",
+      "led lamp",
+      "shaw cnn",
+      "mini lamp",
+      "task lamp",
+      "lamp long",
+      "lamp ikea",
+      "ikea fors",
+      "fors work",
+      "work lamp"
+    ]
+  },
+  "category_intelligence_sources": [
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps review",
+      "title": "The best desk lamps of 2026, tested and reviewed for function and style",
+      "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+      "href": "https://www.businessinsider.com/guides/home/best-desk-lamps",
+      "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+      "page_excerpt": "The best desk lamps of 2026, tested and reviewed for function and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes all the difference.",
+      "extracted_chars": 12339,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps review",
+      "title": "10 Best Desk Lamps of 2025, Tested by Experts",
+      "page_title": "The 10 Best Desk Lamps for Your Home Office",
+      "href": "https://www.goodhousekeeping.com/home-products/g44879285/best-desk-lamps/",
+      "snippet": "We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.",
+      "page_excerpt": "10 Best Desk Lamps of 2025, Tested by Experts. . The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts. The 10 Best Desk Lamps for Your Home Office. We spoke with design and eye experts to find the best desk lamps, including unique styles for work and college.. 10 Best Desk Lamps of 2025, Tested by Experts If you’re not a fan of overhead lighting, a great desk lamp can help you study for an exam late into the night or complete a work assignment while it’s dark and rainy outside. Some lamps even have features like multiple temperatures if you dislike a bright white light, phone chargers, and extending necks to create your ideal <a href=\"https://www.goodhousekeeping.com/home-products/g42285814/best-home-office-desk/\" rel=\"nofollow\" data-token-index=\"1\" tabindex=\"0\" target=\"_blank\">home office desk</a> setup. </p><p>To find the <strong>best desk lamps</strong>, our experts in the <a href=\"https://www.goodhousekeeping.com/about/institute/a19748212/good-housekeeping-institute-product-reviews/\" rel=\"noopener noreferrer\" data-token-index=\"3\"",
+      "extracted_chars": 12207,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps review",
+      "title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+      "page_title": "The Best Desk Lamps of 2024 | Reviews & Top Picks",
+      "href": "https://www.theepochtimes.com/epochbuy/best-desk-lamps-reviews-5634444",
+      "snippet": "Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs",
+      "page_excerpt": "The Best Desk Lamps of 2024 | Reviews & Top Picks. . The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks. The Best Desk Lamps of 2024 | Reviews & Top Picks. Transform your desk setup with our in-depth guide to desk lamps | Discover lamps with features like flexible arms, touch controls, and energy-efficient LEDs. The Best Desk Lamps of 2024 | Reviews & Top Picks Deals Health & Wellness Home & Garden Kitchen & Dining Electronics Outdoors Fashion Games & Hobbies Pets Tech Gifts Money Deals Health & Wellness Personal Care Cycling Exercise Medical Supplies Fitness Trackers Home & Garden Kitchen & Dining Electronics Accessories Audio Batteries & Charging Cameras Computers Gaming Headphones Laptops Outdoors Camping Hiking Outdoor Gear Snow Swim Fashion Apparel Bags Shoes Fashion Accessories Games & Hobbies Games & Puzzles Holiday & Seasonal Crafts Music EpochBuy items are selected by The Deals Team, independent of The Epoch Times newsroom. We may earn a commission from qualifying purc",
+      "extracted_chars": 2319,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps comparison",
+      "title": "16 Best Desk Lamps | The Strategist",
+      "page_title": "The 16 Very Best Desk Lamps",
+      "href": "https://nymag.com/strategist/article/best-desk-lamps.html",
+      "snippet": "The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.",
+      "page_excerpt": "16 Best Desk Lamps | The Strategist. . The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist. The 16 Very Best Desk Lamps. The best desk lamp overall is the Anglepoise Type 75 desk lamp, according to our home writers, who also reviewed other portable, adjustable, and dimmable options.. 16 Best Desk Lamps | The Strategist Every product is independently selected by (obsessive) editors. Things you buy through our links may earn us a commission. Best in Class Skip article list The Very Best Face Washes The Very Best Face Washes The 8 Very Best White Button-down Shirts for Women The 8 Very Best White Button-down Shirts… The Very Best Portable Air Conditioners The Very Best Portable Air Conditioners The 12 Very Best Facial Masks The 12 Very Best Facial Masks The 15 Very Best Sunscreens The 15 Very Best Sunscreens There’s a New Generation of Window AC Units There’s a New Generation of Window AC Un… The Very Best Mascaras The Very Best Mascaras The 12 Very Best Jeans for Women The 12 Very Best Jeans for Women The Best",
+      "extracted_chars": 12232,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps review",
+      "title": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style",
+      "page_title": "The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus",
+      "href": "https://www.businessinsider.com/guides/home/best-desk-lamp",
+      "snippet": "The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.",
+      "page_excerpt": "The best desk lamps of 2025, tested and reviewed for adjustability, eye strain, and style. . The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider. The best desk lamps do more than light up your workspace — our top task lights reduce eye strain and improve focus. The best desk lamps are adjustable, easy to use, and energy efficient. We tested task lamps that reduce eye strain and brighten up your workspace.. The Best Desk Lamps of 2026 - Business Insider Reviews Home Reviews The best desk lamps of 2026, tested and reviewed for function and style Written by Camryn Rabideau edited by Jaclyn Turner Form and function: the right desk lamp will look good in your space, reduce eye strain, and provide ample light. Camryn Rabideau; Business Insider 2026-01-15T22:31:27.067Z Share Copy link Email Facebook WhatsApp X LinkedIn Bluesky Threads Impact Link Save Saved Read in app When you spend hours at your desk, the right task lighting makes a",
+      "extracted_chars": 12357,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps comparison",
+      "title": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide",
+      "page_title": "This color-changing desk lamp is one of my favorite home office upgrades of the year",
+      "href": "https://www.tomsguide.com/best-picks/best-desk-lamps",
+      "snippet": "Thanks to this lamp",
+      "page_excerpt": "This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. . This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide. This color-changing desk lamp is one of my favorite home office upgrades of the year. Thanks to this lamp. This color-changing desk lamp is one of my favorite home office upgrades of the year | Tom's Guide Skip to main content Club Benefits - Join our community JOIN NOW 12 Member Features 24/7 Access Available 30K+ Active Members Exclusive Newsletters Tech news direct to your inbox Polls Have your say in tech polls Quizzes Test your tech knowledge Member Competitions Member-only chances to win Community Forums Connect with members Exclusive Discounts Members get exclusive savings GET CLUB ACCESS QUICK For the fastest way to join Tom's Guide Club enter your email below. We'll send you a confirmation and sign you up to our to keep you updated on all the latest news. By submitting your information you agree to the Terms & Conditions and and are aged 16 or over. FIND OUT ABOUT OUR M",
+      "extracted_chars": 10189,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps review",
+      "title": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter",
+      "page_title": "These Gorgeous Desk Lamps Are All About Form and Function",
+      "href": "https://www.nytimes.com/wirecutter/reviews/best-led-desk-lamp/",
+      "snippet": "We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.",
+      "page_excerpt": "The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. . These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter. These Gorgeous Desk Lamps Are All About Form and Function. We found eight of the best desk lamps in various styles to brighten up any workspace and help you stay on task.. The 9 Best Desk Lamps of 2026 | Reviews by Wirecutter SKIP A miniature, modern, minimalist lamp that bends to your will: Koncept Z-Bar Mini Desk Lamp A color-customizable task lamp that doubles as a bedside light: Gantri Analog Task Light A back-to-the-basics, all-steel desk lamp built to last a lifetime: Schoolhouse Joe Task Lamp A space-saving and energy-efficient lamp with a long reach: Uplift LED Desk Lamp E7 With Clamp An intuitive LED desk lamp: Humanscale Nova A classic architect-style lamp: IKEA Forså Work Lamp A classic adjustable shade lamp: Article Leap Table Lamp A tall, slender desk lamp with hands-free controls: Tangram Desk Lamp Aether Other desk lamps worth considering Who should get this Why you should trust us How we",
+      "extracted_chars": 12229,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "web_review",
+      "source_class": "review",
+      "query": "best desk lamps review",
+      "title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+      "page_title": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored",
+      "href": "https://www.cnn.com/cnn-underscored/home/best-desk-lamp",
+      "snippet": "See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.",
+      "page_excerpt": "The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. . The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored. The 10 best desk lamps for a well-lit work space, according to interior designers and editors | CNN Underscored. See which desk lamps interior designers and editors recommend from Ikea, Design Within Reach and Amazon.. 10 best desk lamps, per interior decorators | CNN Underscored All products are independently selected and reviewed by CNN&nbsp;Underscored editors. When you buy through links on our site, we may earn a commission. Learn more Home Furniture & Decor The 10 best desk lamps for a well-lit workspace, according to interior designers and editors By Nikol Slatinska , CNN Underscored Published 8:00 AM EST, Fri January 30, 2026 Link Copied! Sophie Shaw/CNN Underscored In this article Best desk lamps What to look for in a desk lamp FAQs Meet our experts Why trust CNN Underscored Quick pic",
+      "extracted_chars": 12333,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "forum",
+      "source_class": "community",
+      "query": "best desk lamps forum discussion",
+      "title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+      "page_title": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum",
+      "href": "https://www.shine.lighting/threads/top-brands-for-office-study-desk-lamps.37/",
+      "snippet": "The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work...",
+      "page_excerpt": "Top Brands for Office/Study Desk Lamps | Global Lighting Forum. . Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum. Top Brands for Office/Study Desk Lamps | Global Lighting Forum. The industry&#039;s most influential poll of the world&#039;s top desk lamp brands is online! Vote now! Find companies who produce the best desk lamps for office work.... Top Brands for Office/Study Desk Lamps | Global Lighting Forum New posts Search forums Menu Register Install the app Install Forums The Lighting Industry Best of the Industry You are using an out of date browser. It may not display this or other websites correctly. You should upgrade or use an alternative browser . Vote &nbsp; Top Brands for Office/Study Desk Lamps Thread starter Splendor Start date Jul 31, 2023 Tags desk and workstation lighting office lighting task lighting Currently reading: Vote &nbsp; Top Brands for Office/Study Desk Lamps X Voting statistics 5 5 5 4 4 4 3 3 2 2 2 2 2 1 1",
+      "extracted_chars": 12301,
+      "query_overlap": 2
+    },
+    {
+      "source_type": "forum",
+      "source_class": "community",
+      "query": "best desk lamps review",
+      "title": "The Best Desk Lamps | Tested & Ranked",
+      "page_title": "The Best Desk Lamps",
+      "href": "https://www.techgearlab.com/topics/small-and-home-office/best-desk-lamp",
+      "snippet": "We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside...",
+      "page_excerpt": "The Best Desk Lamps | Tested & Ranked. . The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked. The Best Desk Lamps. We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside.... The Best Desk Lamps | Tested & Ranked Reviews You Can Rely On We buy all the products we test &mdash; no freebies from companies. If you purchase through our links, we may earn a commission, which helps support our testing. Home Office Office Furniture By Ross Patton &sdot; Senior Review Editor&nbsp; &sdot; &nbsp; Updated January 5, 2024 Contributions From: Austin Palmer & Miya Tsudome We carefully tested 11 of the best desk lamps in lab-style side-by-side tests. A good desk lamp is an essential mainstay for any home office or bedside, and our testers made sure to test each model's adjustability, lighting coverage, and features to help you find the lamp that best suits your needs. Whether you're looking for something sleek and bright, classic and dimmable,",
+      "extracted_chars": 12218,
+      "query_overlap": 2
+    }
+  ]
+}

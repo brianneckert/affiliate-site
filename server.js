@@ -251,6 +251,7 @@ function buildSearchIndex() {
       top_pick: content.top_pick || '',
       category: entry.category || content.category || '',
       products: comparison.map(item => item.name),
+      published_at: entry.published_at || entry.updated_at || entry.created_at || null,
       search_text: [
         content.title || '',
         content.summary || '',
@@ -260,6 +261,7 @@ function buildSearchIndex() {
       ].join(' ').toLowerCase()
     });
   }
+  rows.sort((a, b) => (Date.parse(b.published_at || 0) || 0) - (Date.parse(a.published_at || 0) || 0));
   return rows;
 }
 

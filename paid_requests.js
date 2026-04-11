@@ -258,6 +258,13 @@ module.exports = function createPaidRequests({ rootDir }) {
     getRequestById,
     getRequestByStripeCheckoutSessionId,
     upsertRequest,
+    paths: {
+      analyticsDir,
+      paidRequestsStoreDir,
+      searchQueriesPath,
+      paidRequestsPath,
+      userBalancesPath
+    },
     readSearchQueries,
     readPaidRequests,
     readUserBalances,
