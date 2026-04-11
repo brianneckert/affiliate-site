@@ -655,9 +655,16 @@ function renderInstantAnswerSuccessPage(requestId) {
       function applyRequestState(req) {
         const status = req?.request_status || '';
         const payment = req?.payment_status || '';
+        const fulfillment = req?.fulfillment_status || '';
         const targetUrl = req?.published_url || (req?.published_slug ? '/article/' + req.published_slug : null);
+        const articleReady = Boolean(targetUrl) && (
+          status === 'published' ||
+          status === 'completed' ||
+          req?.publish_status === 'published' ||
+          fulfillment === 'completed'
+        );
 
-        if (targetUrl && (status === 'published' || req?.publish_status === 'published')) {
+        if (articleReady) {
           setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your Instant Answer is ready. Redirecting you now...');
           titleEl.textContent = 'Your Instant Answer is ready.';
           ctaEl.style.display = 'block';
