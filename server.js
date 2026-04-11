@@ -351,28 +351,22 @@ function buildInstantAnswerAccess(req) {
   const userRecord = userKey ? paidRequests.getUserRecord(userKey, { ip_hash: ipHash, country }) : null;
   const freeArticlesUsed = Number(userRecord?.free_articles_used || 0);
   const paidBalance = Number(userRecord?.articles_remaining_balance || 0);
-  const isUs = country === 'US';
-  const freeRemaining = isUs ? Math.max(0, 3 - freeArticlesUsed) : 0;
-  const hasFreeAccess = isUs && freeArticlesUsed < 3;
-  const hasPaidBalance = paidBalance > 0;
-  const canGenerate = hasFreeAccess || hasPaidBalance;
-  const accessMode = hasFreeAccess ? 'free' : (hasPaidBalance ? 'bundle' : 'paid');
 
   return {
     ip,
     ipHash,
     userKey,
     country,
-    isUs,
+    isUs: true,
     userRecord,
     successfulGenerations: paidRequests.countSuccessfulGenerationsByIpHash(ipHash),
     freeArticlesUsed,
     paidBalance,
-    freeRemaining,
-    canGenerate,
-    hasFreeAccess,
-    hasPaidBalance,
-    accessMode
+    freeRemaining: null,
+    canGenerate: true,
+    hasFreeAccess: true,
+    hasPaidBalance: false,
+    accessMode: 'free'
   };
 }
 
@@ -996,10 +990,14 @@ function renderHome(req) {
       <section id="empty" class="empty" style="display:none;">
         <div class="empty-title">No matching approved article found.</div>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <button id="instantAnswerBtn20" class="instant-answer-btn">Get Instant Answer</button>
-          <button id="instantAnswerBtn100" class="instant-answer-btn" style="display:none;background:linear-gradient(180deg,#0ea5e9,#2563eb);">Buy 100-article bundle</button>
+          <button id="instantAnswerBtn20" class="instant-answer-btn">Generate Comparison</button>
         </div>
         <div id="emptyText" class="empty-copy"></div>
+        <div id="refineSearch" class="refinement-module" style="display:none;margin-top:18px;text-align:left;">
+          <div class="eyebrow" style="margin-bottom:10px;">Refine your search</div>
+          <p style="margin:0 0 12px 0;color:#cbd5e1;">Narrow your search so the comparison matches your exact use case.</p>
+          <div id="refineChips" class="decision-driver-list"></div>
+        </div>
       </section>
       <div class="footer-note">Local-only experience. Only compliance-approved article content is surfaced here.</div>
     </main>
@@ -1011,7 +1009,8 @@ function renderHome(req) {
       const emptyEl = document.getElementById('empty');
       const emptyText = document.getElementById('emptyText');
       const instantAnswerBtn20 = document.getElementById('instantAnswerBtn20');
-      const instantAnswerBtn100 = document.getElementById('instantAnswerBtn100');
+      const refineSearch = document.getElementById('refineSearch');
+      const refineChips = document.getElementById('refineChips');
       function escapeHtml(value) {
         return String(value || '')
           .replace(/&/g, '&amp;')
@@ -1020,6 +1019,45 @@ function renderHome(req) {
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
       }
+      function buildRefinementSuggestions(rawQuery) {
+        const raw = String(rawQuery || '').trim();
+        if (!raw) return [];
+        const normalized = raw.toLowerCase();
+        const tokens = normalized.split(/\s+/).filter(Boolean);
+        const genericLocationFacets = ['for bathroom', 'for kitchen', 'for office', 'for bedroom', 'for garage', 'for outdoors'];
+        const genericSizeFacets = ['small', 'large', 'compact', 'heavy duty'];
+        const genericStyleFacets = ['with lid', 'stainless steel', 'under $50', 'best overall'];
+        const suggestions = [];
+        const alreadyHas = (phrase) => normalized.includes(phrase.toLowerCase());
+        for (const phrase of [...genericLocationFacets, ...genericSizeFacets, ...genericStyleFacets]) {
+          if (!alreadyHas(phrase)) suggestions.push(raw + ' ' + phrase);
+        }
+        if (tokens.length <= 2) {
+          suggestions.unshift(raw + ' for home use', raw + ' for small spaces', raw + ' best for value');
+        }
+        return Array.from(new Set(suggestions)).slice(0, 8);
+      }
+
+      function renderRefinementSuggestions(raw) {
+        const suggestions = buildRefinementSuggestions(raw);
+        if (!suggestions.length) {
+          refineSearch.style.display = 'none';
+          refineChips.innerHTML = '';
+          return;
+        }
+        refineSearch.style.display = 'block';
+        refineChips.innerHTML = suggestions.map(function(suggestion) {
+          return '<button class="chip" style="cursor:pointer;border:none;" data-query="' + escapeHtml(suggestion) + '">' + escapeHtml(suggestion) + '</button>';
+        }).join('');
+        refineChips.querySelectorAll('[data-query]').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            input.value = btn.dataset.query;
+            renderResults(btn.dataset.query);
+            input.focus();
+          });
+        });
+      }
+
       function renderResults(query) {
         const raw = String(query || '').trim();
         const q = raw.toLowerCase();
@@ -1038,14 +1076,15 @@ function renderHome(req) {
         if (!matches.length && q) {
           emptyEl.style.display = 'block';
           instantAnswerBtn20.style.display = 'inline-block';
-          instantAnswerBtn100.style.display = 'inline-block';
-          instantAnswerBtn20.textContent = 'Get Instant Answer / Buy 20-article bundle';
-          emptyText.innerHTML = "Your first 3 articles are free. After that, unlock prepaid bundles only:<br><br><strong>$5 value per article</strong><br>20 articles for <strong>$14.99</strong> (about $0.75 each)<br>100 articles for <strong>$59.00</strong> (about $0.59 each)<br><br><strong>What you'll get:</strong> a comparison of the top 5 <strong>" + escapeHtml(raw) + "</strong> available on Amazon.com with a clear winner selected + a link to the exact products we compare.<br><br>Let our deep learning AI model do the heavy lifting.";
+          instantAnswerBtn20.textContent = 'Generate Comparison';
+          emptyText.innerHTML = "We can generate a direct comparison for <strong>" + escapeHtml(raw) + "</strong>. If your search is broad, refine it first so the comparison matches your exact use case.";
+          renderRefinementSuggestions(raw);
         } else {
           emptyEl.style.display = matches.length ? 'none' : 'block';
           instantAnswerBtn20.style.display = 'none';
-          instantAnswerBtn100.style.display = 'none';
           emptyText.innerHTML = '';
+          refineSearch.style.display = 'none';
+          refineChips.innerHTML = '';
         }
       }
       const sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'sess-' + Math.random().toString(36).slice(2);
@@ -1086,7 +1125,7 @@ function renderHome(req) {
           const res = await fetch('/api/instant-answer/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ raw_query: q, notes: 'search miss instant answer', bundle_code: bundleCode })
+            body: JSON.stringify({ raw_query: q, notes: 'search miss instant answer', bundle_code: bundleCode || null })
           });
           const data = await res.json();
           if (res.ok && !data.request_persisted) {
@@ -1110,10 +1149,7 @@ function renderHome(req) {
         }
       }
       instantAnswerBtn20.addEventListener('click', function() {
-        startInstantAnswer('article_bundle_20', instantAnswerBtn20, 'Checking access…', 'Get Instant Answer / Buy 20-article bundle');
-      });
-      instantAnswerBtn100.addEventListener('click', function() {
-        startInstantAnswer('article_bundle_100', instantAnswerBtn100, 'Creating checkout…', 'Buy 100-article bundle');
+        startInstantAnswer(null, instantAnswerBtn20, 'Generating…', 'Generate Comparison');
       });
       input.addEventListener('input', function(e) {
         renderResults(e.target.value);
