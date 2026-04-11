@@ -4463,6 +4463,27 @@
       "related_articles": [],
       "duplicate_of": null,
       "source_request_id": "49eb4433-fe36-430f-9f93-4cb602427b01"
+    },
+    {
+      "article_slug": "best-desk-lamps",
+      "category": "best desk lamps",
+      "title": "Best Desk Lamps",
+      "output_dir": "data/articles/best-desk-lamps",
+      "article_dir": "data/articles/best-desk-lamps",
+      "topic_family": "best desk lamps",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-04-11",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true,
+        "category_intelligence_required": true
+      },
+      "published_at": "2026-04-11T00:00:37.452Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [],
+      "duplicate_of": null,
+      "source_request_id": "0995d1f6-4fb9-452d-8789-0c8eca10abc2"
     }
   ]
 }
