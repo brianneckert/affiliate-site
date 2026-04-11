@@ -644,6 +644,7 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
       const queryHint = ${JSON.stringify(queryHint || '')};
       const sessionId = new URLSearchParams(window.location.search).get('session_id') || '';
       let missingRequestPolls = 0;
+      let finalizingMode = false;
       const titleEl = document.getElementById('title');
       const subEl = document.getElementById('sub');
       const badgeEl = document.getElementById('badge');
@@ -668,6 +669,11 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
         if (sub) subEl.textContent = sub;
       }
 
+      function enterFinalizingMode(copy) {
+        finalizingMode = true;
+        setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', copy || 'Your comparison is almost ready. Final article checks are underway.');
+      }
+
       function applyRequestState(req) {
         const status = req?.request_status || '';
         const payment = req?.payment_status || '';
@@ -681,9 +687,14 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
         );
 
         if (articleReady) {
-          setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', 'Your comparison is almost ready. Final article checks are underway.');
+          enterFinalizingMode('Your comparison is almost ready. Final article checks are underway.');
           ctaEl.style.display = 'block';
           articleLinkEl.href = targetUrl;
+          return false;
+        }
+
+        if (finalizingMode) {
+          enterFinalizingMode('Your comparison is almost ready. Final article checks are underway.');
           return false;
         }
 
@@ -692,7 +703,7 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
         } else if (payment === 'paid' && status === 'validated') {
           setStepState('compare', ['payment','data'], 72, 'Comparing options', 'We have the candidates and are selecting the clearest winner now.');
         } else if (payment === 'paid') {
-          setStepState('publish', ['payment','data','compare'], 88, 'Publishing article', 'We are finalizing and publishing your comparison page.');
+          enterFinalizingMode('We are finalizing and publishing your comparison page.');
         } else {
           setStepState('payment', [], 16, 'Starting research', 'Deep research underway. This may take a moment while your comparison is prepared.');
         }
@@ -718,9 +729,9 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
             setTimeout(() => { window.location.href = targetUrl; }, 1200);
             return true;
           }
-          setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', 'Your comparison is almost ready. Final article checks are underway.');
+          enterFinalizingMode('Your comparison is almost ready. Final article checks are underway.');
         } catch {
-          setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', 'Your comparison is almost ready. Final article checks are underway.');
+          enterFinalizingMode('Your comparison is almost ready. Final article checks are underway.');
         }
         return false;
       }
