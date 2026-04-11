@@ -624,12 +624,12 @@ function renderInstantAnswerSuccessPage(requestId) {
     <main class="wrap">
       <a class="back" href="/">← Back</a>
       <section class="card">
-        <h1 id="title">Payment received. Building your Instant Answer now.</h1>
-        <div id="sub" class="sub">We’re gathering data, comparing the top 5 Amazon options, and selecting a clear winner for you.</div>
+        <h1 id="title">Building your comparison now.</h1>
+        <div id="sub" class="sub">Deep research underway. This may take a moment while we gather data, compare the leading options, and select a clear winner.</div>
         <div class="status-badge" id="badge">Working on it</div>
         <div class="bar-shell"><div class="bar" id="bar"></div></div>
         <div class="steps">
-          <div class="step active" id="step-payment"><div class="dot"></div><div><div class="step-title">Payment confirmed</div><div class="step-copy">Your request is recorded and queued.</div></div></div>
+          <div class="step active" id="step-payment"><div class="dot"></div><div><div class="step-title">Request received</div><div class="step-copy">Your search is recorded and queued.</div></div></div>
           <div class="step" id="step-data"><div class="dot"></div><div><div class="step-title">Gathering Amazon product data</div><div class="step-copy">Finding the top 5 best matches for your search.</div></div></div>
           <div class="step" id="step-compare"><div class="dot"></div><div><div class="step-title">Comparing and selecting a winner</div><div class="step-copy">Ranking the strongest options and choosing a clear top pick.</div></div></div>
           <div class="step" id="step-publish"><div class="dot"></div><div><div class="step-title">Publishing your article</div><div class="step-copy">Preparing the final article page and redirecting you automatically.</div></div></div>
@@ -678,8 +678,8 @@ function renderInstantAnswerSuccessPage(requestId) {
         );
 
         if (articleReady) {
-          setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your Instant Answer is ready. Redirecting you now...');
-          titleEl.textContent = 'Your Instant Answer is ready.';
+          setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your comparison is ready. Redirecting you now...');
+          titleEl.textContent = 'Your comparison is ready.';
           ctaEl.style.display = 'block';
           articleLinkEl.href = targetUrl;
           setTimeout(() => { window.location.href = targetUrl; }, 1200);
@@ -687,13 +687,13 @@ function renderInstantAnswerSuccessPage(requestId) {
         }
 
         if (payment === 'paid' && (status === 'generating' || status === 'paid_pending')) {
-          setStepState('data', ['payment'], 45, 'Gathering data', 'We are collecting the strongest Amazon matches for your query.');
+          setStepState('data', ['payment'], 45, 'Gathering data', 'Deep research underway. We are collecting the strongest matches for your query.');
         } else if (payment === 'paid' && status === 'validated') {
           setStepState('compare', ['payment','data'], 72, 'Comparing options', 'We have the candidates and are selecting the clearest winner now.');
         } else if (payment === 'paid') {
           setStepState('publish', ['payment','data','compare'], 88, 'Publishing article', 'We are finalizing and publishing your comparison page.');
         } else {
-          setStepState('payment', [], 16, 'Waiting for payment confirmation', 'Your payment completed. We are waiting for the payment confirmation to finish syncing.');
+          setStepState('payment', [], 16, 'Starting research', 'Deep research underway. This may take a moment while your comparison is prepared.');
         }
         return false;
       }
