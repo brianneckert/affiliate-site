@@ -708,10 +708,18 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
 
         if (requestFailed) {
           finalizingMode = false;
-          const actualError = String(req?.error || fulfillment || status || 'generation_failed').replace(/_/g, ' ');
+          const rawError = req?.debug?.error || req?.message || req?.error || fulfillment || status || 'generation_failed';
+          const debugParts = [
+            req?.debug?.stage ? ('stage: ' + req.debug.stage) : '',
+            req?.debug?.product ? ('product: ' + req.debug.product) : '',
+            req?.debug?.objective ? ('objective: ' + req.debug.objective) : '',
+            req?.debug?.reason ? ('reason: ' + req.debug.reason) : ''
+          ].filter(Boolean);
+          const actualError = String(rawError).replace(/_/g, ' ');
+          const detailText = debugParts.length ? (' (' + debugParts.join(' | ') + ')') : '';
           setStepState('publish', ['payment'], 100, 'Generation failed', 'This comparison could not be completed automatically.');
           titleEl.textContent = 'This comparison ran into a problem.';
-          subEl.textContent = 'Error: ' + actualError + '. You can go back and try the search again.';
+          subEl.textContent = 'Error: ' + actualError + detailText + '. You can go back and try the search again.';
           ctaEl.style.display = 'block';
           articleLinkEl.href = '/';
           articleLinkEl.textContent = 'Start a new search';
