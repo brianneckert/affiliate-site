@@ -1,0 +1,410 @@
+{
+  "ok": true,
+  "strategy": "amazon_search_fallback",
+  "request_id": "0fc567e2-fd59-4db7-89c5-e1686c41d5eb",
+  "raw_query": "AAA batteries",
+  "normalized_query": "aaa batteries",
+  "generated_at": "2026-04-11T04:30:54.237Z",
+  "top_matches": [],
+  "answer_summary": "Built directly from live Amazon search results for \"AAA batteries\".",
+  "products": [
+    {
+      "asin": "B079GS4YQS",
+      "product_name": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery",
+      "affiliate_url": "https://www.amazon.com/dp/B079GS4YQS?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"aaa batteries\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "aaa batteries",
+      "source": "amazon_search",
+      "rating": 4.8,
+      "review_count": 53580,
+      "query_fit_tokens": [
+        "aaa",
+        "batteries",
+        "batterie"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 53580 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "strong runtime for everyday devices"
+        ],
+        "cons": [
+          "performance can drop in high-drain devices",
+          "short runtime",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong runtime for everyday devices",
+          "good value for the price",
+          "reliable for household use"
+        ],
+        "matches_complaints": [
+          "performance can drop in high-drain devices",
+          "cheap packs may leak or fade faster"
+        ],
+        "unique_strength": "High review-volume Amazon pick for aaa batteries with a 4.8 average rating.",
+        "hidden_issues": "short runtime",
+        "best_for": "aaa batteries",
+        "avoid_if": "performance can drop in high-drain devices",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B079GS4YQS?tag=helperscollec-20",
+          "title": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery",
+          "source_type": "amazon_search",
+          "page_title": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery",
+          "page_excerpt": "Amazon search fallback evidence for AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery"
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 9,
+          "speed_responsiveness": 10,
+          "reliability": 9,
+          "build_quality": 8.4,
+          "value_for_price": 10,
+          "ease_of_use": 8.2
+        },
+        "final_score": 9.1,
+        "weights": {
+          "core_performance": 0.287,
+          "speed_responsiveness": 0.2,
+          "reliability": 0.157,
+          "build_quality": 0.157,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.087
+        }
+      }
+    },
+    {
+      "asin": "B09RTVN5GN",
+      "product_name": "Energizer Alkaline Power AAA Batteries, 32 Count, Long-Lasting Triple A Batteries, Suitable for Everyday Electronics and E...",
+      "affiliate_url": "https://www.amazon.com/dp/B09RTVN5GN?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"aaa batteries\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "aaa batteries",
+      "source": "amazon_search",
+      "rating": 4.8,
+      "review_count": 53523,
+      "query_fit_tokens": [
+        "aaa",
+        "batteries",
+        "batterie"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 53523 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "strong runtime for everyday devices"
+        ],
+        "cons": [
+          "performance can drop in high-drain devices",
+          "short runtime",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong runtime for everyday devices",
+          "good value for the price",
+          "reliable for household use"
+        ],
+        "matches_complaints": [
+          "performance can drop in high-drain devices",
+          "cheap packs may leak or fade faster"
+        ],
+        "unique_strength": "High review-volume Amazon pick for aaa batteries with a 4.8 average rating.",
+        "hidden_issues": "short runtime",
+        "best_for": "aaa batteries",
+        "avoid_if": "performance can drop in high-drain devices",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B09RTVN5GN?tag=helperscollec-20",
+          "title": "Energizer Alkaline Power AAA Batteries, 32 Count, Long-Lasting Triple A Batteries, Suitable for Everyday Electronics and E...",
+          "source_type": "amazon_search",
+          "page_title": "Energizer Alkaline Power AAA Batteries, 32 Count, Long-Lasting Triple A Batteries, Suitable for Everyday Electronics and E...",
+          "page_excerpt": "Amazon search fallback evidence for Energizer Alkaline Power AAA Batteries, 32 Count, Long-Lasting Triple A Batteries, Suitable for Everyday Electronics and E..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 9,
+          "speed_responsiveness": 10,
+          "reliability": 9,
+          "build_quality": 8.4,
+          "value_for_price": 10,
+          "ease_of_use": 8.2
+        },
+        "final_score": 9.1,
+        "weights": {
+          "core_performance": 0.287,
+          "speed_responsiveness": 0.2,
+          "reliability": 0.157,
+          "build_quality": 0.157,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.087
+        }
+      }
+    },
+    {
+      "asin": "B006OVWT08",
+      "product_name": "ACDelco 20-Count Triple AAA Batteries, Maximum Power Super Alkaline Battery for Home and Office, 10-Year Shelf Life, Reclo...",
+      "affiliate_url": "https://www.amazon.com/dp/B006OVWT08?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"aaa batteries\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "aaa batteries",
+      "source": "amazon_search",
+      "rating": 4.7,
+      "review_count": 53540,
+      "query_fit_tokens": [
+        "aaa",
+        "batteries",
+        "batterie"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 53540 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong runtime for everyday devices"
+        ],
+        "cons": [
+          "performance can drop in high-drain devices",
+          "short runtime",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong runtime for everyday devices",
+          "good value for the price",
+          "reliable for household use"
+        ],
+        "matches_complaints": [
+          "performance can drop in high-drain devices",
+          "cheap packs may leak or fade faster"
+        ],
+        "unique_strength": "High review-volume Amazon pick for aaa batteries with a 4.7 average rating.",
+        "hidden_issues": "short runtime",
+        "best_for": "aaa batteries",
+        "avoid_if": "performance can drop in high-drain devices",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B006OVWT08?tag=helperscollec-20",
+          "title": "ACDelco 20-Count Triple AAA Batteries, Maximum Power Super Alkaline Battery for Home and Office, 10-Year Shelf Life, Reclo...",
+          "source_type": "amazon_search",
+          "page_title": "ACDelco 20-Count Triple AAA Batteries, Maximum Power Super Alkaline Battery for Home and Office, 10-Year Shelf Life, Reclo...",
+          "page_excerpt": "Amazon search fallback evidence for ACDelco 20-Count Triple AAA Batteries, Maximum Power Super Alkaline Battery for Home and Office, 10-Year Shelf Life, Reclo..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.8,
+          "speed_responsiveness": 9.8,
+          "reliability": 8.8,
+          "build_quality": 8.2,
+          "value_for_price": 10,
+          "ease_of_use": 8
+        },
+        "final_score": 9,
+        "weights": {
+          "core_performance": 0.287,
+          "speed_responsiveness": 0.2,
+          "reliability": 0.157,
+          "build_quality": 0.157,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.087
+        }
+      }
+    },
+    {
+      "asin": "B07NWWLLMQ",
+      "product_name": "Amazon Basics 16-Pack Rechargeable AAA NiMH Batteries, 800 mAh, 1.2V, Low Self-Discharge, Pre-Charged, Recharge up to 1000...",
+      "affiliate_url": "https://www.amazon.com/dp/B07NWWLLMQ?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"aaa batteries\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "aaa batteries",
+      "source": "amazon_search",
+      "rating": 4.6,
+      "review_count": 223003,
+      "query_fit_tokens": [
+        "aaa",
+        "batteries",
+        "batterie"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 223003 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong runtime for everyday devices"
+        ],
+        "cons": [
+          "performance can drop in high-drain devices",
+          "short runtime",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong runtime for everyday devices",
+          "good value for the price",
+          "reliable for household use"
+        ],
+        "matches_complaints": [
+          "performance can drop in high-drain devices",
+          "cheap packs may leak or fade faster"
+        ],
+        "unique_strength": "High review-volume Amazon pick for aaa batteries with a 4.6 average rating.",
+        "hidden_issues": "short runtime",
+        "best_for": "aaa batteries",
+        "avoid_if": "performance can drop in high-drain devices",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B07NWWLLMQ?tag=helperscollec-20",
+          "title": "Amazon Basics 16-Pack Rechargeable AAA NiMH Batteries, 800 mAh, 1.2V, Low Self-Discharge, Pre-Charged, Recharge up to 1000...",
+          "source_type": "amazon_search",
+          "page_title": "Amazon Basics 16-Pack Rechargeable AAA NiMH Batteries, 800 mAh, 1.2V, Low Self-Discharge, Pre-Charged, Recharge up to 1000...",
+          "page_excerpt": "Amazon search fallback evidence for Amazon Basics 16-Pack Rechargeable AAA NiMH Batteries, 800 mAh, 1.2V, Low Self-Discharge, Pre-Charged, Recharge up to 1000..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.7,
+          "speed_responsiveness": 9.7,
+          "reliability": 8.7,
+          "build_quality": 8.1,
+          "value_for_price": 10,
+          "ease_of_use": 7.9
+        },
+        "final_score": 8.9,
+        "weights": {
+          "core_performance": 0.287,
+          "speed_responsiveness": 0.2,
+          "reliability": 0.157,
+          "build_quality": 0.157,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.087
+        }
+      }
+    },
+    {
+      "asin": "B07VSV1354",
+      "product_name": "Amazon Basics 300-Pack AAA Alkaline Industrial Batteries, 1.5 Volt, 5-Year Shelf Life",
+      "affiliate_url": "https://www.amazon.com/dp/B07VSV1354?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"aaa batteries\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "aaa batteries",
+      "source": "amazon_search",
+      "rating": 4.6,
+      "review_count": 61450,
+      "query_fit_tokens": [
+        "aaa",
+        "batteries",
+        "batterie"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 61450 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong runtime for everyday devices"
+        ],
+        "cons": [
+          "performance can drop in high-drain devices",
+          "short runtime",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong runtime for everyday devices",
+          "good value for the price",
+          "reliable for household use"
+        ],
+        "matches_complaints": [
+          "performance can drop in high-drain devices",
+          "cheap packs may leak or fade faster"
+        ],
+        "unique_strength": "High review-volume Amazon pick for aaa batteries with a 4.6 average rating.",
+        "hidden_issues": "short runtime",
+        "best_for": "aaa batteries",
+        "avoid_if": "performance can drop in high-drain devices",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B07VSV1354?tag=helperscollec-20",
+          "title": "Amazon Basics 300-Pack AAA Alkaline Industrial Batteries, 1.5 Volt, 5-Year Shelf Life",
+          "source_type": "amazon_search",
+          "page_title": "Amazon Basics 300-Pack AAA Alkaline Industrial Batteries, 1.5 Volt, 5-Year Shelf Life",
+          "page_excerpt": "Amazon search fallback evidence for Amazon Basics 300-Pack AAA Alkaline Industrial Batteries, 1.5 Volt, 5-Year Shelf Life"
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "core_performance": 8.7,
+          "speed_responsiveness": 9.7,
+          "reliability": 8.7,
+          "build_quality": 8.1,
+          "value_for_price": 10,
+          "ease_of_use": 7.9
+        },
+        "final_score": 8.9,
+        "weights": {
+          "core_performance": 0.287,
+          "speed_responsiveness": 0.2,
+          "reliability": 0.157,
+          "build_quality": 0.157,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.087
+        }
+      }
+    }
+  ],
+  "winner_selection": {
+    "best_overall": {
+      "product_name": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery",
+      "asin": "B079GS4YQS",
+      "final_score": 9.1,
+      "justification": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery wins Best Overall because it has the highest weighted score, aligns with praised features like strong runtime for everyday devices and good value for the price, and shows minimal alignment with common complaints such as performance can drop in high-drain devices and cheap packs may leak or fade faster."
+    },
+    "best_budget": {
+      "product_name": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery",
+      "asin": "B079GS4YQS",
+      "final_score": 9.1,
+      "justification": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery stands out on value for price while still aligning with praised traits like strong runtime for everyday devices and good value for the price. It shows limited overlap with common complaints, with only light concern around performance can drop in high-drain devices and cheap packs may leak or fade faster."
+    },
+    "best_premium": {
+      "product_name": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery",
+      "asin": "B079GS4YQS",
+      "final_score": 9.1,
+      "justification": "AAA Batteries, 48 count - Energizer MAX Premium Alkaline Triple A Battery earns the premium slot by leading on pure performance while matching praised attributes like strong runtime for everyday devices and good value for the price. It avoids most common complaint patterns, with only some caution around performance can drop in high-drain devices and cheap packs may leak or fade faster."
+    }
+  },
+  "category_intelligence": {
+    "query": "AAA batteries",
+    "decision_drivers": [
+      "runtime consistency",
+      "value per pack",
+      "leak resistance"
+    ],
+    "top_praises": [
+      "strong runtime for everyday devices",
+      "good value for the price",
+      "reliable for household use"
+    ],
+    "top_complaints": [
+      "performance can drop in high-drain devices",
+      "cheap packs may leak or fade faster"
+    ],
+    "failure_points": [
+      "short runtime",
+      "leak risk",
+      "inconsistent shelf life"
+    ]
+  },
+  "category_intelligence_sources": []
+}
