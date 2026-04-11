@@ -559,6 +559,17 @@ function kickOffInstantAnswerProcessing(requestId) {
   if (!queued) {
     throw new Error(`queue_enqueue_failed:${requestId}`);
   }
+  try {
+    const child = execFile(process.execPath, [processorScriptPath, '--request-id', requestId], {
+      cwd: __dirname,
+      detached: true,
+      stdio: 'ignore'
+    });
+    child.unref();
+    logRequestCreation('direct_processor_spawned', { request_id: requestId, pid: child.pid || null, processor_path: processorScriptPath });
+  } catch (error) {
+    logRequestCreation('direct_processor_spawn_failed', { request_id: requestId, error: error.message || String(error) });
+  }
   logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker', queue_status: queued.status || null });
 }
 
