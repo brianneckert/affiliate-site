@@ -2418,6 +2418,7 @@ function ensurePublish(registry, request, output) {
     article_slug: slug,
     category: request.normalized_query,
     title,
+    seo_title: `Amazon's Top 5 ${title}`,
     summary: `${bestOverallProduct.product_name} wins this ${request.raw_query} comparison because it comes out ahead on ${comparisonFocus} versus the other options in the lineup.`,
     top_pick: output.winner_selection?.best_overall?.product_name || output.products[0].product_name,
     decision_engine_rules: {
