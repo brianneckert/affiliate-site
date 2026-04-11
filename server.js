@@ -681,12 +681,10 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
         );
 
         if (articleReady) {
-          setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your comparison is ready. Redirecting you now...');
-          titleEl.textContent = 'Your comparison is ready.';
+          setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', 'Your comparison is almost ready. Final article checks are underway.');
           ctaEl.style.display = 'block';
           articleLinkEl.href = targetUrl;
-          setTimeout(() => { window.location.href = targetUrl; }, 1200);
-          return true;
+          return false;
         }
 
         if (payment === 'paid' && (status === 'generating' || status === 'paid_pending')) {
@@ -720,7 +718,10 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
             setTimeout(() => { window.location.href = targetUrl; }, 1200);
             return true;
           }
-        } catch {}
+          setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', 'Your comparison is almost ready. Final article checks are underway.');
+        } catch {
+          setStepState('publish', ['payment','data','compare'], 92, 'Finalizing article', 'Your comparison is almost ready. Final article checks are underway.');
+        }
         return false;
       }
 
