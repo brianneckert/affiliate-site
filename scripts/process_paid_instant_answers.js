@@ -2320,20 +2320,38 @@ function ensurePublish(registry, request, output) {
   }));
   const bestOverallProduct = output.products.find((p) => p.product_name === output.winner_selection?.best_overall?.product_name) || output.products[0];
   const winnerSummary = `${bestOverallProduct.product_name} is the strongest overall choice for ${request.raw_query} because it best matches buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall performance and value'}. It also shows less overlap with common complaint patterns than the alternatives.`;
+  const cleanBullet = (value = '') => String(value || '').replace(/\s+/g, ' ').trim();
+  const usableBullet = (value = '') => {
+    const text = cleanBullet(value);
+    if (!text) return false;
+    if (text.length < 8) return false;
+    if (/^(cnn underscored|business insider|wirecutter|the strategist|good housekeeping)$/i.test(text)) return false;
+    return /[a-z]/i.test(text);
+  };
   const winnerWhyItWon = [
-    ...((bestOverallProduct.product_analysis?.matches_praises || []).slice(0, 2).map((item) => `Excels in ${item}`)),
-    ...((output.category_intelligence?.top_complaints || []).slice(0, 2).map((item) => `Avoids ${item}`))
-  ].slice(0, 4);
+    ...((bestOverallProduct.product_analysis?.pros || []).slice(0, 2).filter(usableBullet)),
+    ...((bestOverallProduct.product_analysis?.matches_praises || []).slice(0, 2).map((item) => `Strong match for ${item}`).filter(usableBullet)),
+    (bestOverallProduct.why_it_won || '').trim(),
+    `Best overall fit for ${request.raw_query}.`
+  ].map(cleanBullet).filter(usableBullet).slice(0, 4);
   const whyTheyDidNotWin = output.products
     .filter((p) => p.product_name !== bestOverallProduct.product_name)
     .map((p) => buildDidNotWinReason(p, bestOverallProduct, output.category_intelligence));
   const categoryProsCons = {
-    typically_loved: (output.category_intelligence?.top_praises || []).slice(0, 5),
-    common_complaints: (output.category_intelligence?.top_complaints || []).slice(0, 5),
+    typically_loved: [
+      ...((output.category_intelligence?.top_praises || []).filter(usableBullet)),
+      ...((bestOverallProduct.product_analysis?.pros || []).filter(usableBullet))
+    ].map(cleanBullet).filter(usableBullet).slice(0, 5),
+    common_complaints: [
+      ...((output.category_intelligence?.top_complaints || []).filter(usableBullet)),
+      ...((bestOverallProduct.product_analysis?.cons || []).filter(usableBullet))
+    ].map(cleanBullet).filter(usableBullet).slice(0, 5),
     separates_good_vs_bad: [
-      ...((output.category_intelligence?.decision_drivers || []).slice(0, 3)),
-      ...((output.category_intelligence?.failure_points || []).slice(0, 2).map((item) => `Avoid products with ${item}`))
-    ].slice(0, 5)
+      ...((output.category_intelligence?.decision_drivers || []).filter(usableBullet)),
+      ...((output.category_intelligence?.failure_points || []).filter(usableBullet).map((item) => `Avoid products with ${item}`)),
+      `Prioritize exact fit for ${request.raw_query}.`,
+      'Check the product listing for size, materials, and compatibility before buying.'
+    ].map(cleanBullet).filter(usableBullet).slice(0, 5)
   };
 
   const content = {
