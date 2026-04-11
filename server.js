@@ -545,6 +545,23 @@ function assertPersistedRequest(requestId) {
   return persisted;
 }
 
+function spawnDirectProcessor(requestId) {
+  if (!requestId) return false;
+  try {
+    const child = execFile(process.execPath, [processorScriptPath, '--request-id', requestId], {
+      cwd: __dirname,
+      detached: true,
+      stdio: 'ignore'
+    });
+    child.unref();
+    logRequestCreation('direct_processor_spawned', { request_id: requestId, pid: child.pid || null, processor_path: processorScriptPath });
+    return true;
+  } catch (error) {
+    logRequestCreation('direct_processor_spawn_failed', { request_id: requestId, error: error.message || String(error) });
+    return false;
+  }
+}
+
 function kickOffInstantAnswerProcessing(requestId) {
   if (!requestId) return;
   const startupTs = new Date().toISOString();
@@ -559,17 +576,7 @@ function kickOffInstantAnswerProcessing(requestId) {
   if (!queued) {
     throw new Error(`queue_enqueue_failed:${requestId}`);
   }
-  try {
-    const child = execFile(process.execPath, [processorScriptPath, '--request-id', requestId], {
-      cwd: __dirname,
-      detached: true,
-      stdio: 'ignore'
-    });
-    child.unref();
-    logRequestCreation('direct_processor_spawned', { request_id: requestId, pid: child.pid || null, processor_path: processorScriptPath });
-  } catch (error) {
-    logRequestCreation('direct_processor_spawn_failed', { request_id: requestId, error: error.message || String(error) });
-  }
+  spawnDirectProcessor(requestId);
   logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker', queue_status: queued.status || null });
 }
 
@@ -2352,6 +2359,12 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     }
     if (request.payment_status === 'paid' && ['paid_pending', 'validated'].includes(request.request_status)) {
       kickOffInstantAnswerProcessing(request.request_id);
+    }
+    if (request.payment_status === 'paid' && ['paid_pending', 'validated', 'generating'].includes(request.request_status)) {
+      const runtimeState = getGenerationRuntimeState(request.request_id);
+      if (!runtimeState.workerActiveForRequest && !runtimeState.lock) {
+        spawnDirectProcessor(request.request_id);
+      }
     }
     res.json({ ok: true, request });
   } catch (error) {
