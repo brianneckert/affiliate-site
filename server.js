@@ -554,7 +554,7 @@ function kickOffInstantAnswerProcessing(requestId) {
   logRequestCreation('queue_insertion_started', { request_id: requestId, queue_path: queue.JOBS_PATH, mode: 'durable_worker' });
 }
 
-function renderInstantAnswerSuccessPage(requestId, slugHint = '') {
+function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = '') {
   return `<!doctype html>
   <html>
   <head>
@@ -641,6 +641,7 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '') {
     <script>
       const requestId = ${JSON.stringify(requestId || '')};
       const slugHint = ${JSON.stringify(slugHint || '')};
+      const queryHint = ${JSON.stringify(queryHint || '')};
       const sessionId = new URLSearchParams(window.location.search).get('session_id') || '';
       let missingRequestPolls = 0;
       const titleEl = document.getElementById('title');
@@ -700,13 +701,18 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '') {
         return false;
       }
 
+      function deriveSlugFromQuery(raw) {
+        return String(raw || '').toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      }
+
       async function maybeRedirectBySlugHint() {
-        if (!slugHint) return false;
+        const targetSlug = slugHint || deriveSlugFromQuery(queryHint);
+        if (!targetSlug) return false;
         try {
-          const res = await fetch('/article/' + encodeURIComponent(slugHint), { method: 'GET', cache: 'no-store' });
+          const res = await fetch('/article/' + encodeURIComponent(targetSlug), { method: 'GET', cache: 'no-store' });
           const text = await res.text();
           if (res.ok && !/Article unavailable|not approved for display/i.test(text)) {
-            const targetUrl = '/article/' + slugHint;
+            const targetUrl = '/article/' + targetSlug;
             setStepState('publish', ['payment','data','compare','publish'], 100, 'Article ready', 'Your comparison is ready. Redirecting you now...');
             titleEl.textContent = 'Your comparison is ready.';
             ctaEl.style.display = 'block';
@@ -2150,14 +2156,15 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
       logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'free', module: 'checkout_free', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
       const slugHint = slugifyQuery(updated.normalized_query || updated.raw_query || '');
-      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'free', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}` });
+      const queryHint = updated.raw_query || updated.normalized_query || '';
+      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'free', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}&query_hint=${encodeURIComponent(queryHint)}` });
       return res.json({
         ok: true,
         request_id: updated.request_id,
         access_mode: 'free',
         request_persisted: true,
         free_articles_remaining_after_this: Math.max(0, 3 - (access.freeArticlesUsed + 1)),
-        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}`
+        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}&query_hint=${encodeURIComponent(queryHint)}`
       });
     }
 
@@ -2180,14 +2187,15 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
       logRequestCreation('canonical_request_write_completed', { request_id: persisted.request_id, mode: 'bundle', module: 'checkout_bundle', store_path: paidRequests.paths?.paidRequestsPath || null, request_status: persisted.request_status, payment_status: persisted.payment_status });
       kickOffInstantAnswerProcessing(updated.request_id);
       const slugHint = slugifyQuery(updated.normalized_query || updated.raw_query || '');
-      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'bundle', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}` });
+      const queryHint = updated.raw_query || updated.normalized_query || '';
+      logRequestCreation('response_sent_to_client', { request_id: updated.request_id, mode: 'bundle', success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}&query_hint=${encodeURIComponent(queryHint)}` });
       return res.json({
         ok: true,
         request_id: updated.request_id,
         access_mode: 'bundle',
         request_persisted: true,
         articles_remaining_balance: access.paidBalance,
-        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}`
+        success_url: `${SITE_BASE_URL}/instant-answer/success?request_id=${encodeURIComponent(updated.request_id)}&slug_hint=${encodeURIComponent(slugHint)}&query_hint=${encodeURIComponent(queryHint)}`
       });
     }
 
@@ -2222,7 +2230,7 @@ app.post('/api/instant-answer/checkout', async (req, res) => {
 });
 
 app.get('/instant-answer/success', (req, res) => {
-  res.send(renderInstantAnswerSuccessPage(req.query.request_id || '', req.query.slug_hint || ''));
+  res.send(renderInstantAnswerSuccessPage(req.query.request_id || '', req.query.slug_hint || '', req.query.query_hint || ''));
 });
 
 app.get('/instant-answer/cancel', (req, res) => {
