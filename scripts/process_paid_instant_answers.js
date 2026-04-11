@@ -2354,11 +2354,12 @@ function ensurePublish(registry, request, output) {
     ].map(cleanBullet).filter(usableBullet).slice(0, 5)
   };
 
+  const comparisonFocus = (output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall fit and value';
   const content = {
     article_slug: slug,
     category: request.normalized_query,
     title,
-    summary: output.answer_summary,
+    summary: `${bestOverallProduct.product_name} wins this ${request.raw_query} comparison because it comes out ahead on ${comparisonFocus} versus the other options in the lineup.`,
     top_pick: output.winner_selection?.best_overall?.product_name || output.products[0].product_name,
     decision_engine_rules: {
       no_amazon_ranking_only: true,
@@ -2391,21 +2392,28 @@ function ensurePublish(registry, request, output) {
         best_for: p.best_for || request.normalized_query
       })),
       buying_guide: [
-        `Start with the exact use case for ${request.raw_query}.`,
-        ...((output.category_intelligence?.decision_drivers || []).slice(0, 3)),
-        'Use the direct Amazon links to verify current price, reviews, and availability.'
-      ],
+        `Use ${bestOverallProduct.product_name} if your top priority is ${cleanBullet((output.category_intelligence?.decision_drivers || [])[0] || 'overall performance')}.`,
+        `Move to the runner-up if you care more about ${cleanBullet((output.category_intelligence?.decision_drivers || [])[1] || 'a different tradeoff profile')} than the winner's strengths.`,
+        `Rule out options that show warning signs like ${cleanBullet((output.category_intelligence?.failure_points || [])[0] || 'fit or durability concerns')}.`
+      ].filter(usableBullet),
       faq: [
         {
-          question: `What matters most when buying ${request.raw_query}?`,
-          answer: (output.category_intelligence?.decision_drivers || []).slice(0, 3).join('; ')
+          question: `Why did ${bestOverallProduct.product_name} beat the others?`,
+          answer: winnerSummary
         },
         {
-          question: `What common problems should I watch for with ${request.raw_query}?`,
-          answer: (output.category_intelligence?.failure_points || []).slice(0, 3).join('; ')
+          question: `When should I pick one of the other options instead?`,
+          answer: whyTheyDidNotWin.slice(0, 2).map((item) => `${item.product_name}: ${item.reason}`).join('; ')
+        },
+        {
+          question: `What tradeoffs matter most in this comparison?`,
+          answer: [
+            ...((output.category_intelligence?.decision_drivers || []).slice(0, 2)),
+            ...((output.category_intelligence?.failure_points || []).slice(0, 1))
+          ].filter(usableBullet).join('; ')
         }
       ],
-      final_verdict: output.winner_selection?.best_overall?.justification || `${output.products[0].product_name} is the clearest overall winner for ${request.raw_query} based on buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall fit and value'}, while avoiding common issues such as ${(output.category_intelligence?.failure_points || []).slice(0, 2).join(' and ') || 'typical product weaknesses'}.`
+      final_verdict: output.winner_selection?.best_overall?.justification || `${output.products[0].product_name} wins this ${request.raw_query} comparison because it delivers the best overall balance of ${comparisonFocus} compared with the other options, while avoiding more of the downsides that knock the others down the list.`
     }
   };
   const intelligence = {
