@@ -2392,28 +2392,31 @@ function ensurePublish(registry, request, output) {
         best_for: p.best_for || request.normalized_query
       })),
       buying_guide: [
-        `Use ${bestOverallProduct.product_name} if your top priority is ${cleanBullet((output.category_intelligence?.decision_drivers || [])[0] || 'overall performance')}.`,
-        `Move to the runner-up if you care more about ${cleanBullet((output.category_intelligence?.decision_drivers || [])[1] || 'a different tradeoff profile')} than the winner's strengths.`,
-        `Rule out options that show warning signs like ${cleanBullet((output.category_intelligence?.failure_points || [])[0] || 'fit or durability concerns')}.`
-      ].filter(usableBullet),
+        `${bestOverallProduct.product_name} is the strongest default choice here if you want the best overall balance of ${cleanBullet((output.category_intelligence?.decision_drivers || [])[0] || 'performance and value')}.`,
+        `The winner separates itself by handling ${cleanBullet((output.category_intelligence?.decision_drivers || [])[1] || 'the key comparison tradeoffs')} better than the rest of the lineup.`,
+        `Only move away from the winner if a very specific requirement matters more to you than the winner's overall advantage.`,
+        `Watch for weaknesses like ${cleanBullet((output.category_intelligence?.failure_points || [])[0] || 'fit or durability concerns')}, because those are usually what drag the lower-ranked options down.`
+      ].filter(usableBullet).slice(0, 4),
       faq: [
         {
           question: `Why did ${bestOverallProduct.product_name} beat the others?`,
           answer: winnerSummary
         },
         {
-          question: `When should I pick one of the other options instead?`,
-          answer: whyTheyDidNotWin.slice(0, 2).map((item) => `${item.product_name}: ${item.reason}`).join('; ')
+          question: `What makes the winner the safest best-overall pick?`,
+          answer: [
+            `${bestOverallProduct.product_name} stays ahead because it performs well on the comparison points that matter most in this category.`,
+            (bestOverallProduct.product_analysis?.unique_strength || '').trim()
+          ].filter(usableBullet).join(' ')
         },
         {
-          question: `What tradeoffs matter most in this comparison?`,
-          answer: [
-            ...((output.category_intelligence?.decision_drivers || []).slice(0, 2)),
-            ...((output.category_intelligence?.failure_points || []).slice(0, 1))
-          ].filter(usableBullet).join('; ')
+          question: `When would another option make more sense?`,
+          answer: whyTheyDidNotWin.length
+            ? `Only if you have a narrow edge-case need the winner does not prioritize. For example: ${whyTheyDidNotWin.slice(0, 1).map((item) => `${item.product_name}: ${item.reason}`).join('; ')}`
+            : 'For most buyers, the winner remains the best overall pick unless you have a very specific use case.'
         }
       ],
-      final_verdict: output.winner_selection?.best_overall?.justification || `${output.products[0].product_name} wins this ${request.raw_query} comparison because it delivers the best overall balance of ${comparisonFocus} compared with the other options, while avoiding more of the downsides that knock the others down the list.`
+      final_verdict: output.winner_selection?.best_overall?.justification || `${output.products[0].product_name} wins this ${request.raw_query} comparison because it delivers the strongest overall balance of ${comparisonFocus}, making it the best default pick for most buyers while the other options make more sense only in narrower edge cases.`
     }
   };
   const intelligence = {
