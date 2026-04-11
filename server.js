@@ -725,8 +725,9 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
       }
 
       async function poll() {
+        if (await maybeRedirectBySlugHint()) return;
         if (!requestId) {
-          if (await maybeRedirectBySlugHint()) return;
+          setTimeout(poll, 2000);
           return;
         }
         try {
@@ -735,7 +736,7 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
           if (res.status === 404) {
             missingRequestPolls += 1;
             badgeEl.textContent = 'Finalizing your article';
-            if (missingRequestPolls >= 3 && await maybeRedirectBySlugHint()) return;
+            if (missingRequestPolls >= 2 && await maybeRedirectBySlugHint()) return;
             setTimeout(poll, 2000);
             return;
           }
@@ -744,12 +745,13 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
             missingRequestPolls = 0;
             const done = applyRequestState(data.request);
             if (done) return;
+            if (await maybeRedirectBySlugHint()) return;
           } else {
             badgeEl.textContent = 'Looking for your request';
           }
         } catch {
           badgeEl.textContent = 'Reconnecting';
-          if (missingRequestPolls >= 3 && await maybeRedirectBySlugHint()) return;
+          if (missingRequestPolls >= 2 && await maybeRedirectBySlugHint()) return;
         }
         setTimeout(poll, 2000);
       }
