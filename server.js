@@ -2285,66 +2285,74 @@ app.get('/instant-answer/cancel', (req, res) => {
 });
 
 app.get('/api/instant-answer/request/:id', async (req, res) => {
-  let request = paidRequests.getRequestById(req.params.id);
-  const sessionId = String(req.query.session_id || '').trim() || null;
-  if (!request) {
-    request = await recoverRequestFromStripe(req.params.id, sessionId);
-  } else if (stripe && (request.payment_status !== 'paid' || request.request_status === 'awaiting_payment')) {
-    let session = null;
-    if (sessionId) {
-      try { session = await stripe.checkout.sessions.retrieve(sessionId); } catch {}
-    }
-    if (!session && request.stripe_checkout_session_id) {
-      try { session = await stripe.checkout.sessions.retrieve(request.stripe_checkout_session_id); } catch {}
-    }
-    if (session) {
-      request = await syncRequestFromStripeSession(session, request);
-    }
-  }
-  if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
-  const runtimeState = getGenerationRuntimeState(request.request_id);
-  if (request.request_status === 'generating' && request.fulfillment_status === 'processing' && runtimeState.orphaned) {
-    request = paidRequests.updateRequestStatus(request.request_id, {
-      request_status: 'failed',
-      fulfillment_status: 'failed',
-      error: 'orphaned_generation_job'
-    }) || request;
-    logRequestCreation('orphaned_job_detected', {
-      request_id: request.request_id,
-      worker_active: runtimeState.workerActiveForRequest,
-      lock: runtimeState.lock,
-      last_heartbeat_ms: runtimeState.lastHeartbeatMs,
-      terminal_status_write: 'failed:orphaned_generation_job'
-    });
-  }
-  if (!request.generated_article_slug && !request.published_slug && ['validated', 'generating', 'paid_pending'].includes(request.request_status)) {
-    const inferredSlug = slugifyQuery(request.normalized_query || request.raw_query);
-    const registry = readRegistry();
-    const published = (registry.articles || []).find((a) => a.article_slug === inferredSlug && a.publish_status === 'published');
-    if (published) {
-      const registry = readRegistry();
-      const entry = (registry.articles || []).find((a) => a.article_slug === inferredSlug);
-      if (entry) {
-        entry.published_at = new Date().toISOString();
-        entry.publish_status = 'published';
-        fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+  try {
+    let request = paidRequests.getRequestById(req.params.id);
+    const sessionId = String(req.query.session_id || '').trim() || null;
+    if (!request) {
+      request = await recoverRequestFromStripe(req.params.id, sessionId);
+    } else if (stripe && (request.payment_status !== 'paid' || request.request_status === 'awaiting_payment')) {
+      let session = null;
+      if (sessionId) {
+        try { session = await stripe.checkout.sessions.retrieve(sessionId); } catch {}
       }
-      request = paidRequests.updateRequestStatus(request.request_id, {
-        generated_article_slug: inferredSlug,
-        published_slug: inferredSlug,
-        published_url: `${SITE_BASE_URL}/article/${inferredSlug}`,
-        publish_status: 'published',
-        request_status: 'published',
-        fulfillment_status: 'completed',
-        published_at: new Date().toISOString(),
-        error: null
-      }) || request;
+      if (!session && request.stripe_checkout_session_id) {
+        try { session = await stripe.checkout.sessions.retrieve(request.stripe_checkout_session_id); } catch {}
+      }
+      if (session) {
+        request = await syncRequestFromStripeSession(session, request);
+      }
     }
+    if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
+    const runtimeState = getGenerationRuntimeState(request.request_id);
+    if (request.request_status === 'generating' && request.fulfillment_status === 'processing' && runtimeState.orphaned) {
+      request = paidRequests.updateRequestStatus(request.request_id, {
+        request_status: 'failed',
+        fulfillment_status: 'failed',
+        error: 'orphaned_generation_job'
+      }) || request;
+      logRequestCreation('orphaned_job_detected', {
+        request_id: request.request_id,
+        worker_active: runtimeState.workerActiveForRequest,
+        lock: runtimeState.lock,
+        last_heartbeat_ms: runtimeState.lastHeartbeatMs,
+        terminal_status_write: 'failed:orphaned_generation_job'
+      });
+    }
+    if (!request.generated_article_slug && !request.published_slug && ['validated', 'generating', 'paid_pending'].includes(request.request_status)) {
+      const inferredSlug = slugifyQuery(request.normalized_query || request.raw_query);
+      const registry = readRegistry();
+      const published = (registry.articles || []).find((a) => a.article_slug === inferredSlug && a.publish_status === 'published');
+      if (published) {
+        const registry = readRegistry();
+        const entry = (registry.articles || []).find((a) => a.article_slug === inferredSlug);
+        if (entry) {
+          entry.published_at = new Date().toISOString();
+          entry.publish_status = 'published';
+          fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
+        }
+        request = paidRequests.updateRequestStatus(request.request_id, {
+          generated_article_slug: inferredSlug,
+          published_slug: inferredSlug,
+          published_url: `${SITE_BASE_URL}/article/${inferredSlug}`,
+          publish_status: 'published',
+          request_status: 'published',
+          fulfillment_status: 'completed',
+          published_at: new Date().toISOString(),
+          error: null
+        }) || request;
+      }
+    }
+    if (request.payment_status === 'paid' && ['paid_pending', 'validated'].includes(request.request_status)) {
+      kickOffInstantAnswerProcessing(request.request_id);
+    }
+    res.json({ ok: true, request });
+  } catch (error) {
+    logRequestCreation('request_status_route_error', {
+      request_id: req.params.id,
+      error: error.message || String(error)
+    });
+    res.status(500).json({ ok: false, error: 'status_route_error', message: error.message || String(error) });
   }
-  if (request.payment_status === 'paid' && ['paid_pending', 'validated'].includes(request.request_status)) {
-    kickOffInstantAnswerProcessing(request.request_id);
-  }
-  res.json({ ok: true, request });
 });
 
 app.get('/analytics/events', (req, res) => {
