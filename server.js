@@ -685,11 +685,25 @@ function renderInstantAnswerSuccessPage(requestId, slugHint = '', queryHint = ''
           req?.publish_status === 'published' ||
           fulfillment === 'completed'
         );
+        const requestFailed = status === 'failed' || fulfillment === 'failed' || Boolean(req?.error);
+
+        if (requestFailed) {
+          finalizingMode = false;
+          const actualError = String(req?.error || fulfillment || status || 'generation_failed').replace(/_/g, ' ');
+          setStepState('publish', ['payment'], 100, 'Generation failed', 'This comparison could not be completed automatically.');
+          titleEl.textContent = 'This comparison ran into a problem.';
+          subEl.textContent = 'Error: ' + actualError + '. You can go back and try the search again.';
+          ctaEl.style.display = 'block';
+          articleLinkEl.href = '/';
+          articleLinkEl.textContent = 'Start a new search';
+          return true;
+        }
 
         if (articleReady) {
           enterFinalizingMode('Your comparison is almost ready. Final article checks are underway.');
           ctaEl.style.display = 'block';
           articleLinkEl.href = targetUrl;
+          articleLinkEl.textContent = 'Open your article';
           return false;
         }
 
