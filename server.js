@@ -1184,7 +1184,7 @@ function renderHome(req) {
       function renderResults(query) {
         const raw = String(query || '').trim();
         const q = raw.toLowerCase();
-        const matches = !q ? ARTICLE_INDEX : ARTICLE_INDEX.filter(item => item.search_text.includes(q));
+        const matches = !q ? [] : ARTICLE_INDEX.filter(item => item.search_text.includes(q));
         resultsEl.innerHTML = matches.map(function(item) {
           const chips = (item.products || []).map(function(name) {
             return '<span class="chip">' + name + '</span>';
@@ -1196,14 +1196,22 @@ function renderHome(req) {
             '<div class="chips">' + chips + '</div>' +
             '</a>';
         }).join('');
-        if (!matches.length && q) {
+        if (!q) {
+          emptyEl.style.display = 'none';
+          instantAnswerBtn20.style.display = 'none';
+          emptyText.innerHTML = '';
+          refineSearch.style.display = 'none';
+          refineChips.innerHTML = '';
+          return;
+        }
+        if (!matches.length) {
           emptyEl.style.display = 'block';
           instantAnswerBtn20.style.display = 'inline-block';
           instantAnswerBtn20.textContent = 'Generate Comparison';
           emptyText.innerHTML = "We can generate a direct comparison for <strong>" + escapeHtml(raw) + "</strong>. If your search is broad, refine it first so the comparison matches your exact use case.";
           renderRefinementSuggestions(raw);
         } else {
-          emptyEl.style.display = matches.length ? 'none' : 'block';
+          emptyEl.style.display = 'none';
           instantAnswerBtn20.style.display = 'none';
           emptyText.innerHTML = '';
           refineSearch.style.display = 'none';
