@@ -25,20 +25,20 @@
     "best_overall": {
       "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
       "asin": "B07HYZCBV5",
-      "final_score": 8.8,
-      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop wins Best Overall because it has the highest weighted score, aligns with praised features like strong overall fit for the intended use case and solid buyer demand, and shows minimal alignment with common complaints such as performance can vary across brands and lower-end options may trade quality for price."
+      "final_score": 7.6,
+      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop is the clearest recommendation for stainless steel paper towel holder because it offers strong amazon shopper validation with about 17214 reviews. It solves the main buyer problem better than the rest, and the tradeoff is weak durability."
     },
     "best_budget": {
       "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
       "asin": "B07HYZCBV5",
-      "final_score": 8.8,
-      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop stands out on value for price while still aligning with praised traits like strong overall fit for the intended use case and solid buyer demand. It shows limited overlap with common complaints, with only light concern around performance can vary across brands and lower-end options may trade quality for price."
+      "final_score": 7.6,
+      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop is the value pick for stainless steel paper towel holder because it offers strong amazon shopper validation with about 17214 reviews. The tradeoff is weak durability."
     },
     "best_premium": {
       "product_name": "OXO Good Grips Steady Paper Towel Holder Countertop",
       "asin": "B07HYZCBV5",
-      "final_score": 8.8,
-      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop earns the premium slot by leading on pure performance while matching praised attributes like strong overall fit for the intended use case and solid buyer demand. It avoids most common complaint patterns, with only some caution around performance can vary across brands and lower-end options may trade quality for price."
+      "final_score": 7.6,
+      "justification": "OXO Good Grips Steady Paper Towel Holder Countertop is the performance pick for stainless steel paper towel holder because it offers strong amazon shopper validation with about 17214 reviews. It makes the most sense if your priority is stainless steel paper towel holder rather than the lowest price."
     }
   },
   "products": [
@@ -95,21 +95,24 @@
       ],
       "product_score": {
         "category_scores": {
-          "core_performance": 9,
-          "speed_responsiveness": 8.2,
-          "reliability": 8.2,
-          "build_quality": 9,
-          "value_for_price": 10,
-          "ease_of_use": 8.2
+          "use_case_fit": 8.9,
+          "core_performance": 7,
+          "reliability": 7.1,
+          "build_quality": 8,
+          "runtime_portability": 7.1,
+          "value_for_price": 8.1,
+          "ease_of_use": 7.1
         },
-        "final_score": 8.8,
+        "raw_final_score": 7.74,
+        "final_score": 7.6,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       }
     },
@@ -166,21 +169,24 @@
       ],
       "product_score": {
         "category_scores": {
-          "core_performance": 8.8,
-          "speed_responsiveness": 8,
-          "reliability": 8,
-          "build_quality": 8.8,
-          "value_for_price": 10,
-          "ease_of_use": 8
+          "use_case_fit": 8.8,
+          "core_performance": 6.9,
+          "reliability": 7,
+          "build_quality": 7.9,
+          "runtime_portability": 7,
+          "value_for_price": 8,
+          "ease_of_use": 7
         },
-        "final_score": 8.6,
+        "raw_final_score": 7.64,
+        "final_score": 7.2,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       }
     },
@@ -237,21 +243,24 @@
       ],
       "product_score": {
         "category_scores": {
-          "core_performance": 8.8,
-          "speed_responsiveness": 8,
-          "reliability": 8,
-          "build_quality": 8.8,
-          "value_for_price": 10,
-          "ease_of_use": 8
+          "use_case_fit": 8.8,
+          "core_performance": 6.9,
+          "reliability": 7,
+          "build_quality": 7.9,
+          "runtime_portability": 7,
+          "value_for_price": 8,
+          "ease_of_use": 7
         },
-        "final_score": 8.6,
+        "raw_final_score": 7.64,
+        "final_score": 7,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       }
     },
@@ -308,21 +317,24 @@
       ],
       "product_score": {
         "category_scores": {
-          "core_performance": 8.7,
-          "speed_responsiveness": 7.9,
-          "reliability": 7.9,
-          "build_quality": 8.7,
-          "value_for_price": 10,
-          "ease_of_use": 7.9
+          "use_case_fit": 8.7,
+          "core_performance": 6.8,
+          "reliability": 6.9,
+          "build_quality": 7.8,
+          "runtime_portability": 6.9,
+          "value_for_price": 7.9,
+          "ease_of_use": 6.9
         },
-        "final_score": 8.5,
+        "raw_final_score": 7.54,
+        "final_score": 6.9,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       }
     },
@@ -379,21 +391,24 @@
       ],
       "product_score": {
         "category_scores": {
-          "core_performance": 8.5,
-          "speed_responsiveness": 7.7,
-          "reliability": 7.7,
-          "build_quality": 8.5,
-          "value_for_price": 10,
-          "ease_of_use": 7.7
+          "use_case_fit": 8.6,
+          "core_performance": 6.7,
+          "reliability": 6.8,
+          "build_quality": 7.7,
+          "runtime_portability": 6.8,
+          "value_for_price": 7.8,
+          "ease_of_use": 6.8
         },
-        "final_score": 8.3,
+        "raw_final_score": 7.44,
+        "final_score": 6.7,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       }
     }
@@ -406,21 +421,24 @@
       "rating": 4.8,
       "score": {
         "category_scores": {
-          "core_performance": 9,
-          "speed_responsiveness": 8.2,
-          "reliability": 8.2,
-          "build_quality": 9,
-          "value_for_price": 10,
-          "ease_of_use": 8.2
+          "use_case_fit": 8.9,
+          "core_performance": 7,
+          "reliability": 7.1,
+          "build_quality": 8,
+          "runtime_portability": 7.1,
+          "value_for_price": 8.1,
+          "ease_of_use": 7.1
         },
-        "final_score": 8.8,
+        "raw_final_score": 7.74,
+        "final_score": 7.6,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       },
       "analysis": {
@@ -467,21 +485,24 @@
       "rating": 4.7,
       "score": {
         "category_scores": {
-          "core_performance": 8.8,
-          "speed_responsiveness": 8,
-          "reliability": 8,
-          "build_quality": 8.8,
-          "value_for_price": 10,
-          "ease_of_use": 8
+          "use_case_fit": 8.8,
+          "core_performance": 6.9,
+          "reliability": 7,
+          "build_quality": 7.9,
+          "runtime_portability": 7,
+          "value_for_price": 8,
+          "ease_of_use": 7
         },
-        "final_score": 8.6,
+        "raw_final_score": 7.64,
+        "final_score": 7.2,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       },
       "analysis": {
@@ -528,21 +549,24 @@
       "rating": 4.7,
       "score": {
         "category_scores": {
-          "core_performance": 8.8,
-          "speed_responsiveness": 8,
-          "reliability": 8,
-          "build_quality": 8.8,
-          "value_for_price": 10,
-          "ease_of_use": 8
+          "use_case_fit": 8.8,
+          "core_performance": 6.9,
+          "reliability": 7,
+          "build_quality": 7.9,
+          "runtime_portability": 7,
+          "value_for_price": 8,
+          "ease_of_use": 7
         },
-        "final_score": 8.6,
+        "raw_final_score": 7.64,
+        "final_score": 7,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       },
       "analysis": {
@@ -589,21 +613,24 @@
       "rating": 4.6,
       "score": {
         "category_scores": {
-          "core_performance": 8.7,
-          "speed_responsiveness": 7.9,
-          "reliability": 7.9,
-          "build_quality": 8.7,
-          "value_for_price": 10,
-          "ease_of_use": 7.9
+          "use_case_fit": 8.7,
+          "core_performance": 6.8,
+          "reliability": 6.9,
+          "build_quality": 7.8,
+          "runtime_portability": 6.9,
+          "value_for_price": 7.9,
+          "ease_of_use": 6.9
         },
-        "final_score": 8.5,
+        "raw_final_score": 7.54,
+        "final_score": 6.9,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       },
       "analysis": {
@@ -650,21 +677,24 @@
       "rating": 4.4,
       "score": {
         "category_scores": {
-          "core_performance": 8.5,
-          "speed_responsiveness": 7.7,
-          "reliability": 7.7,
-          "build_quality": 8.5,
-          "value_for_price": 10,
-          "ease_of_use": 7.7
+          "use_case_fit": 8.6,
+          "core_performance": 6.7,
+          "reliability": 6.8,
+          "build_quality": 7.7,
+          "runtime_portability": 6.8,
+          "value_for_price": 7.8,
+          "ease_of_use": 6.8
         },
-        "final_score": 8.3,
+        "raw_final_score": 7.44,
+        "final_score": 6.7,
         "weights": {
-          "core_performance": 0.295,
-          "speed_responsiveness": 0.179,
-          "reliability": 0.161,
-          "build_quality": 0.161,
-          "value_for_price": 0.116,
-          "ease_of_use": 0.089
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
         }
       },
       "analysis": {
@@ -712,13 +742,13 @@
       "asin": "B07HYZCBV5",
       "affiliate_url": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
       "canonical_product_url": "https://www.amazon.com/dp/B07HYZCBV5?tag=helperscollec-20",
-      "price_tier": "Best Overall Value",
+      "price_tier": "Best Overall",
       "best_for": "stainless steel paper towel holder",
-      "total_score": 8.8,
+      "total_score": 7.6,
       "notable_features": [
         "Strong Amazon shopper validation with about 17214 reviews.",
         "Solid visible rating around 4.8 stars for this category.",
-        "strong overall fit for the intended use case"
+        "High review-volume Amazon pick for stainless steel paper towel holder with a 4.8 average rating."
       ],
       "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.8 average rating.",
       "keep_in_mind": "weak durability"
@@ -729,13 +759,13 @@
       "asin": "B0024AKCTS",
       "affiliate_url": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
       "canonical_product_url": "https://www.amazon.com/dp/B0024AKCTS?tag=helperscollec-20",
-      "price_tier": "Premium Pick",
+      "price_tier": "Strong Runner-Up",
       "best_for": "stainless steel paper towel holder",
-      "total_score": 8.6,
+      "total_score": 7.2,
       "notable_features": [
         "Strong Amazon shopper validation with about 28696 reviews.",
         "Solid visible rating around 4.7 stars for this category.",
-        "strong overall fit for the intended use case"
+        "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating."
       ],
       "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
       "keep_in_mind": "weak durability"
@@ -746,13 +776,13 @@
       "asin": "B000F5IB60",
       "affiliate_url": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
       "canonical_product_url": "https://www.amazon.com/dp/B000F5IB60?tag=helperscollec-20",
-      "price_tier": "Balanced Pick",
+      "price_tier": "Niche Alternative",
       "best_for": "stainless steel paper towel holder",
-      "total_score": 8.6,
+      "total_score": 7,
       "notable_features": [
         "Strong Amazon shopper validation with about 25640 reviews.",
         "Solid visible rating around 4.7 stars for this category.",
-        "strong overall fit for the intended use case"
+        "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating."
       ],
       "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.7 average rating.",
       "keep_in_mind": "weak durability"
@@ -763,13 +793,13 @@
       "asin": "B000W8AF2S",
       "affiliate_url": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
       "canonical_product_url": "https://www.amazon.com/dp/B000W8AF2S?tag=helperscollec-20",
-      "price_tier": "Budget-Friendly",
+      "price_tier": "Also Consider",
       "best_for": "stainless steel paper towel holder",
-      "total_score": 8.5,
+      "total_score": 6.9,
       "notable_features": [
         "Strong Amazon shopper validation with about 30885 reviews.",
         "Solid visible rating around 4.6 stars for this category.",
-        "strong overall fit for the intended use case"
+        "High review-volume Amazon pick for stainless steel paper towel holder with a 4.6 average rating."
       ],
       "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.6 average rating.",
       "keep_in_mind": "weak durability"
@@ -780,16 +810,17 @@
       "asin": "B08L37BPBN",
       "affiliate_url": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
       "canonical_product_url": "https://www.amazon.com/dp/B08L37BPBN?tag=helperscollec-20",
-      "price_tier": "Alternate Option",
+      "price_tier": "Alternative for stainless steel paper towel holder",
       "best_for": "stainless steel paper towel holder",
-      "total_score": 8.3,
+      "total_score": 6.7,
       "notable_features": [
         "Strong Amazon shopper validation with about 33079 reviews.",
         "Solid visible rating around 4.4 stars for this category.",
-        "strong overall fit for the intended use case"
+        "High review-volume Amazon pick for stainless steel paper towel holder with a 4.4 average rating."
       ],
       "why_it_won": "High review-volume Amazon pick for stainless steel paper towel holder with a 4.4 average rating.",
       "keep_in_mind": "weak durability"
     }
-  ]
+  ],
+  "score_spread": 0.9
 }

@@ -4551,19 +4551,19 @@
     {
       "article_slug": "stainless-steel-paper-towel-holder",
       "category": "stainless steel paper towel holder",
-      "title": "Stainless Steel Paper Towel Holder",
+      "title": "stainless steel paper towel holder",
       "output_dir": "data/articles/stainless-steel-paper-towel-holder",
       "article_dir": "data/articles/stainless-steel-paper-towel-holder",
       "topic_family": "stainless steel paper towel holder",
       "article_family_position": "instant_answer",
-      "source_topic_plan_date": "2026-04-11",
+      "source_topic_plan_date": "2026-04-12",
       "generation_status": "published",
       "publish_status": "published",
       "validation_result": {
         "passed": true,
         "category_intelligence_required": true
       },
-      "published_at": "2026-04-11T15:37:28.587Z",
+      "published_at": "2026-04-12T21:44:23.662Z",
       "source_article_family": "instant_answer_paid",
       "related_articles": [],
       "duplicate_of": null,

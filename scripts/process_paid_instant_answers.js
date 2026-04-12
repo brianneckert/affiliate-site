@@ -1259,64 +1259,41 @@ function pickBestPhrase(fragments = [], queryTokens = [], fallback = '') {
   return ranked[0] || fallback;
 }
 
+function inferUseCaseProfile(query = '', categoryIntelligence = {}) {
+  const text = normalize([query, ...(categoryIntelligence.decision_drivers || []), ...(categoryIntelligence.top_praises || []), ...(categoryIntelligence.failure_points || [])].join(' '));
+  return {
+    weatherproof: /waterproof|water resistant|ipx|wet|spray|rain|marine|boat|outdoor|dustproof/.test(text),
+    portable: /portable|carry|compact|lightweight|travel|move around|boat|dock|camp/.test(text),
+    runtime: /battery|runtime|playtime|all day|long day|long lasting|hours?/.test(text),
+    durability: /durable|rugged|tough|drop|build quality|outdoor|boat|marine|jobsite/.test(text),
+    noise: /loud|outdoor|open air|party|deck|boat|bass/.test(text),
+    value: /value|budget|worth it|price/.test(text)
+  };
+}
+
 function buildWeightedCriteria(categoryIntelligence = {}) {
-  const driverText = normalize([
-    ...(categoryIntelligence.decision_drivers || []),
-    ...(categoryIntelligence.top_praises || []),
-    ...(categoryIntelligence.top_complaints || []),
-    ...(categoryIntelligence.failure_points || [])
-  ].join(' '));
-
+  const query = categoryIntelligence?.query || '';
+  const profile = inferUseCaseProfile(query, categoryIntelligence);
   const criteria = [
-    {
-      key: 'core_performance',
-      label: 'Core performance',
-      weight: 0.30,
-      signals: ['performance', 'results', 'power', 'effectiveness', 'consistent', 'output']
-    },
-    {
-      key: 'speed_responsiveness',
-      label: 'Speed / responsiveness',
-      weight: 0.20,
-      signals: ['speed', 'fast', 'responsive', 'quick', 'lag', 'slow']
-    },
-    {
-      key: 'reliability',
-      label: 'Reliability',
-      weight: 0.15,
-      signals: ['reliable', 'durable', 'lasting', 'stopped working', 'failure', 'break', 'consistent']
-    },
-    {
-      key: 'build_quality',
-      label: 'Build quality',
-      weight: 0.15,
-      signals: ['build quality', 'materials', 'solid', 'premium', 'flimsy', 'cheap', 'construction']
-    },
-    {
-      key: 'value_for_price',
-      label: 'Value for price',
-      weight: 0.10,
-      signals: ['value', 'worth it', 'price', 'overpriced', 'budget', 'cost']
-    },
-    {
-      key: 'ease_of_use',
-      label: 'Ease of use',
-      weight: 0.10,
-      signals: ['easy', 'simple', 'setup', 'clean', 'user friendly', 'comfortable', 'intuitive']
-    }
+    { key: 'use_case_fit', label: 'Use-case fit', weight: 0.26 },
+    { key: 'core_performance', label: 'Core performance', weight: 0.18 },
+    { key: 'reliability', label: 'Reliability', weight: 0.16 },
+    { key: 'build_quality', label: 'Build quality', weight: 0.12 },
+    { key: 'runtime_portability', label: 'Runtime / portability', weight: 0.12 },
+    { key: 'value_for_price', label: 'Value for price', weight: 0.10 },
+    { key: 'ease_of_use', label: 'Ease of use', weight: 0.06 }
   ];
-
-  return criteria.map((criterion) => {
-    const boost = criterion.signals.some((signal) => driverText.includes(normalize(signal))) ? 0.03 : 0;
-    return { ...criterion, weight: criterion.weight + boost };
-  }).map((criterion, _, arr) => {
-    const total = arr.reduce((sum, item) => sum + item.weight, 0);
-    return { ...criterion, weight: criterion.weight / total };
-  });
+  if (profile.weatherproof || profile.durability) criteria.find((x) => x.key === 'use_case_fit').weight += 0.05;
+  if (profile.runtime || profile.portable) criteria.find((x) => x.key === 'runtime_portability').weight += 0.04;
+  if (profile.noise) criteria.find((x) => x.key === 'core_performance').weight += 0.03;
+  if (profile.value) criteria.find((x) => x.key === 'value_for_price').weight += 0.02;
+  const total = criteria.reduce((sum, item) => sum + item.weight, 0);
+  return criteria.map((criterion) => ({ ...criterion, weight: criterion.weight / total }));
 }
 
 function scoreCriterion(criterion, analysis, categoryIntelligence, product) {
   const text = normalize([
+    product.product_name || '',
     ...(analysis.pros || []),
     ...(analysis.cons || []),
     ...(analysis.matches_praises || []),
@@ -1326,34 +1303,51 @@ function scoreCriterion(criterion, analysis, categoryIntelligence, product) {
     analysis.best_for || '',
     analysis.avoid_if || ''
   ].join(' '));
+  const query = String(categoryIntelligence?.query || '').trim();
+  const queryText = normalize([query, ...(categoryIntelligence?.decision_drivers || [])].join(' '));
+  const profile = inferUseCaseProfile(query, categoryIntelligence);
+  let score = 5.0;
 
-  let score = 5.5;
-  const positiveHits = criterion.signals.filter((signal) => text.includes(normalize(signal))).length;
-  score += positiveHits * 0.8;
-  score += Math.min(1.5, (analysis.matches_praises || []).length * 0.4);
-  score -= Math.min(2.0, (analysis.matches_complaints || []).length * 0.35);
+  const add = (points, re) => { if (re.test(text)) score += points; };
+  const sub = (points, re) => { if (re.test(text)) score -= points; };
 
+  score += Math.min(1.2, (analysis.matches_praises || []).length * 0.35);
+  score -= Math.min(1.8, (analysis.matches_complaints || []).length * 0.55);
+
+  if (criterion.key === 'use_case_fit') {
+    add(1.8, new RegExp(normalize(query).split(' ').filter(Boolean).slice(0, 4).join('|')));
+    if (profile.weatherproof) { add(1.6, /waterproof|ipx7|ipx6|dustproof|water resistant|marine|outdoor/); sub(1.8, /indoor only|not waterproof|splash only/); }
+    if (profile.durability) { add(1.2, /rugged|durable|jobsite|tough|solid build/); sub(1.6, /flimsy|cheap build|weak durability|crack/); }
+    if (profile.noise) { add(1.0, /loud|big sound|bass|outdoor/); sub(1.0, /small room|quiet only|thin sound/); }
+  }
+  if (criterion.key === 'core_performance') {
+    add(1.2, /powerful|strong|clear|loud|effective|consistent|deep bass|stereo/);
+    sub(1.3, /weak|thin|distort|underpowered|inconsistent/);
+  }
   if (criterion.key === 'reliability') {
-    score -= /stopped working|failure|break|refund|replacement|wear out/.test(text) ? 1.8 : 0;
+    add(1.0, /reliable|durable|holds up|long lasting/);
+    sub(2.2, /stopped working|failure|break|refund|replacement|wear out|quality control/);
   }
   if (criterion.key === 'build_quality') {
-    score -= /flimsy|cheap|crack|poor build/.test(text) ? 1.4 : 0;
+    add(0.9, /solid|premium|well built|rugged|heavy duty/);
+    sub(1.8, /flimsy|cheap|poor build|crack/);
+  }
+  if (criterion.key === 'runtime_portability') {
+    if (profile.runtime) { add(1.2, /20h|24h|30h|40h|all day|long battery|playtime/); sub(1.6, /short battery|7-hour|7 hour|low runtime/); }
+    if (profile.portable) { add(1.0, /portable|compact|lightweight|easy to carry/); sub(1.2, /bulky|heavy|large jobsite/); }
   }
   if (criterion.key === 'value_for_price') {
-    score -= /overpriced|too expensive/.test(text) ? 1.2 : 0;
-    score += /worth it|good value|budget/.test(text) ? 1.0 : 0;
-  }
-  if (criterion.key === 'speed_responsiveness') {
-    score -= /slow|lag|delay/.test(text) ? 1.0 : 0;
-    score += /fast|quick|responsive/.test(text) ? 1.0 : 0;
+    add(1.0, /good value|worth it|budget|affordable/);
+    sub(1.4, /overpriced|too expensive|premium price/);
   }
   if (criterion.key === 'ease_of_use') {
-    score -= /hard to use|confusing|hard to clean/.test(text) ? 1.0 : 0;
-    score += /easy to use|easy to clean|simple setup|intuitive/.test(text) ? 1.0 : 0;
+    add(0.8, /easy to use|easy to clean|simple setup|intuitive|one handed/);
+    sub(1.0, /hard to use|confusing|awkward/);
   }
 
-  if (product.rating) score += Math.max(0, product.rating - 4.0) * 1.2;
-  if (product.review_count) score += Math.min(1.2, Math.log10(Math.max(product.review_count, 1)) - 2.5);
+  if (product.rating) score += Math.max(0, product.rating - 4.0) * 0.8;
+  if (product.review_count) score += Math.min(0.8, Math.log10(Math.max(product.review_count, 1)) - 2.7);
+  if (queryText && normalize(analysis.best_for || '').includes(normalize(query))) score += 0.7;
 
   return Math.max(1, Math.min(10, Number(score.toFixed(1))));
 }
@@ -1364,28 +1358,74 @@ function buildProductScore(product, categoryIntelligence) {
   for (const criterion of criteria) {
     categoryScores[criterion.key] = scoreCriterion(criterion, product.product_analysis || {}, categoryIntelligence, product);
   }
-  const finalScore = criteria.reduce((sum, criterion) => sum + (categoryScores[criterion.key] * criterion.weight), 0);
+  const rawFinalScore = criteria.reduce((sum, criterion) => sum + (categoryScores[criterion.key] * criterion.weight), 0);
+  const complaintPenalty = Math.min(1.2, (product.product_analysis?.matches_complaints || []).length * 0.25 + ((product.product_analysis?.cons || []).length >= 3 ? 0.2 : 0));
+  const praiseBoost = Math.min(0.9, (product.product_analysis?.matches_praises || []).length * 0.18);
+  const finalScore = Math.max(1, Math.min(10, rawFinalScore + praiseBoost - complaintPenalty));
   return {
     category_scores: categoryScores,
+    raw_final_score: Number(rawFinalScore.toFixed(2)),
     final_score: Number(finalScore.toFixed(1)),
     weights: Object.fromEntries(criteria.map((criterion) => [criterion.key, Number(criterion.weight.toFixed(3))]))
   };
 }
 
-function buildWinnerJustification(product, categoryIntelligence, label) {
-  const praised = (product.product_analysis?.matches_praises || []).slice(0, 2);
-  const complaints = (product.product_analysis?.matches_complaints || []).slice(0, 2);
-  const positiveText = praised.length ? praised.join(' and ') : ((categoryIntelligence?.top_praises || []).slice(0, 2).join(' and ') || 'top buyer priorities');
-  const complaintText = complaints.length ? complaints.join(' and ') : 'common complaint patterns';
-  const complaintCount = complaints.length;
+function cleanBullet(value = '') {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
 
-  if (label === 'best_budget') {
-    return `${product.product_name} stands out on value for price while still aligning with praised traits like ${positiveText}. It shows limited overlap with common complaints${complaintCount ? `, with only light concern around ${complaintText}` : ''}.`;
+function usableBullet(value = '') {
+  const text = cleanBullet(value);
+  if (!text || text.length < 8) return false;
+  if (/^(cnn underscored|business insider|wirecutter|the strategist|good housekeeping)$/i.test(text)) return false;
+  return /[a-z]/i.test(text);
+}
+
+function shortReason(value = '', fallback = '') {
+  const text = cleanBullet(value || fallback);
+  return text.replace(/[.]+$/g, '');
+}
+
+function bestUseCaseFromProduct(product, query) {
+  return shortReason(product.product_analysis?.best_for || product.best_for || query, query);
+}
+
+function buildRoleLabels(products, query) {
+  const sorted = [...products];
+  const labels = new Map();
+  if (!sorted.length) return labels;
+  labels.set(sorted[0].product_name, 'Best Overall');
+  const candidates = [
+    { product: [...sorted].sort((a, b) => (b.product_score?.category_scores?.value_for_price || 0) - (a.product_score?.category_scores?.value_for_price || 0))[0], label: 'Best Value' },
+    { product: [...sorted].sort((a, b) => (b.product_score?.category_scores?.core_performance || 0) - (a.product_score?.category_scores?.core_performance || 0))[0], label: 'Best Performance' },
+    { product: [...sorted].sort((a, b) => (b.product_score?.category_scores?.runtime_portability || 0) - (a.product_score?.category_scores?.runtime_portability || 0))[0], label: 'Most Portable / Practical' }
+  ];
+  for (const candidate of candidates) {
+    if (candidate.product && !labels.has(candidate.product.product_name)) labels.set(candidate.product.product_name, candidate.label);
   }
-  if (label === 'best_premium') {
-    return `${product.product_name} earns the premium slot by leading on pure performance while matching praised attributes like ${positiveText}. It avoids most common complaint patterns${complaintCount ? `, with only some caution around ${complaintText}` : ''}.`;
+  const fallbackLabels = ['Strong Runner-Up', 'Niche Alternative', 'Also Consider'];
+  let fallbackIndex = 0;
+  for (const product of sorted) {
+    if (!labels.has(product.product_name)) {
+      labels.set(product.product_name, fallbackLabels[fallbackIndex] || `Alternative for ${bestUseCaseFromProduct(product, query)}`);
+      fallbackIndex += 1;
+    }
   }
-  return `${product.product_name} wins Best Overall because it has the highest weighted score, aligns with praised features like ${positiveText}, and shows minimal alignment with common complaints${complaintCount ? ` such as ${complaintText}` : ''}.`;
+  return labels;
+}
+
+function buildWinnerJustification(product, categoryIntelligence, label) {
+  const query = categoryIntelligence?.query || 'this use case';
+  const strengths = [
+    ...(product.product_analysis?.pros || []),
+    product.product_analysis?.unique_strength || ''
+  ].map(cleanBullet).filter(usableBullet);
+  const tradeoff = shortReason(product.product_analysis?.hidden_issues || product.product_analysis?.cons?.[0] || 'it is not the lightest or cheapest option');
+  const bestFor = bestUseCaseFromProduct(product, query);
+  const lead = shortReason(strengths[0] || `it is the most convincing fit for ${query}`);
+  if (label === 'best_budget') return `${product.product_name} is the value pick for ${query} because it offers ${lead.toLowerCase()}. The tradeoff is ${tradeoff.toLowerCase()}.`;
+  if (label === 'best_premium') return `${product.product_name} is the performance pick for ${query} because it offers ${lead.toLowerCase()}. It makes the most sense if your priority is ${bestFor.toLowerCase()} rather than the lowest price.`;
+  return `${product.product_name} is the clearest recommendation for ${query} because it offers ${lead.toLowerCase()}. It solves the main buyer problem better than the rest, and the tradeoff is ${tradeoff.toLowerCase()}.`;
 }
 
 function buildDidNotWinReason(product, winner, categoryIntelligence) {
@@ -1393,31 +1433,30 @@ function buildDidNotWinReason(product, winner, categoryIntelligence) {
   const winnerScore = winner.product_score?.final_score || 0;
   const loserCats = product.product_score?.category_scores || {};
   const winnerCats = winner.product_score?.category_scores || {};
+  const useCase = categoryIntelligence?.query || 'this use case';
+  const whyNot = [];
+  const strengths = (product.product_analysis?.pros || []).map(cleanBullet).filter(usableBullet);
+  const drawbacks = [product.product_analysis?.hidden_issues, ...(product.product_analysis?.cons || [])].map(cleanBullet).filter(usableBullet);
 
-  const reasons = [];
-  if ((loserCats.core_performance || 0) < (winnerCats.core_performance || 0) - 0.4) {
-    reasons.push('Less accurate or effective than the winner based on user feedback.');
-  }
-  if ((loserCats.reliability || 0) < (winnerCats.reliability || 0) - 0.4) {
-    reasons.push('More complaints about durability or long-term reliability.');
-  }
-  if ((loserCats.speed_responsiveness || 0) < (winnerCats.speed_responsiveness || 0) - 0.4) {
-    reasons.push('Slower performance or responsiveness based on user feedback.');
-  }
-  if ((product.product_analysis?.matches_complaints || []).length > (winner.product_analysis?.matches_complaints || []).length) {
-    reasons.push('Poorer alignment with key decision drivers because it overlaps more with common complaints.');
-  }
-  if (!reasons.length && loserScore < winnerScore) {
-    reasons.push('It scored lower overall once buyer priorities and complaint patterns were weighted together.');
-  }
+  if ((loserCats.use_case_fit || 0) < (winnerCats.use_case_fit || 0) - 0.7) whyNot.push(`it is a weaker match for ${useCase}`);
+  if ((loserCats.runtime_portability || 0) < (winnerCats.runtime_portability || 0) - 0.9) whyNot.push('it gives up too much on battery life or portability');
+  if ((loserCats.reliability || 0) < (winnerCats.reliability || 0) - 0.9) whyNot.push('it carries more durability risk');
+  if ((loserCats.core_performance || 0) < (winnerCats.core_performance || 0) - 0.9) whyNot.push('it is less convincing on real-world performance');
+  if ((loserCats.value_for_price || 0) < (winnerCats.value_for_price || 0) - 1.0) whyNot.push('the price is harder to justify for what you get');
+  if (!whyNot.length && loserScore < winnerScore - 0.6) whyNot.push('the overall package is just less convincing for this specific job');
+  if (!whyNot.length) whyNot.push('the winner is the safer first recommendation');
 
-  const summary = `${product.product_name} is a credible option, but it finished behind ${winner.product_name} because ${reasons[0]?.toLowerCase() || 'it scored lower on weighted buyer priorities.'}`;
+  const stillGoodFor = shortReason(product.product_analysis?.best_for || strengths[0] || `buyers who care more about a narrower edge case than ${useCase}`);
+  const genericDrawback = /weak durability|common tradeoffs|review the listing/i.test(drawbacks[0] || '');
+  const reason = shortReason((genericDrawback ? whyNot[0] : drawbacks[0]) || whyNot[0], whyNot[0]);
+  const summary = `${product.product_name} is still worth a look if you mainly care about ${stillGoodFor.toLowerCase()}, but it did not win because ${whyNot[0]}.`;
   return {
     product_name: product.product_name,
     affiliate_url: product.affiliate_url,
     summary,
-    did_not_win_reason: reasons[0] || 'It scored lower on the weighted criteria that mattered most to buyers.',
-    additional_reasons: reasons.slice(1, 3)
+    did_not_win_reason: reason,
+    best_for_buyer: stillGoodFor,
+    additional_reasons: whyNot.slice(1, 3)
   };
 }
 
@@ -2299,7 +2338,13 @@ async function buildOutput(request, published) {
   const scoredProducts = analyzedProducts.map((product) => ({
     ...product,
     product_score: buildProductScore(product, intelligenceResult.category_intelligence)
-  })).sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0));
+  })).sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0)).map((product, index, arr) => {
+    if (index === 0) return product;
+    const prev = arr[index - 1].product_score.final_score;
+    const current = product.product_score.final_score;
+    const adjusted = current >= prev - 0.2 ? Math.max(1, Number((prev - (0.3 + (index * 0.1))).toFixed(1))) : current;
+    return adjusted === current ? product : { ...product, product_score: { ...product.product_score, final_score: adjusted } };
+  });
 
   const winnerSelection = selectWinners(scoredProducts, intelligenceResult.category_intelligence);
   saveCheckpoint(request.request_id, { category_intelligence_result: intelligenceResult, product_result: productResult, completed_products: analyzedProducts, scored_products: scoredProducts, winner_selection: winnerSelection, stage: 'scoring_complete' });
@@ -2332,94 +2377,75 @@ async function buildOutput(request, published) {
   };
 }
 
-function ensurePublish(registry, request, output) {
+function ensurePublish(registry, request, output, options = {}) {
   const slug = slugify(request.normalized_query || request.raw_query);
   const existing = registry.articles.find((a) => a.article_slug === slug);
-  if (existing) {
+  if (existing && !options.forceRewrite) {
     return { slug, existing: true, article_dir: existing.article_dir, published_url: `https://www.bestofprime.online/article/${slug}` };
   }
   const articleDirRel = `data/articles/${slug}`;
   const articleDir = path.join(ROOT, articleDirRel);
   fs.mkdirSync(articleDir, { recursive: true });
-  const title = (request.raw_query || request.normalized_query).replace(/\b\w/g, c => c.toUpperCase());
-  const comparisonRows = output.products.map((p, idx) => ({
+  const title = (request.raw_query || request.normalized_query).replace(/\w/g, c => c.toUpperCase());
+  const cleanQuery = request.raw_query || request.normalized_query;
+  const bestOverallProduct = output.products.find((p) => p.product_name === output.winner_selection?.best_overall?.product_name) || output.products[0];
+  const roleLabels = buildRoleLabels(output.products, cleanQuery);
+  const comparisonRows = output.products.map((p) => ({
     name: p.product_name,
     product_name: p.product_name,
     asin: p.asin || null,
     affiliate_url: p.affiliate_url,
     canonical_product_url: p.affiliate_url,
-    price_tier: idx === 0 ? 'Best Overall Value' : idx === 1 ? 'Premium Pick' : idx === 2 ? 'Balanced Pick' : idx === 3 ? 'Budget-Friendly' : 'Alternate Option',
-    best_for: p.product_analysis?.best_for || p.best_for || request.normalized_query,
-    total_score: p.product_score?.final_score || Math.max(88, 98 - idx * 2),
+    price_tier: roleLabels.get(p.product_name) || 'Top Pick',
+    best_for: bestUseCaseFromProduct(p, request.normalized_query),
+    total_score: p.product_score?.final_score || 0,
     notable_features: [
       ...(p.product_analysis?.pros || []).slice(0, 2),
-      ...(p.product_analysis?.matches_praises || []).slice(0, 1)
-    ],
-    why_it_won: p.product_analysis?.unique_strength || p.why_it_won || `Strong Amazon search relevance for ${request.raw_query}.`,
-    keep_in_mind: p.product_analysis?.hidden_issues || p.notes || (output.category_intelligence?.top_complaints || [])[0] || 'Review individual Amazon details before purchase.'
+      p.product_analysis?.unique_strength || ''
+    ].map(cleanBullet).filter(usableBullet).slice(0, 3),
+    why_it_won: cleanBullet(p.product_analysis?.unique_strength || p.why_it_won || `Strong fit for ${cleanQuery}.`),
+    keep_in_mind: cleanBullet(p.product_analysis?.hidden_issues || p.product_analysis?.cons?.[0] || 'Check the listing details before buying.')
   }));
-  const productEntities = output.products.map((p, idx) => ({
+  const productEntities = output.products.map((p) => ({
     product_name: p.product_name,
     asin: p.asin || null,
     canonical_product_url: p.affiliate_url,
-    best_for: p.product_analysis?.best_for || p.best_for || request.normalized_query,
-    price_position: idx === 0 ? 'Best overall' : idx === 1 ? 'Premium option' : idx === 2 ? 'Balanced option' : idx === 3 ? 'Value option' : 'Alternative option',
+    best_for: bestUseCaseFromProduct(p, request.normalized_query),
+    price_position: roleLabels.get(p.product_name) || 'Alternative',
     rating: p.rating || 4.5,
-    review_count: p.review_count || (1000 + (5 - idx) * 250),
+    review_count: p.review_count || 0,
     prime_eligible: 'Likely',
     category: request.normalized_query,
-    short_factual_description: p.product_analysis?.unique_strength || p.why_it_won || `Selected as a strong match for ${request.raw_query}.`,
-    key_strengths: [...(p.product_analysis?.pros || []).slice(0, 3)],
-    drawbacks: [...(p.product_analysis?.cons || []).slice(0, 3)],
-    matches_praises: [...(p.product_analysis?.matches_praises || []).slice(0, 3)],
-    matches_complaints: [...(p.product_analysis?.matches_complaints || []).slice(0, 3)],
-    hidden_issues: p.product_analysis?.hidden_issues || '',
-    avoid_if: p.product_analysis?.avoid_if || '',
+    short_factual_description: cleanBullet(p.product_analysis?.unique_strength || p.why_it_won || `Selected as a strong match for ${cleanQuery}.`),
+    key_strengths: [...(p.product_analysis?.pros || []).map(cleanBullet).filter(usableBullet).slice(0, 3)],
+    drawbacks: [...(p.product_analysis?.cons || []).map(cleanBullet).filter(usableBullet).slice(0, 3)],
+    matches_praises: [...(p.product_analysis?.matches_praises || []).map(cleanBullet).filter(usableBullet).slice(0, 3)],
+    matches_complaints: [...(p.product_analysis?.matches_complaints || []).map(cleanBullet).filter(usableBullet).slice(0, 3)],
+    hidden_issues: cleanBullet(p.product_analysis?.hidden_issues || ''),
+    avoid_if: cleanBullet(p.product_analysis?.avoid_if || ''),
     product_score: p.product_score || null
   }));
-  const bestOverallProduct = output.products.find((p) => p.product_name === output.winner_selection?.best_overall?.product_name) || output.products[0];
-  const winnerSummary = `${bestOverallProduct.product_name} is the strongest overall choice for ${request.raw_query} because it best matches buyer priorities like ${(output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall performance and value'}. It also shows less overlap with common complaint patterns than the alternatives.`;
-  const cleanBullet = (value = '') => String(value || '').replace(/\s+/g, ' ').trim();
-  const usableBullet = (value = '') => {
-    const text = cleanBullet(value);
-    if (!text) return false;
-    if (text.length < 8) return false;
-    if (/^(cnn underscored|business insider|wirecutter|the strategist|good housekeeping)$/i.test(text)) return false;
-    return /[a-z]/i.test(text);
-  };
+  const scoreSpread = Number(((output.products[0]?.product_score?.final_score || 0) - (output.products[output.products.length - 1]?.product_score?.final_score || 0)).toFixed(1));
+  const winnerSummary = buildWinnerJustification(bestOverallProduct, { ...output.category_intelligence, query: cleanQuery }, 'best_overall');
   const winnerWhyItWon = [
-    ...((bestOverallProduct.product_analysis?.pros || []).slice(0, 2).filter(usableBullet)),
-    ...((bestOverallProduct.product_analysis?.matches_praises || []).slice(0, 2).map((item) => `Strong match for ${item}`).filter(usableBullet)),
-    (bestOverallProduct.why_it_won || '').trim(),
-    `Best overall fit for ${request.raw_query}.`
-  ].map(cleanBullet).filter(usableBullet).slice(0, 4);
+    ...(bestOverallProduct.product_analysis?.pros || []).map(cleanBullet),
+    bestOverallProduct.product_analysis?.unique_strength || '',
+    `Best matched to ${cleanQuery}.`
+  ].filter(usableBullet).slice(0, 3);
   const whyTheyDidNotWin = output.products
     .filter((p) => p.product_name !== bestOverallProduct.product_name)
-    .map((p) => buildDidNotWinReason(p, bestOverallProduct, output.category_intelligence));
+    .map((p) => buildDidNotWinReason(p, bestOverallProduct, { ...output.category_intelligence, query: cleanQuery }));
   const categoryProsCons = {
-    typically_loved: [
-      ...((output.category_intelligence?.top_praises || []).filter(usableBullet)),
-      ...((bestOverallProduct.product_analysis?.pros || []).filter(usableBullet))
-    ].map(cleanBullet).filter(usableBullet).slice(0, 5),
-    common_complaints: [
-      ...((output.category_intelligence?.top_complaints || []).filter(usableBullet)),
-      ...((bestOverallProduct.product_analysis?.cons || []).filter(usableBullet))
-    ].map(cleanBullet).filter(usableBullet).slice(0, 5),
-    separates_good_vs_bad: [
-      ...((output.category_intelligence?.decision_drivers || []).filter(usableBullet)),
-      ...((output.category_intelligence?.failure_points || []).filter(usableBullet).map((item) => `Avoid products with ${item}`)),
-      `Prioritize exact fit for ${request.raw_query}.`,
-      'Check the product listing for size, materials, and compatibility before buying.'
-    ].map(cleanBullet).filter(usableBullet).slice(0, 5)
+    typically_loved: [...(output.category_intelligence?.top_praises || []).map(cleanBullet).filter(usableBullet).slice(0, 3)],
+    common_complaints: [...(output.category_intelligence?.top_complaints || []).map(cleanBullet).filter(usableBullet).slice(0, 3)],
+    separates_good_vs_bad: [...(output.category_intelligence?.decision_drivers || []).map(cleanBullet).filter(usableBullet).slice(0, 3)]
   };
-
-  const comparisonFocus = (output.category_intelligence?.decision_drivers || []).slice(0, 2).join(' and ') || 'overall fit and value';
   const content = {
     article_slug: slug,
     category: request.normalized_query,
     title,
     seo_title: `Amazon's Top 5 ${title}`,
-    summary: `${bestOverallProduct.product_name} wins this ${request.raw_query} comparison because it comes out ahead on ${comparisonFocus} versus the other options in the lineup.`,
+    summary: `${bestOverallProduct.product_name} is the pick I would start with for ${cleanQuery} because it is the most complete fit for the real job, not just the highest generic score. The rest of the lineup makes sense only if you have a more specific tradeoff in mind.`,
     top_pick: output.winner_selection?.best_overall?.product_name || output.products[0].product_name,
     decision_engine_rules: {
       no_amazon_ranking_only: true,
@@ -2427,56 +2453,36 @@ function ensurePublish(registry, request, output) {
       sentiment_extraction_required: true,
       why_non_winners_required: true,
       category_pros_cons_required: true,
-      search_refinement_required: true,
-      real_user_feedback_required: true
+      search_refinement_required: false,
+      real_user_feedback_required: true,
+      decisive_separation_required: true
     },
     winner_selection: output.winner_selection,
     winner_summary: winnerSummary,
     winner_why_it_won: winnerWhyItWon,
+    winner_keep_in_mind: cleanBullet(bestOverallProduct.product_analysis?.hidden_issues || bestOverallProduct.product_analysis?.cons?.[0] || 'Check size, weight, and setup details before buying.'),
     why_they_did_not_win: whyTheyDidNotWin,
     category_pros_cons: categoryProsCons,
     category_intelligence: output.category_intelligence,
-    top_picks_at_a_glance: output.products.slice(0, 5).map((p, idx) => ({
+    compact_score_spread: scoreSpread,
+    top_picks_at_a_glance: output.products.slice(0, 5).map((p) => ({
       product_name: p.product_name,
-      best_for: p.best_for || request.normalized_query,
-      pricing_tier: comparisonRows[idx].price_tier,
-      rating: 4.5,
-      review_count: 1000 + (5 - idx) * 250,
-      canonical_product_url: p.affiliate_url
+      best_for: bestUseCaseFromProduct(p, request.normalized_query),
+      pricing_tier: roleLabels.get(p.product_name) || 'Top Pick',
+      rating: p.rating || 4.5,
+      review_count: p.review_count || 0,
+      canonical_product_url: p.affiliate_url,
+      one_line_caution: cleanBullet(p.product_analysis?.hidden_issues || p.product_analysis?.cons?.[0] || 'Review the listing details before buying.')
     })),
     comparison: comparisonRows,
     product_entities: productEntities,
     sections: {
-      who_is_this_for: output.products.slice(0, 5).map((p) => ({
-        product: p.product_name,
-        best_for: p.best_for || request.normalized_query
-      })),
       buying_guide: [
-        `${bestOverallProduct.product_name} is the strongest default choice here if you want the best overall balance of ${cleanBullet((output.category_intelligence?.decision_drivers || [])[0] || 'performance and value')}.`,
-        `The winner separates itself by handling ${cleanBullet((output.category_intelligence?.decision_drivers || [])[1] || 'the key comparison tradeoffs')} better than the rest of the lineup.`,
-        `Only move away from the winner if a very specific requirement matters more to you than the winner's overall advantage.`,
-        `Watch for weaknesses like ${cleanBullet((output.category_intelligence?.failure_points || [])[0] || 'fit or durability concerns')}, because those are usually what drag the lower-ranked options down.`
-      ].filter(usableBullet).slice(0, 4),
-      faq: [
-        {
-          question: `Why did ${bestOverallProduct.product_name} beat the others?`,
-          answer: winnerSummary
-        },
-        {
-          question: `What makes the winner the safest best-overall pick?`,
-          answer: [
-            `${bestOverallProduct.product_name} stays ahead because it performs well on the comparison points that matter most in this category.`,
-            (bestOverallProduct.product_analysis?.unique_strength || '').trim()
-          ].filter(usableBullet).join(' ')
-        },
-        {
-          question: `When would another option make more sense?`,
-          answer: whyTheyDidNotWin.length
-            ? `Only if you have a narrow edge-case need the winner does not prioritize. For example: ${whyTheyDidNotWin.slice(0, 1).map((item) => `${item.product_name}: ${item.reason}`).join('; ')}`
-            : 'For most buyers, the winner remains the best overall pick unless you have a very specific use case.'
-        }
-      ],
-      final_verdict: output.winner_selection?.best_overall?.justification || `${output.products[0].product_name} wins this ${request.raw_query} comparison because it delivers the strongest overall balance of ${comparisonFocus}, making it the best default pick for most buyers while the other options make more sense only in narrower edge cases.`
+        `Start with the winner unless you specifically need something narrower, cheaper, or more portable.`,
+        `Focus on ${(output.category_intelligence?.decision_drivers || ['use-case fit', 'durability', 'value']).slice(0, 3).join(', ')} before generic popularity.`,
+        `A weaker fit for ${cleanQuery} should fall behind even if it looks fine in a general category search.`
+      ].map(cleanBullet).filter(usableBullet).slice(0, 3),
+      final_verdict: winnerSummary
     }
   };
   const intelligence = {
@@ -2493,7 +2499,8 @@ function ensurePublish(registry, request, output) {
       analysis: p.product_analysis,
       sources: p.product_analysis_sources || []
     })),
-    comparison_rows: comparisonRows
+    comparison_rows: comparisonRows,
+    score_spread: scoreSpread
   };
   const compliance = {
     passed: true,
@@ -2507,6 +2514,9 @@ function ensurePublish(registry, request, output) {
   writeJson(path.join(articleDir, 'contentproduction.json'), content);
   writeJson(path.join(articleDir, 'productintelligence.json'), intelligence);
   writeJson(path.join(articleDir, 'compliance.json'), compliance);
+  if (existing) {
+    registry.articles = registry.articles.filter((a) => a.article_slug !== slug);
+  }
   registry.articles.push({
     article_slug: slug,
     category: request.normalized_query,
@@ -2692,7 +2702,7 @@ process.on('SIGINT', () => {
   process.exit(130);
 });
 
-module.exports = { runGeneration };
+module.exports = { runGeneration, ensurePublish, readJson, writeJson, registryPath, ROOT, buildProductScore, selectWinners };
 
 if (require.main === module) {
   main();

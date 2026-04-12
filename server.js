@@ -1329,7 +1329,7 @@ function renderArticle(req, content, compliance, entry = null) {
         <td>${escapeHtml(p.price_tier)}</td>
         <td>${escapeHtml(p.best_for)}</td>
         <td>${escapeHtml(p.total_score)}</td>
-        <td>${escapeHtml((p.notable_features || []).join(', '))}</td>
+        <td>${escapeHtml(p.keep_in_mind || (p.notable_features || []).join(', '))}</td>
         <td><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" data-position-in-article="${comparisonRankMap.get(p.name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (p.name || '').trim())}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></td>
       </tr>
     `
@@ -1775,60 +1775,25 @@ function renderArticle(req, content, compliance, entry = null) {
             <ul>${(content.winner_why_it_won || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
           </div>
           <div class="mini-card">
-            <div class="eyebrow">Category pros & cons</div>
-            <p><strong>People typically love:</strong> ${escapeHtml((content.category_pros_cons?.typically_loved || []).join(', '))}</p>
-            <p><strong>Common complaints:</strong> ${escapeHtml((content.category_pros_cons?.common_complaints || []).join(', '))}</p>
-            <p><strong>Good vs bad products:</strong> ${escapeHtml((content.category_pros_cons?.separates_good_vs_bad || []).join(', '))}</p>
+            <div class="eyebrow">Keep in mind</div>
+            <p>${escapeHtml(content.winner_keep_in_mind || 'Review the listing details before buying.')}</p>
+            <p><strong>Decision drivers:</strong> ${escapeHtml((content.category_pros_cons?.separates_good_vs_bad || []).join(', '))}</p>
           </div>
         </div>
 
-        ${relatedGuides ? `<h3>Related Guides</h3><p>${relatedGuides}</p>` : ''}
+        ${glance ? `<h3>Top Alternatives</h3><div class="glance-grid">${glance}</div>` : ''}
 
-        ${glance ? `<h3>Top Picks at a Glance</h3><div class="glance-grid">${glance}</div>` : ''}
+        ${didNotWinCards ? `<h3>Why the Others Fall Short</h3><div class="did-not-win-grid">${didNotWinCards}</div>` : ''}
 
-        ${didNotWinCards ? `<h3>Why They Did Not Win</h3><div class="did-not-win-grid">${didNotWinCards}</div>` : ''}
-
-        <h3>Refine Your Search</h3>
-        <div class="refinement-module">
-          <p>If you're looking for something more specific, refine your search below.</p>
-          <div class="decision-driver-list">${refinementChips}</div>
-          <div class="refinement-search-shell">
-            <div class="refinement-search-row">
-              <div>⌕</div>
-              <input id="refinementSearchInput" class="refinement-search-input" type="text" placeholder="Search a more specific variation…" value="">
-            </div>
-          </div>
-        </div>
-
-        <h3>Key Decision Drivers</h3>
-        <div class="decision-driver-list">${decisionDriverChips}</div>
-
-        <h3>Structured Comparison Table</h3>
+        <h3>Compact Comparison</h3>
         <div class="comparison-table-shell">
           <table>
             <tr>
               <th>Product</th>
-              <th>Core performance</th>
-              <th>Reliability</th>
-              <th>Speed</th>
-              <th>Build quality</th>
-              <th>Price</th>
-              <th>Best use case</th>
-            </tr>
-            ${structuredComparisonRows}
-          </table>
-        </div>
-        <div class="comparison-cards">${structuredComparisonCards}</div>
-
-        <h3>Comparison</h3>
-        <div class="comparison-table-shell">
-          <table>
-            <tr>
-              <th>Product</th>
-              <th>Price Tier</th>
+              <th>Role</th>
               <th>Best For</th>
               <th>Score</th>
-              <th>Notable Features</th>
+              <th>Watchout</th>
               <th>Shop</th>
             </tr>
             ${rows}
@@ -1838,14 +1803,17 @@ function renderArticle(req, content, compliance, entry = null) {
           ${(content.comparison || []).filter(hasValidAffiliateUrl).map((p) => `
             <div class="comparison-card">
               <div class="comparison-card-title">${escapeHtml(p.name)}</div>
-              <div class="comparison-row"><div class="comparison-label">Price tier</div><div>${escapeHtml(p.price_tier)}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Role</div><div>${escapeHtml(p.price_tier)}</div></div>
               <div class="comparison-row"><div class="comparison-label">Best for</div><div>${escapeHtml(p.best_for)}</div></div>
               <div class="comparison-row"><div class="comparison-label">Score</div><div>${escapeHtml(p.total_score)}</div></div>
-              <div class="comparison-row"><div class="comparison-label">Features</div><div>${escapeHtml((p.notable_features || []).join(', '))}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Watchout</div><div>${escapeHtml(p.keep_in_mind)}</div></div>
               <div class="comparison-row"><div class="comparison-label">Shop</div><div><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" data-position-in-article="${comparisonRankMap.get(p.name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (p.name || '').trim())}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div></div>
             </div>
           `).join('')}
         </div>
+
+        <h3>How to Choose</h3>
+        <div class="mini-card"><ul>${((content.sections && content.sections.buying_guide) || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>
 
         <h3>Who is this for</h3>
         <ul>${who}</ul>
