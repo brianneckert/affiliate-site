@@ -1119,7 +1119,6 @@ function renderHome(req) {
           <div id="refineChips" class="decision-driver-list"></div>
         </div>
       </section>
-      <div class="footer-note">Local-only experience. Only compliance-approved article content is surfaced here.</div>
     </main>
     <script id="articleIndexData" type="application/json">${searchData}</script>
     <script>
