@@ -1,0 +1,826 @@
+{
+  "category_intelligence": {
+    "query": "30x20” air filter for air conditioner",
+    "decision_drivers": [
+      "overall value",
+      "runtime consistency",
+      "brand reliability"
+    ],
+    "top_praises": [
+      "strong overall fit for the intended use case",
+      "solid buyer demand",
+      "good value for the category"
+    ],
+    "top_complaints": [
+      "performance can vary across brands",
+      "lower-end options may trade quality for price"
+    ],
+    "failure_points": [
+      "weak durability",
+      "inconsistent quality control"
+    ]
+  },
+  "category_intelligence_sources": [],
+  "winner_selection": {
+    "best_overall": {
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "asin": "B0CNV1615R",
+      "final_score": 7.5,
+      "justification": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H... is the clearest recommendation for 30x20” air filter for air conditioner because it offers strong amazon shopper validation with about 5662 reviews. It solves the main buyer problem better than the rest, and the tradeoff is weak durability."
+    },
+    "best_budget": {
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "asin": "B0CNV1615R",
+      "final_score": 7.5,
+      "justification": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H... is the value pick for 30x20” air filter for air conditioner because it offers strong amazon shopper validation with about 5662 reviews. The tradeoff is weak durability."
+    },
+    "best_premium": {
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "asin": "B0CNV1615R",
+      "final_score": 7.5,
+      "justification": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H... is the performance pick for 30x20” air filter for air conditioner because it offers strong amazon shopper validation with about 5662 reviews. It makes the most sense if your priority is 30x20 air filter for air conditioner rather than the lowest price."
+    }
+  },
+  "products": [
+    {
+      "asin": "B0CNV1615R",
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "affiliate_url": "https://www.amazon.com/dp/B0CNV1615R?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"30x20 air filter for air conditioner\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "30x20 air filter for air conditioner",
+      "source": "amazon_search",
+      "rating": 4.7,
+      "review_count": 5662,
+      "query_fit_tokens": [
+        "air",
+        "filter",
+        "conditioner"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 5662 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.7 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CNV1615R?tag=helperscollec-20",
+          "title": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+          "source_type": "amazon_search",
+          "page_title": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+          "page_excerpt": "Amazon search fallback evidence for BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "use_case_fit": 8.8,
+          "core_performance": 6.9,
+          "reliability": 7,
+          "build_quality": 7.9,
+          "runtime_portability": 7,
+          "value_for_price": 8,
+          "ease_of_use": 7
+        },
+        "raw_final_score": 7.64,
+        "final_score": 7.5,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      }
+    },
+    {
+      "asin": "B0BR8RBNTK",
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "affiliate_url": "https://www.amazon.com/dp/B0BR8RBNTK?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"30x20 air filter for air conditioner\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "30x20 air filter for air conditioner",
+      "source": "amazon_search",
+      "rating": 4.6,
+      "review_count": 20066,
+      "query_fit_tokens": [
+        "air",
+        "filter",
+        "conditioner"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 20066 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0BR8RBNTK?tag=helperscollec-20",
+          "title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "source_type": "amazon_search",
+          "page_title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "page_excerpt": "Amazon search fallback evidence for BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "use_case_fit": 8.7,
+          "core_performance": 6.8,
+          "reliability": 6.9,
+          "build_quality": 7.8,
+          "runtime_portability": 6.9,
+          "value_for_price": 7.9,
+          "ease_of_use": 6.9
+        },
+        "raw_final_score": 7.54,
+        "final_score": 7.1,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      }
+    },
+    {
+      "asin": "B0CB23DNHJ",
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "affiliate_url": "https://www.amazon.com/dp/B0CB23DNHJ?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"30x20 air filter for air conditioner\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "30x20 air filter for air conditioner",
+      "source": "amazon_search",
+      "rating": 4.6,
+      "review_count": 20066,
+      "query_fit_tokens": [
+        "air",
+        "filter",
+        "conditioner"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 20066 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CB23DNHJ?tag=helperscollec-20",
+          "title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "source_type": "amazon_search",
+          "page_title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "page_excerpt": "Amazon search fallback evidence for BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "use_case_fit": 8.7,
+          "core_performance": 6.8,
+          "reliability": 6.9,
+          "build_quality": 7.8,
+          "runtime_portability": 6.9,
+          "value_for_price": 7.9,
+          "ease_of_use": 6.9
+        },
+        "raw_final_score": 7.54,
+        "final_score": 6.9,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      }
+    },
+    {
+      "asin": "B0D5MH4T5D",
+      "product_name": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+      "affiliate_url": "https://www.amazon.com/dp/B0D5MH4T5D?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"30x20 air filter for air conditioner\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "30x20 air filter for air conditioner",
+      "source": "amazon_search",
+      "rating": 4.8,
+      "review_count": 1375,
+      "query_fit_tokens": [
+        "air",
+        "filter",
+        "conditioner"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 1375 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.8 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0D5MH4T5D?tag=helperscollec-20",
+          "title": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+          "source_type": "amazon_search",
+          "page_title": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+          "page_excerpt": "Amazon search fallback evidence for TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "use_case_fit": 8.5,
+          "core_performance": 6.6,
+          "reliability": 4.5,
+          "build_quality": 7.6,
+          "runtime_portability": 6.7,
+          "value_for_price": 7.7,
+          "ease_of_use": 6.7
+        },
+        "raw_final_score": 7.01,
+        "final_score": 6.8,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      }
+    },
+    {
+      "asin": "B0C94YDYDC",
+      "product_name": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+      "affiliate_url": "https://www.amazon.com/dp/B0C94YDYDC?tag=helperscollec-20",
+      "why_it_won": "Selected using query-fit, review-volume, and rating thresholds for \"30x20 air filter for air conditioner\".",
+      "notes": "Chosen for exact query fit first, then by descending review count and rating thresholds.",
+      "best_for": "30x20 air filter for air conditioner",
+      "source": "amazon_search",
+      "rating": 4.5,
+      "review_count": 982,
+      "query_fit_tokens": [
+        "air",
+        "filter",
+        "conditioner"
+      ],
+      "product_analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 982 reviews.",
+          "Solid visible rating around 4.5 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.5 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "product_analysis_sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0C94YDYDC?tag=helperscollec-20",
+          "title": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+          "source_type": "amazon_search",
+          "page_title": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+          "page_excerpt": "Amazon search fallback evidence for CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made..."
+        }
+      ],
+      "product_score": {
+        "category_scores": {
+          "use_case_fit": 8.1,
+          "core_performance": 6.2,
+          "reliability": 6.3,
+          "build_quality": 7.2,
+          "runtime_portability": 6.3,
+          "value_for_price": 7.3,
+          "ease_of_use": 6.3
+        },
+        "raw_final_score": 6.94,
+        "final_score": 6.1,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      }
+    }
+  ],
+  "product_analysis": [
+    {
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "asin": "B0CNV1615R",
+      "review_count": 5662,
+      "rating": 4.7,
+      "score": {
+        "category_scores": {
+          "use_case_fit": 8.8,
+          "core_performance": 6.9,
+          "reliability": 7,
+          "build_quality": 7.9,
+          "runtime_portability": 7,
+          "value_for_price": 8,
+          "ease_of_use": 7
+        },
+        "raw_final_score": 7.64,
+        "final_score": 7.5,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 5662 reviews.",
+          "Solid visible rating around 4.7 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.7 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CNV1615R?tag=helperscollec-20",
+          "title": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+          "source_type": "amazon_search",
+          "page_title": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+          "page_excerpt": "Amazon search fallback evidence for BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H..."
+        }
+      ]
+    },
+    {
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "asin": "B0BR8RBNTK",
+      "review_count": 20066,
+      "rating": 4.6,
+      "score": {
+        "category_scores": {
+          "use_case_fit": 8.7,
+          "core_performance": 6.8,
+          "reliability": 6.9,
+          "build_quality": 7.8,
+          "runtime_portability": 6.9,
+          "value_for_price": 7.9,
+          "ease_of_use": 6.9
+        },
+        "raw_final_score": 7.54,
+        "final_score": 7.1,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 20066 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0BR8RBNTK?tag=helperscollec-20",
+          "title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "source_type": "amazon_search",
+          "page_title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "page_excerpt": "Amazon search fallback evidence for BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi..."
+        }
+      ]
+    },
+    {
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "asin": "B0CB23DNHJ",
+      "review_count": 20066,
+      "rating": 4.6,
+      "score": {
+        "category_scores": {
+          "use_case_fit": 8.7,
+          "core_performance": 6.8,
+          "reliability": 6.9,
+          "build_quality": 7.8,
+          "runtime_portability": 6.9,
+          "value_for_price": 7.9,
+          "ease_of_use": 6.9
+        },
+        "raw_final_score": 7.54,
+        "final_score": 6.9,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 20066 reviews.",
+          "Solid visible rating around 4.6 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0CB23DNHJ?tag=helperscollec-20",
+          "title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "source_type": "amazon_search",
+          "page_title": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+          "page_excerpt": "Amazon search fallback evidence for BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi..."
+        }
+      ]
+    },
+    {
+      "product_name": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+      "asin": "B0D5MH4T5D",
+      "review_count": 1375,
+      "rating": 4.8,
+      "score": {
+        "category_scores": {
+          "use_case_fit": 8.5,
+          "core_performance": 6.6,
+          "reliability": 4.5,
+          "build_quality": 7.6,
+          "runtime_portability": 6.7,
+          "value_for_price": 7.7,
+          "ease_of_use": 6.7
+        },
+        "raw_final_score": 7.01,
+        "final_score": 6.8,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 1375 reviews.",
+          "Solid visible rating around 4.8 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.8 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0D5MH4T5D?tag=helperscollec-20",
+          "title": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+          "source_type": "amazon_search",
+          "page_title": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+          "page_excerpt": "Amazon search fallback evidence for TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna..."
+        }
+      ]
+    },
+    {
+      "product_name": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+      "asin": "B0C94YDYDC",
+      "review_count": 982,
+      "rating": 4.5,
+      "score": {
+        "category_scores": {
+          "use_case_fit": 8.1,
+          "core_performance": 6.2,
+          "reliability": 6.3,
+          "build_quality": 7.2,
+          "runtime_portability": 6.3,
+          "value_for_price": 7.3,
+          "ease_of_use": 6.3
+        },
+        "raw_final_score": 6.94,
+        "final_score": 6.1,
+        "weights": {
+          "use_case_fit": 0.245,
+          "core_performance": 0.17,
+          "reliability": 0.151,
+          "build_quality": 0.113,
+          "runtime_portability": 0.151,
+          "value_for_price": 0.113,
+          "ease_of_use": 0.057
+        }
+      },
+      "analysis": {
+        "pros": [
+          "Strong Amazon shopper validation with about 982 reviews.",
+          "Solid visible rating around 4.5 stars for this category.",
+          "strong overall fit for the intended use case"
+        ],
+        "cons": [
+          "performance can vary across brands",
+          "weak durability",
+          "Amazon search selection is stronger on demand signals than hands-on lab verification."
+        ],
+        "matches_praises": [
+          "strong overall fit for the intended use case",
+          "solid buyer demand",
+          "good value for the category"
+        ],
+        "matches_complaints": [
+          "performance can vary across brands",
+          "lower-end options may trade quality for price"
+        ],
+        "unique_strength": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.5 average rating.",
+        "hidden_issues": "weak durability",
+        "best_for": "30x20 air filter for air conditioner",
+        "avoid_if": "performance can vary across brands",
+        "amazon_review_sentiment": null,
+        "evidence_tier": "tier_0_amazon_search_plus_category_intelligence"
+      },
+      "sources": [
+        {
+          "href": "https://www.amazon.com/dp/B0C94YDYDC?tag=helperscollec-20",
+          "title": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+          "source_type": "amazon_search",
+          "page_title": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+          "page_excerpt": "Amazon search fallback evidence for CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made..."
+        }
+      ]
+    }
+  ],
+  "comparison_rows": [
+    {
+      "name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 11 (4-Pack) - MADE IN USA - Allergen Defense Electrostatic Pleated Air Conditioner H...",
+      "asin": "B0CNV1615R",
+      "affiliate_url": "https://www.amazon.com/dp/B0CNV1615R?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CNV1615R?tag=helperscollec-20",
+      "price_tier": "Best Overall",
+      "best_for": "30x20 air filter for air conditioner",
+      "total_score": 7.5,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 5662 reviews.",
+        "Solid visible rating around 4.7 stars for this category.",
+        "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.7 average rating."
+      ],
+      "why_it_won": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.7 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (4-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "asin": "B0BR8RBNTK",
+      "affiliate_url": "https://www.amazon.com/dp/B0BR8RBNTK?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0BR8RBNTK?tag=helperscollec-20",
+      "price_tier": "Strong Runner-Up",
+      "best_for": "30x20 air filter for air conditioner",
+      "total_score": 7.1,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 20066 reviews.",
+        "Solid visible rating around 4.6 stars for this category.",
+        "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating."
+      ],
+      "why_it_won": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "product_name": "BNX TruFilter 20x30x1 Air Filter MERV 13 (6-Pack) - MADE IN USA - Electrostatic Pleated Air Conditioner HVAC AC Furnace Fi...",
+      "asin": "B0CB23DNHJ",
+      "affiliate_url": "https://www.amazon.com/dp/B0CB23DNHJ?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0CB23DNHJ?tag=helperscollec-20",
+      "price_tier": "Niche Alternative",
+      "best_for": "30x20 air filter for air conditioner",
+      "total_score": 6.9,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 20066 reviews.",
+        "Solid visible rating around 4.6 stars for this category.",
+        "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating."
+      ],
+      "why_it_won": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.6 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+      "product_name": "TRIGHTFILTERS 20x30x1 Air Filter 4 Pack, MERV 8 Pleated Dust Defense Air Filters Replacement Air Conditioner HVAC AC Furna...",
+      "asin": "B0D5MH4T5D",
+      "affiliate_url": "https://www.amazon.com/dp/B0D5MH4T5D?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0D5MH4T5D?tag=helperscollec-20",
+      "price_tier": "Also Consider",
+      "best_for": "30x20 air filter for air conditioner",
+      "total_score": 6.8,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 1375 reviews.",
+        "Solid visible rating around 4.8 stars for this category.",
+        "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.8 average rating."
+      ],
+      "why_it_won": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.8 average rating.",
+      "keep_in_mind": "weak durability"
+    },
+    {
+      "name": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+      "product_name": "CoreCarbon 20x30x1 Cut To Fit Furnace & Air Conditioner Washable Reusable High Air Flow Polyester Fiber Filter Media, Made...",
+      "asin": "B0C94YDYDC",
+      "affiliate_url": "https://www.amazon.com/dp/B0C94YDYDC?tag=helperscollec-20",
+      "canonical_product_url": "https://www.amazon.com/dp/B0C94YDYDC?tag=helperscollec-20",
+      "price_tier": "Alternative for 30x20 air filter for air conditioner",
+      "best_for": "30x20 air filter for air conditioner",
+      "total_score": 6.1,
+      "notable_features": [
+        "Strong Amazon shopper validation with about 982 reviews.",
+        "Solid visible rating around 4.5 stars for this category.",
+        "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.5 average rating."
+      ],
+      "why_it_won": "High review-volume Amazon pick for 30x20 air filter for air conditioner with a 4.5 average rating.",
+      "keep_in_mind": "weak durability"
+    }
+  ],
+  "score_spread": 1.4
+}

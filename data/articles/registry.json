@@ -4568,6 +4568,27 @@
       "related_articles": [],
       "duplicate_of": null,
       "source_request_id": "ff4b26ee-9312-4baa-a604-c0b0b816c138"
+    },
+    {
+      "article_slug": "30x20-air-filter-for-air-conditioner",
+      "category": "30x20 air filter for air conditioner",
+      "title": "30x20” air filter for air conditioner",
+      "output_dir": "data/articles/30x20-air-filter-for-air-conditioner",
+      "article_dir": "data/articles/30x20-air-filter-for-air-conditioner",
+      "topic_family": "30x20 air filter for air conditioner",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-04-12",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true,
+        "category_intelligence_required": true
+      },
+      "published_at": "2026-04-12T23:54:49.949Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [],
+      "duplicate_of": null,
+      "source_request_id": "f04729a8-b58c-4fa1-b623-3b3125bac89b"
     }
   ]
 }
