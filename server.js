@@ -2294,7 +2294,13 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     }
     if (!request) return res.status(404).json({ ok: false, error: 'request_not_found' });
     const runtimeState = getGenerationRuntimeState(request.request_id);
-    if (request.request_status === 'generating' && request.fulfillment_status === 'processing' && runtimeState.orphaned) {
+    const requestAgeMs = Date.now() - new Date(request.paid_at || request.created_at || 0).getTime();
+    const orphanGraceMs = 5 * 60 * 1000;
+    const shouldMarkOrphaned = request.request_status === 'generating'
+      && request.fulfillment_status === 'processing'
+      && runtimeState.orphaned
+      && requestAgeMs > orphanGraceMs;
+    if (shouldMarkOrphaned) {
       request = paidRequests.updateRequestStatus(request.request_id, {
         request_status: 'failed',
         fulfillment_status: 'failed',
@@ -2305,6 +2311,8 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
         worker_active: runtimeState.workerActiveForRequest,
         lock: runtimeState.lock,
         last_heartbeat_ms: runtimeState.lastHeartbeatMs,
+        request_age_ms: requestAgeMs,
+        orphan_grace_ms: orphanGraceMs,
         terminal_status_write: 'failed:orphaned_generation_job'
       });
     }
