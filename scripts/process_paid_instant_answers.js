@@ -1903,9 +1903,8 @@ function buildFromExisting(request, published) {
     const overlapRatio = qTokens.length ? (Math.max(titleHits, productHits) / qTokens.length) : 0;
     return { ...item, score, titleHits, productHits, overlapRatio };
   }).filter((item) => {
-    const strongTitleOnlyMatch = item.titleHits >= 3;
     const productAnchoredMatch = item.productHits >= 1;
-    return item.titleHits >= 1 && item.overlapRatio >= 0.6 && item.score >= 3 && (productAnchoredMatch || strongTitleOnlyMatch);
+    return item.titleHits >= 1 && item.overlapRatio >= 0.6 && item.score >= 3 && productAnchoredMatch;
   }).sort((a,b) => b.score - a.score).slice(0, 5);
 
   if (!matches.length) return { ok: false, error: 'no_relevant_content_found' };
