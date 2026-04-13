@@ -1422,10 +1422,43 @@ function cleanBullet(value = '') {
   return String(value || '').replace(/\s+/g, ' ').trim();
 }
 
+function isNaturalSentence(value = '') {
+  const text = cleanBullet(value);
+  return text.length >= 18 && /[a-z]/i.test(text) && /\s/.test(text);
+}
+
+function isLeakPlaceholderText(value = '') {
+  const text = cleanBullet(value).toLowerCase();
+  if (!text) return true;
+  const blockedPhrases = [
+    'the tradeoff is harnesses 2026',
+    'keep in mind: harnesses 2026',
+    'why it did not win: harnesses 2026',
+    'harnesses 2026',
+    '2026 tested',
+    'fur common',
+    'she sees'
+  ];
+  if (blockedPhrases.some((phrase) => text.includes(phrase))) return true;
+  if (/\b[a-z0-9-]+\s+20\d{2}\b/.test(text)) return true;
+  if (/\b(?:slug|taxonomy|category|categories|fallback|placeholder|token|label)\b/.test(text)) return true;
+  if (/^[a-z0-9-]{3,}$/.test(text) && !/\s/.test(text)) return true;
+  if (/^(n\/a|na|none|null|unknown|generic|misc|other)$/i.test(text)) return true;
+  return false;
+}
+
+function isRenderableUserText(value = '') {
+  const text = cleanBullet(value);
+  if (!isNaturalSentence(text)) return false;
+  if (isLeakPlaceholderText(text)) return false;
+  return /[a-z]/i.test(text);
+}
+
 function usableBullet(value = '') {
   const text = cleanBullet(value);
   if (!text || text.length < 8) return false;
   if (/^(cnn underscored|business insider|wirecutter|the strategist|good housekeeping)$/i.test(text)) return false;
+  if (isLeakPlaceholderText(text)) return false;
   return /[a-z]/i.test(text);
 }
 
@@ -1519,11 +1552,13 @@ function buildWinnerJustification(product, categoryIntelligence, label) {
     product.product_analysis?.unique_strength || ''
   ].map(cleanBullet).filter(usableBullet);
   const hvacAttrs = extractFilterAttributes(product);
-  const tradeoff = shortReason(detectHvacFilterFamily(query, product.product_name || '')
+  const rawTradeoff = detectHvacFilterFamily(query, product.product_name || '')
     ? buildHvacTradeoff(hvacAttrs, categoryIntelligence)
-    : (product.product_analysis?.hidden_issues || product.product_analysis?.cons?.[0] || 'it is not the lightest or cheapest option'));
+    : (product.product_analysis?.hidden_issues || product.product_analysis?.cons?.[0] || '');
+  const tradeoff = isRenderableUserText(rawTradeoff) ? shortReason(rawTradeoff) : '';
   const bestFor = bestUseCaseFromProduct(product, query);
   const lead = shortReason(strengths[0] || `it is the most convincing fit for ${query}`);
+  let sentences = [];
   if (detectHvacFilterFamily(query, [bestFor, ...strengths].join(' '))) {
     const attrs = extractFilterAttributes(product);
     const hvacLead = attrs.merv >= 13
@@ -1533,13 +1568,40 @@ function buildWinnerJustification(product, categoryIntelligence, label) {
         : attrs.packCount >= 4
           ? `it balances the right size, sensible airflow, and multi-pack replacement value`
           : `it stays focused on the correct filter size and a practical HVAC replacement use case`;
-    if (label === 'best_budget') return `${product.product_name} is the value pick for ${query} because ${hvacLead}. The tradeoff is ${tradeoff.toLowerCase()}.`;
-    if (label === 'best_premium') return `${product.product_name} is the more aggressive filtration pick for ${query} because ${hvacLead}. It makes the most sense if your priority is ${bestFor.toLowerCase()} rather than maximum airflow.`;
-    return `${product.product_name} is the clearest recommendation for ${query} because ${hvacLead}. It is the easiest starting point for buyers who want the right size, solid filtration, and a pack that is practical to replace on schedule. The tradeoff is ${tradeoff.toLowerCase()}.`;
+    if (label === 'best_budget') {
+      sentences = [
+        `${product.product_name} is the value pick for ${query}.`,
+        `It stands out because ${hvacLead}.`
+      ];
+    } else if (label === 'best_premium') {
+      sentences = [
+        `${product.product_name} is the performance pick for ${query}.`,
+        `It makes the most sense when ${bestFor.toLowerCase()} matters more than maximum airflow.`
+      ];
+    } else {
+      sentences = [
+        `${product.product_name} is the best choice for ${query}.`,
+        `It stands out because ${hvacLead}.`
+      ];
+    }
+  } else if (label === 'best_budget') {
+    sentences = [
+      `${product.product_name} is the value pick for ${query}.`,
+      `It is the best low-cost fit because it offers ${lead.toLowerCase()}.`
+    ];
+  } else if (label === 'best_premium') {
+    sentences = [
+      `${product.product_name} is the performance pick for ${query}.`,
+      `It is the strongest fit when ${bestFor.toLowerCase()} matters more than the lowest price.`
+    ];
+  } else {
+    sentences = [
+      `${product.product_name} is the best choice for ${query}.`,
+      `It is the best fit because it offers ${lead.toLowerCase()}.`
+    ];
   }
-  if (label === 'best_budget') return `${product.product_name} is the value pick for ${query} because it offers ${lead.toLowerCase()}. The tradeoff is ${tradeoff.toLowerCase()}.`;
-  if (label === 'best_premium') return `${product.product_name} is the performance pick for ${query} because it offers ${lead.toLowerCase()}. It makes the most sense if your priority is ${bestFor.toLowerCase()} rather than the lowest price.`;
-  return `${product.product_name} is the clearest recommendation for ${query} because it offers ${lead.toLowerCase()}. It solves the main buyer problem better than the rest, and the tradeoff is ${tradeoff.toLowerCase()}.`;
+  if (tradeoff) sentences.push(`Keep in mind: ${tradeoff}.`);
+  return sentences.join(' ');
 }
 
 function buildDidNotWinReason(product, winner, categoryIntelligence) {
@@ -2553,22 +2615,25 @@ function ensurePublish(registry, request, output, options = {}) {
   const cleanQuery = request.raw_query || request.normalized_query;
   const bestOverallProduct = output.products.find((p) => p.product_name === output.winner_selection?.best_overall?.product_name) || output.products[0];
   const roleLabels = buildRoleLabels(output.products, cleanQuery);
-  const comparisonRows = output.products.map((p) => ({
-    name: p.product_name,
-    product_name: p.product_name,
-    asin: p.asin || null,
-    affiliate_url: p.affiliate_url,
-    canonical_product_url: p.affiliate_url,
-    price_tier: roleLabels.get(p.product_name) || 'Top Pick',
-    best_for: bestUseCaseFromProduct(p, request.normalized_query),
-    total_score: p.product_score?.final_score || 0,
-    notable_features: [
-      ...(p.product_analysis?.pros || []).slice(0, 2),
-      p.product_analysis?.unique_strength || ''
-    ].map(cleanBullet).filter(usableBullet).slice(0, 3),
-    why_it_won: cleanBullet(p.product_analysis?.unique_strength || p.why_it_won || `Strong fit for ${cleanQuery}.`),
-    keep_in_mind: cleanBullet(p.product_analysis?.hidden_issues || p.product_analysis?.cons?.[0] || 'Check the listing details before buying.')
-  }));
+  const comparisonRows = output.products.map((p) => {
+    const rawKeepInMind = cleanBullet(p.product_analysis?.hidden_issues || p.product_analysis?.cons?.[0] || '');
+    return {
+      name: p.product_name,
+      product_name: p.product_name,
+      asin: p.asin || null,
+      affiliate_url: p.affiliate_url,
+      canonical_product_url: p.affiliate_url,
+      price_tier: roleLabels.get(p.product_name) || 'Top Pick',
+      best_for: bestUseCaseFromProduct(p, request.normalized_query),
+      total_score: p.product_score?.final_score || 0,
+      notable_features: [
+        ...(p.product_analysis?.pros || []).slice(0, 2),
+        p.product_analysis?.unique_strength || ''
+      ].map(cleanBullet).filter(usableBullet).slice(0, 3),
+      why_it_won: cleanBullet(p.product_analysis?.unique_strength || p.why_it_won || `Strong fit for ${cleanQuery}.`),
+      keep_in_mind: isRenderableUserText(rawKeepInMind) ? rawKeepInMind : ''
+    };
+  });
   const productEntities = output.products.map((p) => ({
     product_name: p.product_name,
     asin: p.asin || null,
@@ -2595,6 +2660,7 @@ function ensurePublish(registry, request, output, options = {}) {
     bestOverallProduct.product_analysis?.unique_strength || '',
     `Best matched to ${cleanQuery}.`
   ].filter(usableBullet).slice(0, 3);
+  const rawWinnerKeepInMind = cleanBullet(bestOverallProduct.product_analysis?.hidden_issues || bestOverallProduct.product_analysis?.cons?.[0] || '');
   const whyTheyDidNotWin = output.products
     .filter((p) => p.product_name !== bestOverallProduct.product_name)
     .map((p) => buildDidNotWinReason(p, bestOverallProduct, { ...output.category_intelligence, query: cleanQuery }));
@@ -2623,7 +2689,7 @@ function ensurePublish(registry, request, output, options = {}) {
     winner_selection: output.winner_selection,
     winner_summary: winnerSummary,
     winner_why_it_won: winnerWhyItWon,
-    winner_keep_in_mind: cleanBullet(bestOverallProduct.product_analysis?.hidden_issues || bestOverallProduct.product_analysis?.cons?.[0] || 'Check size, weight, and setup details before buying.'),
+    winner_keep_in_mind: isRenderableUserText(rawWinnerKeepInMind) ? rawWinnerKeepInMind : '',
     why_they_did_not_win: whyTheyDidNotWin,
     category_pros_cons: categoryProsCons,
     category_intelligence: output.category_intelligence,

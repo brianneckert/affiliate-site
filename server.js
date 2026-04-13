@@ -1293,6 +1293,55 @@ function renderHome(req) {
   </html>`;
 }
 
+function isRenderableArticleSentence(value = '') {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text || text.length < 18) return false;
+  const lowered = text.toLowerCase();
+  const blocked = [
+    'the tradeoff is harnesses 2026',
+    'keep in mind: harnesses 2026',
+    'why it did not win: harnesses 2026',
+    'harnesses 2026',
+    '2026 tested',
+    'fur common',
+    'she sees'
+  ];
+  if (blocked.some((phrase) => lowered.includes(phrase))) return false;
+  if (/\b(?:slug|taxonomy|fallback|placeholder|token|label)\b/i.test(text)) return false;
+  if (/\b[a-z0-9-]+\s+20\d{2}\b/i.test(text)) return false;
+  return /[a-z]/i.test(text) && /\s/.test(text);
+}
+
+function sanitizeArticleContent(content = {}) {
+  const next = JSON.parse(JSON.stringify(content || {}));
+  const winner = next.winner_selection?.best_overall?.product_name || next.top_pick || 'This option';
+  const query = next.title || next.category || 'this use case';
+  const fallbackVerdict = `${winner} is the best choice for ${query}. It is the strongest fit for the stated use case based on the current comparison.`;
+  if (!isRenderableArticleSentence(next.sections?.final_verdict || '')) {
+    next.sections = { ...(next.sections || {}), final_verdict: fallbackVerdict };
+  } else {
+    next.sections = { ...(next.sections || {}), final_verdict: String(next.sections.final_verdict).replace(/\s+The tradeoff is\s+[^.]+\.?$/i, '').trim() };
+  }
+  if (!isRenderableArticleSentence(next.winner_keep_in_mind || '')) next.winner_keep_in_mind = '';
+  next.why_they_did_not_win = (next.why_they_did_not_win || []).map((item) => ({
+    ...item,
+    did_not_win_reason: isRenderableArticleSentence(item?.did_not_win_reason || '') ? item.did_not_win_reason : '',
+    additional_reasons: (item?.additional_reasons || []).filter(isRenderableArticleSentence)
+  }));
+  next.comparison = (next.comparison || []).map((item) => ({
+    ...item,
+    keep_in_mind: isRenderableArticleSentence(item?.keep_in_mind || '') ? item.keep_in_mind : ''
+  }));
+  next.product_entities = (next.product_entities || []).map((item) => ({
+    ...item,
+    hidden_issues: isRenderableArticleSentence(item?.hidden_issues || '') ? item.hidden_issues : '',
+    drawbacks: (item?.drawbacks || []).filter(isRenderableArticleSentence),
+    matches_praises: (item?.matches_praises || []).filter(isRenderableArticleSentence),
+    matches_complaints: (item?.matches_complaints || []).filter(isRenderableArticleSentence)
+  }));
+  return next;
+}
+
 function renderArticle(req, content, compliance, entry = null) {
   if (!content || !isDisplayableCompliance(compliance)) {
     return `
@@ -1380,7 +1429,7 @@ function renderArticle(req, content, compliance, entry = null) {
       <div class="product-card">
         <h4>${escapeHtml(item.product_name)}</h4>
         <p>${escapeHtml(item.summary || '')}</p>
-        <p><strong>Why it did not win:</strong> ${escapeHtml(item.did_not_win_reason || '')}</p>
+        ${item.did_not_win_reason ? `<p><strong>Why it did not win:</strong> ${escapeHtml(item.did_not_win_reason)}</p>` : ''}
         ${(item.additional_reasons || []).length ? `<p><strong>Also:</strong> ${escapeHtml(item.additional_reasons.join(' '))}</p>` : ''}
         <p><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(item.product_name)}" data-asin="${escapeHtml(productEntityMap.get(item.product_name)?.asin || '')}" data-affiliate-url="${escapeHtml(item.affiliate_url || '')}" data-position-in-article="${comparisonRankMap.get(item.product_name) || ''}" data-was-top-pick="false" href="${escapeHtml(item.affiliate_url || '')}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></p>
       </div>
@@ -1756,6 +1805,9 @@ function renderArticle(req, content, compliance, entry = null) {
         <h1>${escapeHtml(content.title)}</h1>
         <div class="summary">${escapeHtml(content.summary)}</div>
 
+        <h3>Final Verdict</h3>
+        <p class="final">${escapeHtml(content.sections?.final_verdict || '')}</p>
+
         <div class="winner-hero">
           <div class="eyebrow">Winner</div>
           <div class="top-name">${escapeHtml(content.winner_selection?.best_overall?.product_name || content.top_pick)}</div>
@@ -1777,16 +1829,14 @@ function renderArticle(req, content, compliance, entry = null) {
           </div>
           <div class="mini-card">
             <div class="eyebrow">Keep in mind</div>
-            <p>${escapeHtml(content.winner_keep_in_mind || 'Review the listing details before buying.')}</p>
+            ${content.winner_keep_in_mind ? `<p>${escapeHtml(content.winner_keep_in_mind)}</p>` : '<p>Review fit, sizing, and listing details before buying.</p>'}
             <p><strong>Decision drivers:</strong> ${escapeHtml((content.category_pros_cons?.separates_good_vs_bad || []).join(', '))}</p>
           </div>
         </div>
 
-        ${glance ? `<h3>Top Alternatives</h3><div class="glance-grid">${glance}</div>` : ''}
+        ${glance ? `<h3>Alternatives</h3><div class="glance-grid">${glance}</div>` : ''}
 
-        ${didNotWinCards ? `<h3>Why the Others Fall Short</h3><div class="did-not-win-grid">${didNotWinCards}</div>` : ''}
-
-        <h3>Compact Comparison</h3>
+        <h3>Comparison</h3>
         <div class="comparison-table-shell">
           <table>
             <tr>
@@ -1807,11 +1857,13 @@ function renderArticle(req, content, compliance, entry = null) {
               <div class="comparison-row"><div class="comparison-label">Role</div><div>${escapeHtml(p.price_tier)}</div></div>
               <div class="comparison-row"><div class="comparison-label">Best for</div><div>${escapeHtml(p.best_for)}</div></div>
               <div class="comparison-row"><div class="comparison-label">Score</div><div>${escapeHtml(p.total_score)}</div></div>
-              <div class="comparison-row"><div class="comparison-label">Watchout</div><div>${escapeHtml(p.keep_in_mind)}</div></div>
+              <div class="comparison-row"><div class="comparison-label">Watchout</div><div>${escapeHtml(p.keep_in_mind || '—')}</div></div>
               <div class="comparison-row"><div class="comparison-label">Shop</div><div><a class="shop-btn analytics-link" data-article-slug="${escapeHtml(content.article_slug || 'configured-article')}" data-category="${escapeHtml(content.category || 'configured category')}" data-product-name="${escapeHtml(p.name)}" data-asin="${escapeHtml(p.asin)}" data-affiliate-url="${escapeHtml(p.affiliate_url)}" data-position-in-article="${comparisonRankMap.get(p.name) || ''}" data-was-top-pick="${String((content.top_pick || '').trim() === (p.name || '').trim())}" href="${escapeHtml(p.affiliate_url)}" target="_blank" rel="noopener noreferrer">Shop on Amazon</a></div></div>
             </div>
           `).join('')}
         </div>
+
+        ${productSections ? `<h3>Product Details</h3><div class="product-grid">${productSections}</div>` : ''}
 
         <h3>How to Choose</h3>
         <div class="mini-card"><ul>${((content.sections && content.sections.buying_guide) || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>
@@ -1819,17 +1871,12 @@ function renderArticle(req, content, compliance, entry = null) {
         <h3>Who is this for</h3>
         <ul>${who}</ul>
 
-        ${productSections ? `<h3>Product Details</h3><div class="product-grid">${productSections}</div>` : ''}
-
         <h3>Buying Guide</h3>
         <ul>${guide}</ul>
 
         ${faq ? `<h3>FAQ</h3><div class="product-grid">${faq}</div>` : ''}
 
         ${relatedGuides ? `<h3>More Air Purifier Guides</h3><p>${relatedGuides}</p>` : ''}
-
-        <h3>Final Verdict</h3>
-        <p class="final">${escapeHtml(content.sections?.final_verdict || '')}</p>
       </div>
     </div>
     <script>
@@ -1933,7 +1980,7 @@ app.get('/article/:slug', (req, res) => {
   if (!bundle || bundle.entry?.publish_status !== 'published') {
     return res.status(404).send(renderArticle(req, null, null));
   }
-  const content = bundle.content;
+  const content = sanitizeArticleContent(bundle.content || {});
   const compliance = bundle.compliance;
   logEvent(analytics.buildPageViewEvent(req, req.params.slug));
   res.send(renderArticle(req, content, compliance, bundle.entry));
