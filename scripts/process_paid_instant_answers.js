@@ -4,6 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 const createPaidRequests = require('../paid_requests');
+const { buildDistinctiveTokenSet, shouldReuseExistingContentMatch } = require('../lib/instant_answer_guardrails');
 
 const ROOT = path.resolve(__dirname, '..');
 const paidRequests = createPaidRequests({ rootDir: ROOT });
@@ -1891,9 +1892,8 @@ function buildFromExisting(request, published) {
   const q = normalize(request.raw_query);
   const rawTokens = q.split(' ').filter(Boolean);
   const stopwords = new Set(['best', 'for', 'the', 'and', 'with', 'from', 'that', 'this', 'your', 'into', 'under', 'over', 'vs', 'comparison', 'guide', 'buy', 'top', 'amazon']);
-  const genericCategoryTokens = new Set(['air', 'filter', 'filters', 'conditioner', 'conditioners', 'unit', 'units', 'system', 'systems']);
   const qTokens = rawTokens.filter((token) => token.length >= 3 && !stopwords.has(token));
-  const distinctiveTokens = qTokens.filter((token) => !genericCategoryTokens.has(token));
+  const distinctiveTokens = buildDistinctiveTokenSet(qTokens);
   if (!qTokens.length) return { ok: false, error: 'query_too_generic_for_existing_match' };
 
   const matches = published.map((item) => {
@@ -1906,11 +1906,15 @@ function buildFromExisting(request, published) {
     const score = (titleHits * 3) + productHits + (distinctiveTitleHits * 4) + (distinctiveProductHits * 4);
     const overlapRatio = qTokens.length ? (Math.max(titleHits, productHits) / qTokens.length) : 0;
     return { ...item, score, titleHits, productHits, distinctiveTitleHits, distinctiveProductHits, overlapRatio };
-  }).filter((item) => {
-    const productAnchoredMatch = item.productHits >= 1;
-    const distinctiveMatchRequired = !distinctiveTokens.length || item.distinctiveTitleHits >= 1 || item.distinctiveProductHits >= 1;
-    return item.titleHits >= 1 && item.overlapRatio >= 0.6 && item.score >= 3 && productAnchoredMatch && distinctiveMatchRequired;
-  }).sort((a,b) => b.score - a.score).slice(0, 5);
+  }).filter((item) => shouldReuseExistingContentMatch({
+    titleHits: item.titleHits,
+    productHits: item.productHits,
+    overlapRatio: item.overlapRatio,
+    score: item.score,
+    distinctiveTitleHits: item.distinctiveTitleHits,
+    distinctiveProductHits: item.distinctiveProductHits,
+    hasDistinctiveTokens: distinctiveTokens.length > 0
+  })).sort((a,b) => b.score - a.score).slice(0, 5);
 
   if (!matches.length) return { ok: false, error: 'no_relevant_content_found' };
 

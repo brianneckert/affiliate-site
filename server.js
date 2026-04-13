@@ -4,6 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 const createAnalytics = require('./analytics');
 const createPaidRequests = require('./paid_requests');
+const { shouldMarkRequestOrphaned } = require('./lib/instant_answer_guardrails');
 const Stripe = require('stripe');
 
 const app = express();
@@ -2296,10 +2297,13 @@ app.get('/api/instant-answer/request/:id', async (req, res) => {
     const runtimeState = getGenerationRuntimeState(request.request_id);
     const requestAgeMs = Date.now() - new Date(request.paid_at || request.created_at || 0).getTime();
     const orphanGraceMs = 5 * 60 * 1000;
-    const shouldMarkOrphaned = request.request_status === 'generating'
-      && request.fulfillment_status === 'processing'
-      && runtimeState.orphaned
-      && requestAgeMs > orphanGraceMs;
+    const shouldMarkOrphaned = shouldMarkRequestOrphaned({
+      requestStatus: request.request_status,
+      fulfillmentStatus: request.fulfillment_status,
+      runtimeOrphaned: runtimeState.orphaned,
+      requestAgeMs,
+      orphanGraceMs
+    });
     if (shouldMarkOrphaned) {
       request = paidRequests.updateRequestStatus(request.request_id, {
         request_status: 'failed',
