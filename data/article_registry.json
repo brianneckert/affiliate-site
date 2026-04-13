@@ -1,0 +1,24 @@
+{
+  "articles": [
+    {
+      "article_slug": "find-me-the-best-dog-harness-for-a-sheepadoodle-that-will-not-mat-my-dogs-hair",
+      "category": "dog harness for a sheepadoodle that will not mat dog hair",
+      "title": "Find Me The Best Dog Harness For A Sheepadoodle That Will Not Mat My Dogs Hair",
+      "output_dir": "data/articles/find-me-the-best-dog-harness-for-a-sheepadoodle-that-will-not-mat-my-dogs-hair",
+      "article_dir": "data/articles/find-me-the-best-dog-harness-for-a-sheepadoodle-that-will-not-mat-my-dogs-hair",
+      "topic_family": "dog harness for a sheepadoodle that will not mat dog hair",
+      "article_family_position": "instant_answer",
+      "source_topic_plan_date": "2026-04-13",
+      "generation_status": "published",
+      "publish_status": "published",
+      "validation_result": {
+        "passed": true
+      },
+      "published_at": "2026-04-13T17:35:00.000Z",
+      "source_article_family": "instant_answer_paid",
+      "related_articles": [],
+      "duplicate_of": null,
+      "source_request_id": "manual-recovery-sheepadoodle"
+    }
+  ]
+}
