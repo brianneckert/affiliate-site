@@ -4577,14 +4577,14 @@
       "article_dir": "data/articles/30x20-air-filter-for-air-conditioner",
       "topic_family": "30x20 air filter for air conditioner",
       "article_family_position": "instant_answer",
-      "source_topic_plan_date": "2026-04-12",
+      "source_topic_plan_date": "2026-04-13",
       "generation_status": "published",
       "publish_status": "published",
       "validation_result": {
         "passed": true,
         "category_intelligence_required": true
       },
-      "published_at": "2026-04-12T23:54:49.949Z",
+      "published_at": "2026-04-13T00:36:08.123Z",
       "source_article_family": "instant_answer_paid",
       "related_articles": [],
       "duplicate_of": null,

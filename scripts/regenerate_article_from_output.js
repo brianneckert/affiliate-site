@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require('path');
-const { ensurePublish, readJson, writeJson, registryPath, buildProductScore, selectWinners } = require('./process_paid_instant_answers');
+const { ensurePublish, readJson, writeJson, registryPath, buildProductScore, selectWinners, detectHvacFilterFamily, buildHvacFilterFallbackAnalysis } = require('./process_paid_instant_answers');
 
 const outputPath = process.argv[2];
 const rawQuery = process.argv[3];
@@ -14,7 +14,14 @@ const registry = readJson(registryPath);
 const normalized = String(output.normalized_query || rawQuery).trim();
 if (Array.isArray(output.products) && output.category_intelligence) {
   output.products = output.products
-    .map((product) => ({ ...product, product_score: buildProductScore(product, { ...output.category_intelligence, query: rawQuery }) }))
+    .map((product) => {
+      const next = { ...product };
+      if (detectHvacFilterFamily(rawQuery, product.product_name || '')) {
+        next.product_analysis = buildHvacFilterFallbackAnalysis(product, { ...output.category_intelligence, query: rawQuery }, rawQuery);
+      }
+      next.product_score = buildProductScore(next, { ...output.category_intelligence, query: rawQuery });
+      return next;
+    })
     .sort((a, b) => b.product_score.final_score - a.product_score.final_score || (b.review_count || 0) - (a.review_count || 0))
     .map((product, index, arr) => {
       if (index === 0) return product;

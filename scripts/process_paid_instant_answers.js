@@ -1260,6 +1260,28 @@ function pickBestPhrase(fragments = [], queryTokens = [], fallback = '') {
   return ranked[0] || fallback;
 }
 
+function detectHvacFilterFamily(query = '', text = '') {
+  const combined = normalize([query, text].join(' '));
+  return /\b(hvac|furnace|ac filter|air conditioner|merv|pleated|allergen|filter media|washable|disposable)\b/.test(combined)
+    && /\bfilter\b/.test(combined);
+}
+
+function extractFilterAttributes(product = {}) {
+  const text = normalize([product.product_name || '', product.title || '', product.best_for || ''].join(' '));
+  const mervMatch = text.match(/\bmerv\s*(\d{1,2})\b/i);
+  const sizeMatch = text.match(/\b(\d{1,2})x(\d{1,2})x(\d{1,2})\b/i);
+  const packMatch = text.match(/\b(\d+)\s*pack\b/i) || text.match(/\((\d+)\s*pack\)/i);
+  return {
+    merv: mervMatch ? Number(mervMatch[1]) : null,
+    size: sizeMatch ? `${sizeMatch[1]}x${sizeMatch[2]}x${sizeMatch[3]}` : null,
+    packCount: packMatch ? Number(packMatch[1]) : null,
+    washable: /washable|reusable|cut to fit/.test(text),
+    disposable: /pleated|disposable|replacement/.test(text),
+    allergen: /allergen|odor|dust|pollen|pet|mold/.test(text),
+    highAirflow: /high air flow|airflow|dust defense|merv 8\b|merv 11\b/.test(text)
+  };
+}
+
 function inferUseCaseProfile(query = '', categoryIntelligence = {}) {
   const text = normalize([query, ...(categoryIntelligence.decision_drivers || []), ...(categoryIntelligence.top_praises || []), ...(categoryIntelligence.failure_points || [])].join(' '));
   return {
@@ -1268,7 +1290,8 @@ function inferUseCaseProfile(query = '', categoryIntelligence = {}) {
     runtime: /battery|runtime|playtime|all day|long day|long lasting|hours?/.test(text),
     durability: /durable|rugged|tough|drop|build quality|outdoor|boat|marine|jobsite/.test(text),
     noise: /loud|outdoor|open air|party|deck|boat|bass/.test(text),
-    value: /value|budget|worth it|price/.test(text)
+    value: /value|budget|worth it|price/.test(text),
+    hvacFilter: detectHvacFilterFamily(query, text)
   };
 }
 
@@ -1288,6 +1311,11 @@ function buildWeightedCriteria(categoryIntelligence = {}) {
   if (profile.runtime || profile.portable) criteria.find((x) => x.key === 'runtime_portability').weight += 0.04;
   if (profile.noise) criteria.find((x) => x.key === 'core_performance').weight += 0.03;
   if (profile.value) criteria.find((x) => x.key === 'value_for_price').weight += 0.02;
+  if (profile.hvacFilter) {
+    criteria.find((x) => x.key === 'use_case_fit').weight += 0.06;
+    criteria.find((x) => x.key === 'core_performance').weight += 0.04;
+    criteria.find((x) => x.key === 'value_for_price').weight += 0.03;
+  }
   const total = criteria.reduce((sum, item) => sum + item.weight, 0);
   return criteria.map((criterion) => ({ ...criterion, weight: criterion.weight / total }));
 }
@@ -1308,6 +1336,7 @@ function scoreCriterion(criterion, analysis, categoryIntelligence, product) {
   const queryText = normalize([query, ...(categoryIntelligence?.decision_drivers || [])].join(' '));
   const profile = inferUseCaseProfile(query, categoryIntelligence);
   let score = 5.0;
+  const attrs = extractFilterAttributes(product);
 
   const add = (points, re) => { if (re.test(text)) score += points; };
   const sub = (points, re) => { if (re.test(text)) score -= points; };
@@ -1320,10 +1349,22 @@ function scoreCriterion(criterion, analysis, categoryIntelligence, product) {
     if (profile.weatherproof) { add(1.6, /waterproof|ipx7|ipx6|dustproof|water resistant|marine|outdoor/); sub(1.8, /indoor only|not waterproof|splash only/); }
     if (profile.durability) { add(1.2, /rugged|durable|jobsite|tough|solid build/); sub(1.6, /flimsy|cheap build|weak durability|crack/); }
     if (profile.noise) { add(1.0, /loud|big sound|bass|outdoor/); sub(1.0, /small room|quiet only|thin sound/); }
+    if (profile.hvacFilter) {
+      if (attrs.size && normalize(query).includes(attrs.size.toLowerCase())) score += 1.2;
+      if (attrs.merv && attrs.merv >= 13) score += /allerg|pet|asthma|dust|pollen/.test(queryText) ? 1.4 : 0.3;
+      if (attrs.merv && attrs.merv <= 8) score += /airflow|hvac|ac|furnace/.test(queryText) ? 1.0 : 0.2;
+      if (attrs.washable) score += /washable|reusable|cut to fit/.test(queryText) ? 1.2 : -0.5;
+      if (attrs.packCount && attrs.packCount >= 4) score += 0.8;
+    }
   }
   if (criterion.key === 'core_performance') {
     add(1.2, /powerful|strong|clear|loud|effective|consistent|deep bass|stereo/);
     sub(1.3, /weak|thin|distort|underpowered|inconsistent/);
+    if (profile.hvacFilter) {
+      if (attrs.merv && attrs.merv >= 13) score += /allerg|pollen|pet|odor/.test(text) ? 1.0 : 0.5;
+      if (attrs.merv && attrs.merv <= 8) score += /air flow|airflow|dust defense/.test(text) ? 1.0 : 0.4;
+      if (attrs.washable) score += /high air flow|cut to fit|reusable/.test(text) ? 0.8 : 0;
+    }
   }
   if (criterion.key === 'reliability') {
     add(1.0, /reliable|durable|holds up|long lasting/);
@@ -1340,14 +1381,20 @@ function scoreCriterion(criterion, analysis, categoryIntelligence, product) {
   if (criterion.key === 'value_for_price') {
     add(1.0, /good value|worth it|budget|affordable/);
     sub(1.4, /overpriced|too expensive|premium price/);
+    if (profile.hvacFilter) {
+      if (attrs.packCount && attrs.packCount >= 6) score += 1.1;
+      else if (attrs.packCount && attrs.packCount >= 4) score += 0.7;
+      if (attrs.washable) score += 0.8;
+      if (attrs.merv && attrs.merv >= 13 && (!attrs.packCount || attrs.packCount <= 2)) score -= 0.8;
+    }
   }
   if (criterion.key === 'ease_of_use') {
     add(0.8, /easy to use|easy to clean|simple setup|intuitive|one handed/);
     sub(1.0, /hard to use|confusing|awkward/);
   }
 
-  if (product.rating) score += Math.max(0, product.rating - 4.0) * 0.8;
-  if (product.review_count) score += Math.min(0.8, Math.log10(Math.max(product.review_count, 1)) - 2.7);
+  if (product.rating) score += Math.max(0, product.rating - 4.0) * (profile.hvacFilter ? 0.35 : 0.8);
+  if (product.review_count) score += Math.min(profile.hvacFilter ? 0.35 : 0.8, Math.log10(Math.max(product.review_count, 1)) - 2.7);
   if (queryText && normalize(analysis.best_for || '').includes(normalize(query))) score += 0.7;
 
   return Math.max(1, Math.min(10, Number(score.toFixed(1))));
@@ -1395,8 +1442,13 @@ function buildRoleLabels(products, query) {
   const sorted = [...products];
   const labels = new Map();
   if (!sorted.length) return labels;
+  const isHvac = detectHvacFilterFamily(query, query);
   labels.set(sorted[0].product_name, 'Best Overall');
-  const candidates = [
+  const candidates = isHvac ? [
+    { product: [...sorted].sort((a, b) => (extractFilterAttributes(b).merv || 0) - (extractFilterAttributes(a).merv || 0))[0], label: 'Best for Allergy Capture' },
+    { product: [...sorted].sort((a, b) => ((extractFilterAttributes(b).packCount || 0) + (b.product_score?.category_scores?.value_for_price || 0)) - ((extractFilterAttributes(a).packCount || 0) + (a.product_score?.category_scores?.value_for_price || 0)))[0], label: 'Best Pack Value' },
+    { product: [...sorted].sort((a, b) => (((extractFilterAttributes(b).washable ? 2 : 0) + (extractFilterAttributes(b).highAirflow ? 1 : 0))) - (((extractFilterAttributes(a).washable ? 2 : 0) + (extractFilterAttributes(a).highAirflow ? 1 : 0))))[0], label: 'Best for Airflow / Reuse' }
+  ] : [
     { product: [...sorted].sort((a, b) => (b.product_score?.category_scores?.value_for_price || 0) - (a.product_score?.category_scores?.value_for_price || 0))[0], label: 'Best Value' },
     { product: [...sorted].sort((a, b) => (b.product_score?.category_scores?.core_performance || 0) - (a.product_score?.category_scores?.core_performance || 0))[0], label: 'Best Performance' },
     { product: [...sorted].sort((a, b) => (b.product_score?.category_scores?.runtime_portability || 0) - (a.product_score?.category_scores?.runtime_portability || 0))[0], label: 'Most Portable / Practical' }
@@ -1415,6 +1467,45 @@ function buildRoleLabels(products, query) {
   return labels;
 }
 
+function buildHvacFilterFallbackAnalysis(product, categoryIntelligence = {}, query = '') {
+  const attrs = extractFilterAttributes(product);
+  const pros = [
+    attrs.merv >= 13 ? `MERV ${attrs.merv} filtration is the better fit if you care more about pollen, dust, and allergen capture.` : null,
+    attrs.merv && attrs.merv <= 11 ? `This keeps airflow tradeoffs more reasonable for a routine HVAC replacement.` : null,
+    attrs.packCount ? `${attrs.packCount}-pack quantity is easier to live with if you change filters on a normal schedule.` : null,
+    attrs.washable ? 'Washable/reusable media makes more sense if you want airflow and reuse instead of buying disposable packs.' : null,
+    attrs.size ? `The listing matches the ${attrs.size} size this search is actually asking for.` : null
+  ].filter(Boolean).slice(0, 3);
+  const cons = [
+    attrs.merv >= 13 ? 'This level of filtration can be more restrictive than some systems need for everyday airflow.' : null,
+    attrs.washable ? 'Reusable media takes more trimming, cleaning, and fit-checking than a normal disposable filter.' : null,
+    !attrs.packCount || attrs.packCount < 4 ? 'Pack quantity is not especially strong if you want to stock up on replacements.' : null,
+    categoryIntelligence?.failure_points?.[0] || 'Fit and airflow tradeoffs still need a quick sanity check.'
+  ].filter(Boolean).slice(0, 3);
+  return {
+    pros,
+    cons,
+    matches_praises: (categoryIntelligence?.top_praises || []).slice(0, 3),
+    matches_complaints: (categoryIntelligence?.top_complaints || []).slice(0, 3),
+    unique_strength: attrs.merv >= 13
+      ? `A stronger-filtration ${attrs.size || ''} option for buyers who care more about allergen capture than maximum airflow.`
+      : attrs.washable
+        ? `A reusable ${attrs.size || ''} filter option for buyers who want airflow and reusability over a standard disposable pack.`
+        : `A practical ${attrs.size || ''} replacement filter with a more routine airflow-and-value balance.`,
+    hidden_issues: attrs.merv >= 13
+      ? 'The filtration may be more aggressive than some HVAC systems really need for routine use.'
+      : (attrs.washable ? 'Fit, trimming, and ongoing maintenance matter more than with a standard drop-in filter.' : categoryIntelligence?.failure_points?.[0] || 'Fit and airflow tradeoffs still need a quick sanity check.'),
+    best_for: attrs.merv >= 13
+      ? 'allergy-sensitive buyers who want stronger particle capture'
+      : (attrs.washable ? 'buyers who want reusable filter media and are okay with extra maintenance' : ((attrs.packCount || 0) >= 4 ? 'buyers who want a straightforward drop-in replacement pack' : 'buyers who want a standard HVAC filter without overcomplicating the decision')),
+    avoid_if: attrs.merv >= 13
+      ? 'You are trying to preserve easier airflow on a system that does better with a less restrictive filter.'
+      : (attrs.washable ? 'You want the easiest disposable replacement path with no trimming or cleaning.' : 'You specifically want a more aggressive allergy-focused filter.'),
+    amazon_review_sentiment: null,
+    evidence_tier: 'tier_0_amazon_search_plus_category_intelligence'
+  };
+}
+
 function buildWinnerJustification(product, categoryIntelligence, label) {
   const query = categoryIntelligence?.query || 'this use case';
   const strengths = [
@@ -1424,6 +1515,19 @@ function buildWinnerJustification(product, categoryIntelligence, label) {
   const tradeoff = shortReason(product.product_analysis?.hidden_issues || product.product_analysis?.cons?.[0] || 'it is not the lightest or cheapest option');
   const bestFor = bestUseCaseFromProduct(product, query);
   const lead = shortReason(strengths[0] || `it is the most convincing fit for ${query}`);
+  if (detectHvacFilterFamily(query, [bestFor, ...strengths].join(' '))) {
+    const attrs = extractFilterAttributes(product);
+    const hvacLead = attrs.merv >= 13
+      ? `it gives you stronger small-particle capture without drifting out of the right 30x20x1 filter family`
+      : attrs.washable
+        ? `it is the practical airflow-first option if you want a reusable filter instead of recurring disposable packs`
+        : attrs.packCount >= 4
+          ? `it balances the right size, sensible airflow, and multi-pack replacement value`
+          : `it stays focused on the correct filter size and a practical HVAC replacement use case`;
+    if (label === 'best_budget') return `${product.product_name} is the value pick for ${query} because ${hvacLead}. The tradeoff is ${tradeoff.toLowerCase()}.`;
+    if (label === 'best_premium') return `${product.product_name} is the more aggressive filtration pick for ${query} because ${hvacLead}. It makes the most sense if your priority is ${bestFor.toLowerCase()} rather than maximum airflow.`;
+    return `${product.product_name} is the clearest recommendation for ${query} because ${hvacLead}. It is the easiest starting point for buyers who want the right size, solid filtration, and a pack that is practical to replace on schedule. The tradeoff is ${tradeoff.toLowerCase()}.`;
+  }
   if (label === 'best_budget') return `${product.product_name} is the value pick for ${query} because it offers ${lead.toLowerCase()}. The tradeoff is ${tradeoff.toLowerCase()}.`;
   if (label === 'best_premium') return `${product.product_name} is the performance pick for ${query} because it offers ${lead.toLowerCase()}. It makes the most sense if your priority is ${bestFor.toLowerCase()} rather than the lowest price.`;
   return `${product.product_name} is the clearest recommendation for ${query} because it offers ${lead.toLowerCase()}. It solves the main buyer problem better than the rest, and the tradeoff is ${tradeoff.toLowerCase()}.`;
@@ -1439,13 +1543,43 @@ function buildDidNotWinReason(product, winner, categoryIntelligence) {
   const strengths = (product.product_analysis?.pros || []).map(cleanBullet).filter(usableBullet);
   const drawbacks = [product.product_analysis?.hidden_issues, ...(product.product_analysis?.cons || [])].map(cleanBullet).filter(usableBullet);
 
+  if (detectHvacFilterFamily(useCase, [product.product_name, winner.product_name].join(' '))) {
+    const loserAttrs = extractFilterAttributes(product);
+    const winnerAttrs = extractFilterAttributes(winner);
+    if ((loserAttrs.merv || 0) > (winnerAttrs.merv || 0)) whyNot.push((loserAttrs.packCount || 0) > (winnerAttrs.packCount || 0)
+      ? 'it gives you more filters per order, but it also moves to a more aggressive filtration level than many systems need for a routine replacement'
+      : 'it pushes filtration harder, but that can be a worse airflow tradeoff for a routine replacement filter');
+    if ((loserAttrs.merv || 0) < (winnerAttrs.merv || 0)) whyNot.push('it is easier on airflow, but it does less if you want stronger allergen capture');
+    if ((loserAttrs.packCount || 0) < (winnerAttrs.packCount || 0)) whyNot.push('the pack value is weaker if you want to replace filters on a normal schedule without reordering constantly');
+    if (loserAttrs.washable && !winnerAttrs.washable) whyNot.push('it is better only if you specifically want reusable media instead of a simpler drop-in disposable filter');
+    if (!loserAttrs.washable && winnerAttrs.washable) whyNot.push('it does not create a meaningful enough disposable-filter advantage to beat the more flexible reusable option');
+    if (!whyNot.length && loserScore < winnerScore) whyNot.push('it does not separate itself enough on airflow, filtration, or replacement value');
+    const hvacBestFor = loserAttrs.merv >= 13
+      ? 'buyers who want more aggressive allergen capture and are comfortable with a stronger filter'
+      : loserAttrs.washable
+        ? 'buyers who want washable media and are willing to trim or fit it carefully'
+        : (loserAttrs.packCount || 0) >= 4
+          ? 'buyers who care most about stocking up on standard replacements'
+          : 'buyers with a narrower filter preference than a normal all-around replacement';
+    const reason = shortReason(whyNot[0]);
+    const summary = `${product.product_name} is still worth a look if you mainly care about ${hvacBestFor}, but it did not win because ${reason}.`;
+    return {
+      product_name: product.product_name,
+      affiliate_url: product.affiliate_url,
+      summary,
+      did_not_win_reason: reason,
+      best_for_buyer: hvacBestFor,
+      additional_reasons: whyNot.slice(1, 3)
+    };
+  }
+
   if ((loserCats.use_case_fit || 0) < (winnerCats.use_case_fit || 0) - 0.7) whyNot.push(`it is a weaker match for ${useCase}`);
   if ((loserCats.runtime_portability || 0) < (winnerCats.runtime_portability || 0) - 0.9) whyNot.push('it gives up too much on battery life or portability');
   if ((loserCats.reliability || 0) < (winnerCats.reliability || 0) - 0.9) whyNot.push('it carries more durability risk');
   if ((loserCats.core_performance || 0) < (winnerCats.core_performance || 0) - 0.9) whyNot.push('it is less convincing on real-world performance');
   if ((loserCats.value_for_price || 0) < (winnerCats.value_for_price || 0) - 1.0) whyNot.push('the price is harder to justify for what you get');
   if (!whyNot.length && loserScore < winnerScore - 0.6) whyNot.push('the overall package is just less convincing for this specific job');
-  if (!whyNot.length) whyNot.push('the winner is the safer first recommendation');
+  if (!whyNot.length) whyNot.push('it does not separate itself enough to beat the winner');
 
   const stillGoodFor = shortReason(product.product_analysis?.best_for || strengths[0] || `buyers who care more about a narrower edge case than ${useCase}`);
   const genericDrawback = /weak durability|common tradeoffs|review the listing/i.test(drawbacks[0] || '');
@@ -1967,17 +2101,20 @@ async function buildProductAnalysis(product, request, categoryIntelligence, cate
   if (product?.source === 'amazon_search') {
     const reviewSignal = Number(product.review_count || 0);
     const ratingSignal = Number(product.rating || 0);
-    const pros = [
+    const attrs = extractFilterAttributes(product);
+    const isHvac = detectHvacFilterFamily(query, product.product_name || '');
+    const hvacAnalysis = isHvac ? buildHvacFilterFallbackAnalysis(product, categoryIntelligence, query) : null;
+    const pros = isHvac ? hvacAnalysis.pros : [
       reviewSignal > 0 ? `Strong Amazon shopper validation with about ${reviewSignal} reviews.` : null,
       ratingSignal > 0 ? `Solid visible rating around ${ratingSignal} stars for this category.` : `Strong overall fit for this category based on the current Amazon listing match.`,
       categoryIntelligence?.top_praises?.[0] || `Good fit for common ${query} priorities.`
     ].filter(Boolean);
-    const cons = [
+    const cons = isHvac ? hvacAnalysis.cons : [
       categoryIntelligence?.top_complaints?.[0] || `May share the usual tradeoffs seen across ${query}.`,
       categoryIntelligence?.failure_points?.[0] || 'Check long-term durability details before buying.',
-      'Amazon search selection is stronger on demand signals than hands-on lab verification.'
+      'Marketplace evidence is stronger here than hands-on editorial verification.'
     ].filter(Boolean);
-    const analysis = {
+    const analysis = isHvac ? hvacAnalysis : {
       pros,
       cons,
       matches_praises: (categoryIntelligence?.top_praises || []).slice(0, 3),
@@ -2283,9 +2420,16 @@ async function buildOutput(request, published) {
     intelligenceResult = await buildCategoryIntelligence(request);
     if (!intelligenceResult.ok || !intelligenceResult.category_intelligence) {
       if (intelligenceResult.error === 'category_intelligence_source_coverage_missing') {
+        const hvacFallback = detectHvacFilterFamily(request.raw_query, request.normalized_query || '');
         intelligenceResult = {
           ok: true,
-          category_intelligence: {
+          category_intelligence: hvacFallback ? {
+            query: request.raw_query,
+            decision_drivers: ['correct filter size and thickness', 'merv level versus airflow restriction', 'pack value for normal replacement cadence'],
+            top_praises: ['good allergen capture without obviously choking airflow', 'easy drop-in replacement in the correct size', 'multi-pack value for regular filter changes'],
+            top_complaints: ['filtration can be too aggressive for systems that need easier airflow', 'cheap filters can fit loosely or feel generic', 'reusable media can require more trimming and maintenance than a standard disposable filter'],
+            failure_points: ['wrong size or thickness fit', 'overly restrictive filtration for the HVAC system', 'weak value if pack quantity is too low for the price']
+          } : {
             query: request.raw_query,
             decision_drivers: ['overall value', 'runtime consistency', 'brand reliability'],
             top_praises: ['strong overall fit for the intended use case', 'solid buyer demand', 'good value for the category'],
@@ -2712,7 +2856,7 @@ process.on('SIGINT', () => {
   process.exit(130);
 });
 
-module.exports = { runGeneration, ensurePublish, readJson, writeJson, registryPath, ROOT, buildProductScore, selectWinners };
+module.exports = { runGeneration, ensurePublish, readJson, writeJson, registryPath, ROOT, buildProductScore, selectWinners, detectHvacFilterFamily, buildHvacFilterFallbackAnalysis };
 
 if (require.main === module) {
   main();
