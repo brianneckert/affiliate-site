@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require('path');
-const { ensurePublish, readJson, writeJson, registryPath, buildProductScore, selectWinners, detectHvacFilterFamily, buildHvacFilterFallbackAnalysis } = require('./process_paid_instant_answers');
+const { ensurePublish, readJson, writeJson, registryPath, buildProductScore, selectWinners, detectHvacFilterFamily, buildHvacFilterFallbackAnalysis, buildHvacTradeoff } = require('./process_paid_instant_answers');
 
 const outputPath = process.argv[2];
 const rawQuery = process.argv[3];
@@ -18,6 +18,12 @@ if (Array.isArray(output.products) && output.category_intelligence) {
       const next = { ...product };
       if (detectHvacFilterFamily(rawQuery, product.product_name || '')) {
         next.product_analysis = buildHvacFilterFallbackAnalysis(product, { ...output.category_intelligence, query: rawQuery }, rawQuery);
+        next.product_analysis.hidden_issues = buildHvacTradeoff((() => {
+          const name = String(product.product_name || '').toLowerCase();
+          const merv = (name.match(/\bmerv\s*(\d{1,2})\b/) || [])[1];
+          const pack = (name.match(/\b(\d+)\s*pack\b/) || name.match(/\((\d+)\s*pack\)/) || [])[1];
+          return { merv: merv ? Number(merv) : null, packCount: pack ? Number(pack) : null, washable: /washable|reusable|cut to fit/.test(name) };
+        })(), { ...output.category_intelligence, query: rawQuery });
       }
       next.product_score = buildProductScore(next, { ...output.category_intelligence, query: rawQuery });
       return next;

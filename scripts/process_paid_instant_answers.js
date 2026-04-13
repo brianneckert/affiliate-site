@@ -1467,6 +1467,14 @@ function buildRoleLabels(products, query) {
   return labels;
 }
 
+function buildHvacTradeoff(attrs = {}, categoryIntelligence = {}) {
+  if (attrs.merv >= 13) return 'you are accepting a stronger airflow tradeoff in exchange for more aggressive allergen capture';
+  if (attrs.washable) return 'you are taking on more trimming, cleaning, and fit-checking than with a normal disposable replacement';
+  if (!attrs.packCount || attrs.packCount < 4) return 'the pack value is not as strong if you want to replace filters on a normal schedule';
+  if (attrs.merv && attrs.merv <= 8) return 'it is more of an airflow-first filter than an allergy-first filter';
+  return categoryIntelligence?.failure_points?.find((x) => !/weak durability|quality control/i.test(String(x || ''))) || 'it is less compelling if you specifically want a more aggressive allergy-capture filter';
+}
+
 function buildHvacFilterFallbackAnalysis(product, categoryIntelligence = {}, query = '') {
   const attrs = extractFilterAttributes(product);
   const pros = [
@@ -1492,9 +1500,7 @@ function buildHvacFilterFallbackAnalysis(product, categoryIntelligence = {}, que
       : attrs.washable
         ? `A reusable ${attrs.size || ''} filter option for buyers who want airflow and reusability over a standard disposable pack.`
         : `A practical ${attrs.size || ''} replacement filter with a more routine airflow-and-value balance.`,
-    hidden_issues: attrs.merv >= 13
-      ? 'The filtration may be more aggressive than some HVAC systems really need for routine use.'
-      : (attrs.washable ? 'Fit, trimming, and ongoing maintenance matter more than with a standard drop-in filter.' : categoryIntelligence?.failure_points?.[0] || 'Fit and airflow tradeoffs still need a quick sanity check.'),
+    hidden_issues: buildHvacTradeoff(attrs, categoryIntelligence),
     best_for: attrs.merv >= 13
       ? 'allergy-sensitive buyers who want stronger particle capture'
       : (attrs.washable ? 'buyers who want reusable filter media and are okay with extra maintenance' : ((attrs.packCount || 0) >= 4 ? 'buyers who want a straightforward drop-in replacement pack' : 'buyers who want a standard HVAC filter without overcomplicating the decision')),
@@ -1512,7 +1518,10 @@ function buildWinnerJustification(product, categoryIntelligence, label) {
     ...(product.product_analysis?.pros || []),
     product.product_analysis?.unique_strength || ''
   ].map(cleanBullet).filter(usableBullet);
-  const tradeoff = shortReason(product.product_analysis?.hidden_issues || product.product_analysis?.cons?.[0] || 'it is not the lightest or cheapest option');
+  const hvacAttrs = extractFilterAttributes(product);
+  const tradeoff = shortReason(detectHvacFilterFamily(query, product.product_name || '')
+    ? buildHvacTradeoff(hvacAttrs, categoryIntelligence)
+    : (product.product_analysis?.hidden_issues || product.product_analysis?.cons?.[0] || 'it is not the lightest or cheapest option'));
   const bestFor = bestUseCaseFromProduct(product, query);
   const lead = shortReason(strengths[0] || `it is the most convincing fit for ${query}`);
   if (detectHvacFilterFamily(query, [bestFor, ...strengths].join(' '))) {
@@ -2856,7 +2865,7 @@ process.on('SIGINT', () => {
   process.exit(130);
 });
 
-module.exports = { runGeneration, ensurePublish, readJson, writeJson, registryPath, ROOT, buildProductScore, selectWinners, detectHvacFilterFamily, buildHvacFilterFallbackAnalysis };
+module.exports = { runGeneration, ensurePublish, readJson, writeJson, registryPath, ROOT, buildProductScore, selectWinners, detectHvacFilterFamily, buildHvacFilterFallbackAnalysis, buildHvacTradeoff };
 
 if (require.main === module) {
   main();
